@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    // Linting / Formatting
+    "dbaeumer.vscode-eslint",
+    "bradlc.vscode-tailwindcss",
+    // Theme
+    "seaci.seaci-theme"
+  ]
+}

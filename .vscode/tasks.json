@@ -1,0 +1,42 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "debug start",
+      "type": "npm",
+      "script": "dev",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "vuejs",
+        "source": "vuejs",
+        "applyTo": "allDocuments",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^\\s*$",
+          "endsPattern": "^\\s*$"
+        },
+        "pattern": [
+          {
+            "regexp": "^\\s*$",
+            "file": 1,
+            "location": 2,
+            "message": 3
+          },
+          {
+            "regexp": "^(.*)\\((\\d+),(\\d+)\\):\\s+(.*)$",
+            "file": 1,
+            "location": 2,
+            "message": 4
+          },
+          {
+            "regexp": "^\\s*at\\s+(.*)\\((.*):(\\d+):(\\d+)\\)$",
+            "file": 2,
+            "location": 3,
+            "message": 1
+          }
+        ]
+      }
+    }
+  ]
+}

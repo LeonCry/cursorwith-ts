@@ -1,0 +1,15 @@
+html,
+body,
+#app {
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+  font-family: 'Alibaba PuHuiTi 3.0 55 Regular';
+}
+
+.font-albb {
+  font-family: 'Alibaba PuHuiTi 3.0 55 Regular';
+}

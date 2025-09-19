@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // 使用 Chrome 浏览器调试
+      "type": "chrome",
+      // 使用 Edge 浏览器调试
+      // "type": "msedge",
+      "request": "launch",
+      "name": "vue_debug",
+      // 项目的访问地址
+      "url": "http://localhost:3333",
+      "webRoot": "${workspaceFolder}",
+      "pathMapping": {
+        "/_karma_webpack_": "${workspaceFolder}"
+      },
+      "sourceMapPathOverrides": {
+        "webpack:/*": "${webRoot}/*",
+        "/./*": "${webRoot}/*",
+        "/src/*": "${webRoot}/*",
+        "/*": "*",
+        "/./~/*": "${webRoot}/node_modules/*"
+      },
+      "preLaunchTask": "debug start"
+    }
+  ]
+}
