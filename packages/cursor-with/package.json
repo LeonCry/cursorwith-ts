@@ -2,5 +2,19 @@
   "name": "@cursor-with/core",
   "type": "module",
   "version": "0.0.1",
-  "private": true
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.0"
+  }
 }
