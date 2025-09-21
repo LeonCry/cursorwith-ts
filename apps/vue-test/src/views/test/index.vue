@@ -6,6 +6,7 @@ onMounted(() => {
   cursorWith.value = new CreateCursorWith({
     radius: 20,
     color: '#42a5f5',
+    type: 'time',
   });
 });
 onBeforeUnmount(() => {

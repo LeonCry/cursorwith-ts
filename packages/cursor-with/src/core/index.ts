@@ -1,17 +1,30 @@
-import type { CursorWithOptions } from '../types';
-import throwError from '../utils/global-error';
+import type { CursorWithOptions, Point } from '../types';
+import throttle from '../utils/tiny-throttle';
+import { gapLoop, timeLoop } from './loops';
+import { handleDealDefault, handleDealError } from './pre-check';
 
 class CreateCursorWith {
   options: CursorWithOptions;
+  private TRACK_DELAY = 0;
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private clientWidth = document.documentElement.clientWidth;
   private clientHeight = document.documentElement.clientHeight;
+  private currentPoint: Point = { x: 0, y: 0 };
+  private targetPoint: Point = { x: 0, y: 0 };
+  private throttleHandleMouseMove: Parameters<typeof throttle>[1];
+  private loopId: number | null = null;
   constructor(options: CursorWithOptions) {
-    if (!document?.body) throwError('This library only works in browser environments.');
-    if (!options.radius) throwError('Radius is required.');
-    if (!options.color) throwError('Color is required.');
+    handleDealError(options);
+    handleDealDefault(options);
     this.options = options;
+    this.throttleHandleMouseMove = throttle(
+      { interval: this.TRACK_DELAY },
+      (e: MouseEvent) => {
+        const { clientX, clientY } = e;
+        this.targetPoint = { x: clientX, y: clientY };
+      },
+    );
     // 创建canvas
     this.canvas = this.CreateCanvas();
     this.ctx = this.canvas.getContext('2d')!;
@@ -32,28 +45,45 @@ class CreateCursorWith {
     return canvas;
   }
 
-  private drawCircle(e: MouseEvent) {
-    const { clientX: cx, clientY: cy } = e;
+  private drawCircle(point: Point) {
+    const { x, y } = point;
     const { radius, color } = this.options;
     if (!this.ctx) return;
     this.ctx.clearRect(0, 0, this.clientWidth, this.clientHeight);
     this.ctx.beginPath();
-    this.ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    this.ctx.arc(x, y, radius, 0, Math.PI * 2);
     this.ctx.fillStyle = color;
     this.ctx.fill();
   }
 
+  private loop = () => {
+    const type = this.options.type!;
+    let currentPoint = this.currentPoint;
+    if (type === 'gap') currentPoint = gapLoop([this.currentPoint, this.targetPoint], this.options as CursorWithOptions & { type: 'gap' })!;
+    if (type === 'time') currentPoint = timeLoop([this.currentPoint, this.targetPoint], this.options as CursorWithOptions & { type: 'time' })!;
+    this.drawCircle(currentPoint);
+    this.currentPoint = currentPoint;
+    this.loopId = requestAnimationFrame(this.loop);
+  };
+
   private init() {
-    const handleDraw = this.drawCircle.bind(this);
-    window.addEventListener('mousemove', handleDraw);
+    window.addEventListener('mousemove', this.throttleHandleMouseMove);
+    this.drawCircle({ x: 100, y: 100 });
+    this.loopId = requestAnimationFrame(this.loop);
   }
 
   public destroy() {
-    const handleDraw = this.drawCircle.bind(this);
-    if (this.canvas && this.canvas.parentNode) {
-      window.removeEventListener('mousemove', handleDraw);
+    if (this.canvas) {
+      window.removeEventListener('mousemove', this.throttleHandleMouseMove);
+    }
+    if (this.canvas.parentNode) {
       this.canvas.parentNode.removeChild(this.canvas);
+    }
+    if (this.loopId) {
+      cancelAnimationFrame(this.loopId);
+      this.loopId = null;
     }
   }
 }
+
 export { CreateCursorWith };
