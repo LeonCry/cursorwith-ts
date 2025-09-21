@@ -1,7 +1,7 @@
 <template>
   <main class="h-screen w-screen">
     <!-- push route or component here -->
-    <!-- <RouterView /> -->
+    <RouterView />
     <!-- <Component /> -->
   </main>
 </template>
