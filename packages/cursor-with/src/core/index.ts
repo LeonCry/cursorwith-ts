@@ -1,7 +1,7 @@
 import type { CursorWithOptions, Point } from '../types';
 import throttle from '../utils/tiny-throttle';
 import { gapLoop, timeLoop } from './loops';
-import { handleDealDefault, handleDealError } from './pre-check';
+import { handleDealDefault, handleDealError } from './pre-check-fill';
 
 class CreateCursorWith {
   options: CursorWithOptions;
