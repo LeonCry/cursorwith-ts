@@ -1,5 +1,6 @@
 import type { CursorWithOptions } from '../types';
 import throwError from '../utils/global-error';
+import { notNone } from '../utils/type-judge';
 
 function handleDealDefault(options: CursorWithOptions) {
   // 默认跟踪方式，定时:r = 0.01
@@ -11,10 +12,15 @@ function handleDealDefault(options: CursorWithOptions) {
 function handleDealError(options: CursorWithOptions) {
   if (!window) throwError('This library only works in browser environments.');
   if (!window?.requestAnimationFrame) throwError('RequestAnimationFrame is not supported in this environment.');
-  if (!options.style?.radius) throwError('Radius is required.');
-  if (!options.style?.color) throwError('Color is required.');
-  const follow = options.follow!;
-  if (follow.type === 'time' && typeof follow.timeRatio !== 'undefined' && follow.timeRatio <= 0) throwError('TimeRatio must be a positive number.');
-  if (follow.type === 'gap' && typeof follow.distance !== 'undefined' && follow.distance && follow.distance <= 0) throwError('Distance must be a positive number.');
+  const { style, follow } = options as Required<CursorWithOptions>;
+  const errorList: [() => boolean, string][] = [
+    [() => style.radius <= 0, 'Radius must be a positive number.'],
+    [() => typeof style.borderWidth === 'number' && style.borderWidth <= 0, 'BorderWidth must be a positive number.'],
+    [() => follow.type === 'time' && notNone(follow.timeRatio) && follow.timeRatio <= 0, 'TimeRatio must be a positive number.'],
+    [() => follow.type === 'gap' && notNone(follow.distance) && follow.distance <= 0, 'Distance must be a positive number.'],
+  ];
+  errorList.forEach(([condition, msg]) => {
+    if (condition()) throwError(msg);
+  });
 }
 export { handleDealDefault, handleDealError };

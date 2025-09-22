@@ -1,6 +1,8 @@
 interface StyleOptions {
   radius: number
   color: string
+  borderWidth?: number
+  borderColor?: string
 }
 
 // 定时跟踪方式
