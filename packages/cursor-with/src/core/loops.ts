@@ -1,8 +1,6 @@
-import type { CursorWithOptions, Point } from '../types';
+import type { Point } from '../types';
 
-function gapLoop([currentPoint, targetPoint]: [Point, Point], options: CursorWithOptions & { type: 'gap' }) {
-  const { distance } = options;
-  if (!distance) return;
+function gapLoop([currentPoint, targetPoint]: [Point, Point], distance: number) {
   const cur = { ...currentPoint };
   const tar = { ...targetPoint };
   const dx = tar.x - cur.x;
@@ -18,9 +16,7 @@ function gapLoop([currentPoint, targetPoint]: [Point, Point], options: CursorWit
   }
   return cur;
 }
-function timeLoop([currentPoint, targetPoint]: [Point, Point], options: CursorWithOptions & { type: 'time' }) {
-  const { timeRatio } = options;
-  if (!timeRatio) return;
+function timeLoop([currentPoint, targetPoint]: [Point, Point], timeRatio: number) {
   const cur = { ...currentPoint };
   const tar = { ...targetPoint };
   cur.x = cur.x + (tar.x - cur.x) * timeRatio;

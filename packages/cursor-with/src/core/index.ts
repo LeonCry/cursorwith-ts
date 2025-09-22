@@ -15,8 +15,8 @@ class CreateCursorWith {
   private throttleHandleMouseMove: Parameters<typeof throttle>[1];
   private loopId: number | null = null;
   constructor(options: CursorWithOptions) {
-    handleDealError(options);
     handleDealDefault(options);
+    handleDealError(options);
     this.options = options;
     this.throttleHandleMouseMove = throttle(
       { interval: this.TRACK_DELAY },
@@ -47,7 +47,7 @@ class CreateCursorWith {
 
   private drawCircle(point: Point) {
     const { x, y } = point;
-    const { radius, color } = this.options;
+    const { radius, color } = this.options.style;
     if (!this.ctx) return;
     this.ctx.clearRect(0, 0, this.clientWidth, this.clientHeight);
     this.ctx.beginPath();
@@ -57,10 +57,11 @@ class CreateCursorWith {
   }
 
   private loop = () => {
-    const type = this.options.type!;
+    const follow = this.options.follow!;
+    const type = follow.type;
     let currentPoint = this.currentPoint;
-    if (type === 'gap') currentPoint = gapLoop([this.currentPoint, this.targetPoint], this.options as CursorWithOptions & { type: 'gap' })!;
-    if (type === 'time') currentPoint = timeLoop([this.currentPoint, this.targetPoint], this.options as CursorWithOptions & { type: 'time' })!;
+    if (type === 'gap') currentPoint = gapLoop([this.currentPoint, this.targetPoint], follow.distance!);
+    if (type === 'time') currentPoint = timeLoop([this.currentPoint, this.targetPoint], follow.timeRatio!);
     this.drawCircle(currentPoint);
     this.currentPoint = currentPoint;
     this.loopId = requestAnimationFrame(this.loop);
