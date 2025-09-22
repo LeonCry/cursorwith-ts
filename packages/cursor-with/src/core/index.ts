@@ -1,5 +1,7 @@
 import type { CursorWithOptions, Point } from '../types';
 import throttle from '../utils/tiny-throttle';
+import { canvasCreator } from './creator';
+import { innerCircleDrawer, outerCircleDrawer } from './draw';
 import { gapLoop, timeLoop } from './loops';
 import { handleDealDefault, handleDealError } from './pre-check-fill';
 
@@ -25,35 +27,24 @@ class CreateCursorWith {
         this.targetPoint = { x: clientX, y: clientY };
       },
     );
-    // 创建canvas
-    this.canvas = this.CreateCanvas();
+    this.canvas = this.create();
     this.ctx = this.canvas.getContext('2d')!;
     this.init();
   }
 
-  private CreateCanvas() {
-    const canvas = document.createElement('canvas');
-    canvas.width = this.clientWidth;
-    canvas.height = this.clientHeight;
-    canvas.style.setProperty('position', 'fixed', 'important');
-    canvas.style.setProperty('top', '0px', 'important');
-    canvas.style.setProperty('left', '0px', 'important');
-    canvas.style.setProperty('z-index', '9999', 'important');
-    canvas.style.setProperty('pointer-events', 'none', 'important');
-    canvas.style.setProperty('background', 'rgba(0,0,255,0.1)', 'important');
-    document.body.appendChild(canvas);
-    return canvas;
+  private create() {
+    return canvasCreator(this.clientWidth, this.clientHeight);
   }
 
   private drawCircle(point: Point) {
     const { x, y } = point;
-    const { radius, color } = this.options.style;
+    const { radius, color, borderWidth, borderColor } = this.options.style;
     if (!this.ctx) return;
     this.ctx.clearRect(0, 0, this.clientWidth, this.clientHeight);
-    this.ctx.beginPath();
-    this.ctx.arc(x, y, radius, 0, Math.PI * 2);
-    this.ctx.fillStyle = color;
-    this.ctx.fill();
+    if (borderWidth) {
+      outerCircleDrawer(this.ctx, { x, y }, { radius, borderWidth, borderColor });
+    }
+    innerCircleDrawer(this.ctx, { x, y }, { radius, color });
   }
 
   private loop = () => {
@@ -69,7 +60,6 @@ class CreateCursorWith {
 
   private init() {
     window.addEventListener('mousemove', this.throttleHandleMouseMove);
-    this.drawCircle({ x: 100, y: 100 });
     this.loopId = requestAnimationFrame(this.loop);
   }
 
