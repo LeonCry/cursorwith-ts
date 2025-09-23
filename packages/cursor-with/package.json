@@ -1,7 +1,17 @@
 {
-  "name": "@cursor-with/core",
+  "name": "cursorwith-core",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "private": false,
+  "description": "A tiny, customizable, easy-to-use, framework-Agnostic, and beautiful cursor following effect.",
+  "author": "voidis <lbh_ldu@outlook.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LeonCry/cursor-with"
+  },
+  "bugs": "https://github.com/LeonCry/cursor-with/issues",
+  "keywords": ["cursor", "mouse", "effect", "following", "javascript", "typescript", "animation", "canvas", "framework-Agnostic"],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -11,7 +21,7 @@
   "files": ["dist"],
   "scripts": {
     "build": "tsup",
-    "dev": "tsup --watch"
+    "test": "tsup --watch"
   },
   "dependencies": {
     "radash": "12.1.1"
