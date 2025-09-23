@@ -1,48 +1,41 @@
 {
   "name": "cursor-with",
   "type": "module",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": true,
-  "scripts": {
-    "dev": "vite --mode dev --host",
-    "pre": "vite --mode pre --host",
-    "prod": "vite --mode prod --host",
-    "build:dev": "vite build --mode dev",
-    "build:pre": "vite build --mode pre",
-    "build:prod": "vite build --mode prod",
-    "preview": "vite preview",
-    "cz": "git add . && cz",
-    "prepare": "husky install"
+  "description": "",
+  "author": "LeonCry",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LeonCry/cursor-with.git"
   },
-  "dependencies": {
-    "@tabler/icons-vue": "^3.34.0",
-    "@vueuse/core": "^13.4.0",
-    "element-plus": "^2.11.1",
-    "ky": "^1.9.1",
-    "pinia": "^3.0.3",
-    "radash": "^12.1.1",
-    "vue": "^3.5.17",
-    "vue-router": "4.5.1"
+  "keywords": [],
+  "scripts": {
+    "dev": "pnpm --filter cursorwith-test dev && pnpm --filter cursorwith-test test",
+    "prod": "pnpm --filter cursorwith-test prod && pnpm --filter cursorwith-test prod",
+    "cz": "git add . && cz",
+    "pre-publish": "pnpm --filter cursorwith-core build && pnpm --filter cursorwith-core publish --dry-run --no-git-checks",
+    "pub": "pnpm --filter cursorwith-core build && pnpm --filter cursorwith-core publish --access public --no-git-checks",
+    "up-version-publish": "pnpm _log && pnpm _version && pnpm _push && pnpm _gh-release && pnpm pub && echo '\\n\\nPublished Successfully.\\n\\n'",
+    "_gh-release": "gh release create $(git describe --tags --abbrev=0) --generate-notes",
+    "_version": "pnpm version patch -m \"version %s release\"",
+    "_push": "git push origin main --tags",
+    "_log": "conventional-changelog -p conventionalcommits -i CHANGELOG.md -s -r 0",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^4.16.1",
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
-    "@tailwindcss/vite": "^4.1.11",
-    "@types/node": "^24.0.4",
-    "@vitejs/plugin-vue": "^6.0.0",
-    "@vue/tsconfig": "^0.7.0",
+    "@types/node": "24.0.4",
     "commitizen": "^4.3.1",
     "cz-git": "^1.11.2",
     "eslint": "^9.29.0",
     "eslint-plugin-format": "1.0.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",
-    "tailwindcss": "^4.1.11",
-    "typescript": "^5.8.3",
-    "unplugin-auto-import": "^20.1.0",
-    "unplugin-vue-components": "^29.0.0",
-    "vite": "^7.0.0"
+    "typescript": "5.8.3"
   },
   "config": {
     "commitizen": {

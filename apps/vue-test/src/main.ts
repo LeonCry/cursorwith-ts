@@ -2,7 +2,7 @@ import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
-import Request from './utils/request';
+import { Request } from './utils/request';
 
 declare const __APP_VERSION__: string;
 const app = createApp(App).use(router).use(createPinia());
