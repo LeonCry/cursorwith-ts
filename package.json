@@ -12,9 +12,8 @@
   },
   "keywords": [],
   "scripts": {
-    "dev": "pnpm run -C apps/vue-test dev",
-    "pre": "pnpm run -C apps/vue-test pre",
-    "prod": "pnpm run -C apps/vue-test prod",
+    "dev": "pnpm run -C apps/vue-test dev & pnpm run -C packages/cursor-with dev",
+    "prod": "pnpm run -C apps/vue-test prod & pnpm run -C packages/cursor-with prod",
     "cz": "git add . && cz",
     "prepare": "husky install"
   },
