@@ -1,6 +1,5 @@
 import type { CursorWithOptions } from '../types';
-import throwError from '../utils/global-error';
-import { notNone } from '../utils/type-judge';
+import { notNone, throwError } from '../utils';
 
 function handleDealDefault(options: CursorWithOptions) {
   // 默认跟踪方式，定时:r = 0.01
