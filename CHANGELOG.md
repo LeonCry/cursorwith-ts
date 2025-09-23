@@ -1,5 +1,6 @@
 ## 1.0.0 (2025-09-23)
 
+* docs: :memo: 新增changeLog ([a1981df](https://github.com/LeonCry/cursor-with/commit/a1981df))
 * fix: :bug: 修复脚本重名问题 ([26b69c4](https://github.com/LeonCry/cursor-with/commit/26b69c4))
 * fix: :bug: 修复因打包命令错误导致的发版失败问题 ([e8ea024](https://github.com/LeonCry/cursor-with/commit/e8ea024))
 * fix(core): :bug: 修复部分文件引入错误 ([33a44f7](https://github.com/LeonCry/cursor-with/commit/33a44f7))

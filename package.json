@@ -17,7 +17,7 @@
     "cz": "git add . && cz",
     "pre-publish": "pnpm --filter cursorwith-core build && pnpm --filter cursorwith-core publish --dry-run --no-git-checks",
     "pub": "pnpm --filter cursorwith-core build && pnpm --filter cursorwith-core publish --access public --no-git-checks",
-    "up-version-publish": "pnpm _log && pnpm _version && pnpm _push && pnpm _gh-release && pnpm pub && echo '\\n\\nPublished Successfully.\\n\\n'",
+    "up-version-publish": " pnpm _version && pnpm _log && pnpm _push && pnpm _gh-release && pnpm pub && echo '\\n\\nPublished Successfully.\\n\\n'",
     "_gh-release": "gh release create $(git describe --tags --abbrev=0) --generate-notes",
     "_version": "pnpm version patch -m \"version %s release\"",
     "_push": "git push origin main --tags",
