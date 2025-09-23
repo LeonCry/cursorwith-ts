@@ -3,14 +3,25 @@
   "type": "module",
   "version": "1.0.1",
   "private": true,
-  "description": "",
-  "author": "LeonCry",
+  "description": "A tiny, customizable, easy-to-use, framework-Agnostic, and beautiful cursor following effect.",
+  "author": "voidis <lbh_ldu@outlook.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/LeonCry/cursor-with.git"
+    "url": "https://github.com/LeonCry/cursor-with"
   },
-  "keywords": [],
+  "bugs": "https://github.com/LeonCry/cursor-with/issues",
+  "keywords": [
+    "cursor",
+    "mouse",
+    "effect",
+    "following",
+    "javascript",
+    "typescript",
+    "animation",
+    "canvas",
+    "framework-Agnostic"
+  ],
   "scripts": {
     "dev": "pnpm --filter cursorwith-test dev && pnpm --filter cursorwith-test test",
     "prod": "pnpm --filter cursorwith-test prod && pnpm --filter cursorwith-test prod",
@@ -19,7 +30,7 @@
     "pub": "pnpm --filter cursorwith-core build && pnpm --filter cursorwith-core publish --access public --no-git-checks",
     "up-version-publish": " pnpm _version && pnpm _log && pnpm _push && pnpm _gh-release && pnpm pub && echo '\\n\\nPublished Successfully.\\n\\n'",
     "_gh-release": "gh release create $(git describe --tags --abbrev=0) --generate-notes",
-    "_version": "pnpm version patch -m \"version %s release\"",
+    "_version": "cd packages/cursor-with && npm version patch -m \"version %s release\"",
     "_push": "git push origin main --tags",
     "_log": "conventional-changelog -p conventionalcommits -i CHANGELOG.md -s -r 0",
     "prepare": "husky install"
