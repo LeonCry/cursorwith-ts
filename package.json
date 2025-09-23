@@ -2,7 +2,7 @@
   "name": "cursor-with",
   "type": "module",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
   "description": "",
   "author": "LeonCry",
   "license": "MIT",

@@ -2,7 +2,7 @@
   "name": "cursorwith-test",
   "type": "module",
   "version": "0.0.1",
-  "private": true,
+  "private": false,
   "scripts": {
     "dev": "vite --mode dev --host"
   },
