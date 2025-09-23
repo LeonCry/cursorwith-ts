@@ -1,5 +1,5 @@
 import type { CursorWithOptions, Point } from '../types';
-import { throttle } from '../utils';
+import { listenerUnWrapper, listenerWrapper, throttle } from '../utils';
 import { canvasCreator } from './creator';
 import { innerCircleDrawer, outerCircleDrawer } from './draw';
 import { gapLoop, timeLoop } from './loops';
@@ -14,19 +14,11 @@ class CreateCursorWith {
   private clientHeight = document.documentElement.clientHeight;
   private currentPoint: Point = { x: 0, y: 0 };
   private targetPoint: Point = { x: 0, y: 0 };
-  private throttleHandleMouseMove: Parameters<typeof throttle>[1];
   private loopId: number | null = null;
   constructor(options: CursorWithOptions) {
     handleDealDefault(options);
     handleDealError(options);
     this.options = options;
-    this.throttleHandleMouseMove = throttle(
-      { interval: this.TRACK_DELAY },
-      (e: MouseEvent) => {
-        const { clientX, clientY } = e;
-        this.targetPoint = { x: clientX, y: clientY };
-      },
-    );
     this.canvas = this.create();
     this.ctx = this.canvas.getContext('2d')!;
     this.init();
@@ -59,13 +51,19 @@ class CreateCursorWith {
   };
 
   private init() {
-    window.addEventListener('mousemove', this.throttleHandleMouseMove);
+    window.addEventListener('mousemove', listenerWrapper(throttle(
+      { interval: this.TRACK_DELAY },
+      (e: MouseEvent) => {
+        const { clientX, clientY } = e;
+        this.targetPoint = { x: clientX, y: clientY };
+      },
+    ), 'mousemove'));
     this.loopId = requestAnimationFrame(this.loop);
   }
 
   public destroy() {
     if (this.canvas) {
-      window.removeEventListener('mousemove', this.throttleHandleMouseMove);
+      window.removeEventListener('mousemove', listenerUnWrapper('mousemove'));
     }
     if (this.canvas.parentNode) {
       this.canvas.parentNode.removeChild(this.canvas);
