@@ -1,5 +1,5 @@
 import type { CursorWithOptions, Point } from '../types';
-import throttle from '../utils/tiny-throttle';
+import { throttle } from '../utils';
 import { canvasCreator } from './creator';
 import { innerCircleDrawer, outerCircleDrawer } from './draw';
 import { gapLoop, timeLoop } from './loops';

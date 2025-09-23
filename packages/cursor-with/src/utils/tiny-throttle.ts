@@ -24,4 +24,4 @@ function throttle<TArgs extends any[]>({ interval }: { interval: number }, func:
   return throttled;
 }
 
-export default throttle;
+export { throttle };
