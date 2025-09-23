@@ -11,14 +11,26 @@
     "url": "https://github.com/LeonCry/cursor-with"
   },
   "bugs": "https://github.com/LeonCry/cursor-with/issues",
-  "keywords": ["cursor", "mouse", "effect", "following", "javascript", "typescript", "animation", "canvas", "framework-Agnostic"],
+  "keywords": [
+    "cursor",
+    "mouse",
+    "effect",
+    "following",
+    "javascript",
+    "typescript",
+    "animation",
+    "canvas",
+    "framework-Agnostic"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "test": "tsup --watch"
