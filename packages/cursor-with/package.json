@@ -13,6 +13,9 @@
     "build": "tsup",
     "dev": "tsup --watch"
   },
+  "dependencies": {
+    "radash": "12.1.1"
+  },
   "devDependencies": {
     "tsup": "^8.5.0"
   }

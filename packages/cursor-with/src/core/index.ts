@@ -1,5 +1,6 @@
 import type { CursorWithOptions, Point } from '../types';
-import { listenerUnWrapper, listenerWrapper, notNone, throttle } from '../utils';
+import { debounce, throttle } from 'radash';
+import { listenerUnWrapper, listenerWrapper, notNone } from '../utils';
 import { canvasCreator } from './creator';
 import { innerCircleDrawer, outerCircleDrawer } from './draw';
 import { gapLoop, timeLoop } from './loops';
@@ -10,14 +11,19 @@ class CreateCursorWith {
   private TRACK_DELAY = 0;
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
-  private clientWidth = document.documentElement.clientWidth;
-  private clientHeight = document.documentElement.clientHeight;
-  private currentPoint: Point = { x: 0, y: 0 };
-  private targetPoint: Point = { x: 0, y: 0 };
-  private loopId: number | null = null;
+  private clientWidth: number;
+  private clientHeight: number;
+  private currentPoint: Point;
+  private targetPoint: Point;
+  private loopId: number | null;
   constructor(options: CursorWithOptions) {
     handleDealDefault(options);
     handleDealError(options);
+    this.clientWidth = document.documentElement.clientWidth;
+    this.clientHeight = document.documentElement.clientHeight;
+    this.currentPoint = { x: this.clientWidth / 2, y: this.clientHeight / 2 };
+    this.targetPoint = { x: this.clientWidth / 2, y: this.clientHeight / 2 };
+    this.loopId = null;
     this.options = options;
     this.canvas = this.create();
     this.ctx = this.canvas.getContext('2d')!;
@@ -58,6 +64,15 @@ class CreateCursorWith {
         this.targetPoint = { x: clientX, y: clientY };
       },
     ), 'mousemove'));
+    window.addEventListener('resize', listenerWrapper(debounce(
+      { delay: 300 },
+      () => {
+        this.clientWidth = document.documentElement.clientWidth;
+        this.clientHeight = document.documentElement.clientHeight;
+        this.canvas.width = this.clientWidth;
+        this.canvas.height = this.clientHeight;
+      },
+    ), 'resize'));
     this.loopId = requestAnimationFrame(this.loop);
   }
 
@@ -74,6 +89,7 @@ class CreateCursorWith {
 
   public destroy() {
     this.pause();
+    window.removeEventListener('resize', listenerUnWrapper('resize'));
     if (this.canvas) {
       window.removeEventListener('mousemove', listenerUnWrapper('mousemove'));
     }
