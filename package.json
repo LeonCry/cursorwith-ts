@@ -1,7 +1,7 @@
 {
   "name": "cursor-with",
   "type": "module",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "A tiny, customizable, easy-to-use, framework-Agnostic, and beautiful cursor following effect.",
   "author": "voidis <lbh_ldu@outlook.com>",
