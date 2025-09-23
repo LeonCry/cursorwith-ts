@@ -1,5 +1,5 @@
 import type { CursorWithOptions, Point } from '../types';
-import { listenerUnWrapper, listenerWrapper, throttle } from '../utils';
+import { listenerUnWrapper, listenerWrapper, notNone, throttle } from '../utils';
 import { canvasCreator } from './creator';
 import { innerCircleDrawer, outerCircleDrawer } from './draw';
 import { gapLoop, timeLoop } from './loops';
@@ -61,16 +61,24 @@ class CreateCursorWith {
     this.loopId = requestAnimationFrame(this.loop);
   }
 
+  public pause() {
+    if (!notNone(this.loopId)) return;
+    cancelAnimationFrame(this.loopId);
+    this.loopId = null;
+  }
+
+  public resume() {
+    if (notNone(this.loopId)) return;
+    this.loopId = requestAnimationFrame(this.loop);
+  }
+
   public destroy() {
+    this.pause();
     if (this.canvas) {
       window.removeEventListener('mousemove', listenerUnWrapper('mousemove'));
     }
     if (this.canvas.parentNode) {
       this.canvas.parentNode.removeChild(this.canvas);
-    }
-    if (this.loopId) {
-      cancelAnimationFrame(this.loopId);
-      this.loopId = null;
     }
   }
 }
