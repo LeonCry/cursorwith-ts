@@ -1,0 +1,26 @@
+## 1.0.0 (2025-09-23)
+
+* fix: :bug: 修复脚本重名问题 ([26b69c4](https://github.com/LeonCry/cursor-with/commit/26b69c4))
+* fix: :bug: 修复因打包命令错误导致的发版失败问题 ([e8ea024](https://github.com/LeonCry/cursor-with/commit/e8ea024))
+* fix(core): :bug: 修复部分文件引入错误 ([33a44f7](https://github.com/LeonCry/cursor-with/commit/33a44f7))
+* chore: :hammer: 统一utils入口 ([48a4e8e](https://github.com/LeonCry/cursor-with/commit/48a4e8e))
+* chore: :hammer: 修改项目private ([f7d49f8](https://github.com/LeonCry/cursor-with/commit/f7d49f8))
+* chore(idea): :hammer: 监听函数包装器idea ([98def11](https://github.com/LeonCry/cursor-with/commit/98def11))
+* 改为pnpm + monorepo 结构,删除多余代码 ([ca4124a](https://github.com/LeonCry/cursor-with/commit/ca4124a))
+* 新增测试A ([08091b6](https://github.com/LeonCry/cursor-with/commit/08091b6))
+* Create LICENSE ([ebe133e](https://github.com/LeonCry/cursor-with/commit/ebe133e))
+* init ([95fa880](https://github.com/LeonCry/cursor-with/commit/95fa880))
+* build: :package: 开发脚本优化 ([686c10d](https://github.com/LeonCry/cursor-with/commit/686c10d))
+* build: 新增release 和 npm 自动发版 ([9f287f1](https://github.com/LeonCry/cursor-with/commit/9f287f1))
+* feat: 初始化canvas创建 ([f2b0a9e](https://github.com/LeonCry/cursor-with/commit/f2b0a9e))
+* feat(core): :sparkles: 新增border外圆绘制 ([7d4702f](https://github.com/LeonCry/cursor-with/commit/7d4702f))
+* feat(core): :sparkles: 新增resize监听 引入工具函数依赖 修改初始化位置 ([7c6c7b3](https://github.com/LeonCry/cursor-with/commit/7c6c7b3))
+* feat(core): :sparkles: add 暂停与恢复功能 ([e3538b3](https://github.com/LeonCry/cursor-with/commit/e3538b3))
+* feat(core): 新增定时时间系数与定距离模式cursor移动功能 ([9e7ff26](https://github.com/LeonCry/cursor-with/commit/9e7ff26))
+* feat(utils): :sparkles: 监听函数包装器 ([4763b2b](https://github.com/LeonCry/cursor-with/commit/4763b2b))
+* refactor: :recycle: 错误处理 ([7089aea](https://github.com/LeonCry/cursor-with/commit/7089aea))
+* refactor(core): :recycle: 重构类型定义 ([678c7be](https://github.com/LeonCry/cursor-with/commit/678c7be))
+* style: :lipstick: update readme.md & update filename ([99565a6](https://github.com/LeonCry/cursor-with/commit/99565a6))
+
+
+
