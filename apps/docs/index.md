@@ -6,6 +6,11 @@ hero:
   name: "CURSORWITH"
   text: "A Tiny, High Performance And Framework-Agnostic Cursor Following Effect."
   tagline: customizable and easy to use.
+  image:
+    src: /sign.gif
+    light: /sign.gif
+    dark: /sign.gif
+    alt: sign
   actions:
     - theme: brand
       text: Get Started
