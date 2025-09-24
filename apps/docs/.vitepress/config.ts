@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitepress';
 
 export default defineConfig({
+  base: '/cursor-with/',
   title: 'cursorwith-docs',
   description: 'A tiny, customizable, easy-to-use, framework-agnostic, and high performance cursor following effect.',
   themeConfig: {
