@@ -33,7 +33,12 @@
   ],
   "scripts": {
     "build": "tsup",
+    "prepublishOnly": "pnpm build",
     "test": "tsup --watch"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
     "radash": "12.1.1"
