@@ -1,6 +1,7 @@
-# Cursor-with
 
-cursorwith is a **tiny**, **zero-dependency**, **TypeScript-powered**, **framework-agnostic**, **high-performance** mouse-trailing effect.
+# Cursorwith Introduction
+
+cursorwith is a tiny, zero-dependency, TypeScript-powered, framework-agnostic, high-performance mouse-trailing effect.
 
 ## 🎈  Tiny
 
@@ -13,11 +14,11 @@ import { CreateCursorWith } from 'cursorwith-core';
 
 ## 🚀  Zero-Dependency
 
-**No third-party libraries** are required; all functionality is implemented internally, minimizing project complexity.
+No third-party libraries are required; all functionality is implemented internally, minimizing project complexity.
 
 ## 🔒  TypeScript Support
 
-Written entirely in **TypeScript** across the stack, complete with type definitions to enhance development safety.
+Written entirely in TypeScript across the stack, complete with type definitions to enhance development safety.
 
 ```ts
 import type { CursorWithOptions } from 'cursorwith-core';
@@ -28,8 +29,8 @@ import type { CursorWithOptions } from 'cursorwith-core';
 
 Built without any framework dependencies—pure native implementation that can be dropped into Vue, React, Angular, or any other stack.
 
-`IN app.vue`
 
+::: code-group
 ```ts [app.vue]
 import { CreateCursorWith } from 'cursorwith-core';
 import {onMounted, onBeforeUnmount, ref} from "vue";
@@ -52,11 +53,7 @@ onBeforeUnmount(() => {
   cursorWith.value?.destroy();
 });
 ```
-
-
-`IN react.tsx`
-
-```tsx
+```tsx [react.tsx]
 import { useEffect, useRef } from 'react';
 import { CreateCursorWith } from 'cursorwith-core';
 
@@ -85,92 +82,10 @@ export default function App() {
   return <></>;
 }
 ```
-
-
+:::
 
 
 ## ⚡️  High Performance
 
 Implemented natively with Canvas and zero DOM manipulation, zero render-thread blocking.
-
-
-
-
-
-## Cursorwith Install
-
-```bash [npm]
-npm install cursorwith
-```
-
-## Usage
-
-> [!TIP]
-> cursorwith only support **ES6 Modules** and **CDN**.
-
-### ES6 Modules
-
-```ts
-import { CreateCursorWith } from 'cursorwith-core';
-
-const cw = new CreateCursorWith({
-  style: { 
-    radius: 10, 
-    color: 'rgba(0,0,0,0.1)', 
-    borderWidth: 1, 
-    borderColor: '#000000' 
-    }
-  follow: { 
-    type: 'time', 
-    timeRatio: 0.04 
-    }
-})
-```
-
-### CDN
-
-```ts
-import { CreateCursorWith } from 'https://unpkg.com/cursorwith@latest/dist/index.esm.js';
-
-const cw = new CreateCursorWith({
-  style: { 
-    radius: 10, 
-    color: 'rgba(0,0,0,0.1)', 
-    borderWidth: 1, 
-    borderColor: '#000000' 
-    },
-  follow: { 
-    type: 'time', 
-    timeRatio: 0.04 
-    }
-})
-```
-
-### TypeScript Support 
-
-cursorwith fully support **TypeScript**, with complete type definitions for all functions.
-
-```ts
-import { CreateCursorWith } from 'cursorwith-core';
-import type { CursorWithOptions } from 'cursorwith-core';
-
-const options:CursorWithOptions = {
-  style: { 
-    radius: 10, 
-    color: 'rgba(0,0,0,0.1)', 
-    borderWidth: 1, 
-    borderColor: '#000000' 
-    },
-  follow: { 
-    type: 'time', 
-    timeRatio: 0.04 
-    }
-}
-const cw = new CreateCursorWith(options);
-```
-
-## Environment Requirements 
-
-- Modern browsers supporting ES6 modules.
-- NO IE browser, thanks.
 
