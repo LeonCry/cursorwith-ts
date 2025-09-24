@@ -20,6 +20,7 @@ interface GapFollow {
 type Follow = TimeFollow | GapFollow;
 ```
 
+## Usage
 
 Two follow strategies are `provided—fixed-distance` and `fixed-time—each` yielding a distinct motion feel.
 

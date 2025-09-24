@@ -3,6 +3,7 @@ import { defineConfig } from 'vitepress';
 export default defineConfig({
   base: '/cursor-with/',
   title: 'cursorwith-docs',
+  head: [['link', { rel: 'icon', href: '/cursor-with/favicon.ico' }]],
   description: 'A tiny, customizable, easy-to-use, framework-agnostic, and high performance cursor following effect.',
   themeConfig: {
     siteTitle: 'CURSORWITH',
@@ -12,7 +13,7 @@ export default defineConfig({
       { text: 'Guide', link: '/guide', activeMatch: '/guide/' },
       { text: 'API', link: '/api', activeMatch: '/api/' },
       { text: 'Issues', link: 'https://github.com/LeonCry/cursor-with/issues' },
-      { text: 'ChangeLog', link: 'https://github.com/LeonCry/cursor-with/main/CHANGELOG.md' },
+      { text: 'ChangeLog', link: 'https://github.com/LeonCry/cursor-with/blob/main/CHANGELOG.md' },
       {
         text: 'Version: 0.1.0',
         items: [

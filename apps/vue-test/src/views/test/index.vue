@@ -5,7 +5,7 @@ const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
 onMounted(() => {
   cursorWith.value = new CreateCursorWith({
     style: { radius: 10, color: 'rgba(0,0,0,0.1)', borderWidth: 1, borderColor: 'rgba(0,0,0,1)' },
-    follow: { type: 'time', timeRatio: 0.04 },
+    follow: { type: 'time', timeRatio: 0.01 },
   });
 });
 function handlePause() {
