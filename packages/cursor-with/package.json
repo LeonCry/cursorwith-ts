@@ -34,7 +34,7 @@
   "scripts": {
     "build": "tsup",
     "prepublishOnly": "pnpm build",
-    "test": "tsup --watch"
+    "dev": "tsup --watch"
   },
   "publishConfig": {
     "access": "public",

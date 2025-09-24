@@ -23,8 +23,9 @@
     "framework-Agnostic"
   ],
   "scripts": {
-    "dev": "pnpm --filter cursorwith-test dev && pnpm --filter cursorwith-test test",
-    "prod": "pnpm --filter cursorwith-test prod && pnpm --filter cursorwith-test prod",
+    "dev": "pnpm --filter cursorwith-core dev & pnpm --filter cursorwith-test dev",
+    "build:core": "pnpm --filter cursorwith-core build",
+    "prod": "pnpm --filter cursorwith-test prod & pnpm --filter cursorwith-test prod",
     "cz": "git add . && cz",
     "pre:pub": "pnpm --filter cursorwith-core build && pnpm --filter cursorwith-core publish --dry-run --no-git-checks",
     "pub": "pnpm --filter cursorwith-core build && pnpm --filter cursorwith-core publish --access public --no-git-checks",
