@@ -1,7 +1,7 @@
 {
   "name": "cursorwith-core",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "private": false,
   "description": "A tiny, customizable, easy-to-use, framework-Agnostic, and beautiful cursor following effect.",
   "author": "voidis <lbh_ldu@outlook.com>",
