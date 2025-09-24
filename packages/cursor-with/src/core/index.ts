@@ -48,12 +48,10 @@ class CreateCursorWith {
   private loop = () => {
     const follow = this.options.follow!;
     const type = follow.type;
-    let currentPoint = this.currentPoint;
-    if (type === 'gap') currentPoint = gapLoop([this.currentPoint, this.targetPoint], follow.distance!);
-    if (type === 'time') currentPoint = timeLoop([this.currentPoint, this.targetPoint], follow.timeRatio!);
-    this.drawCircle(currentPoint);
-    this.currentPoint = currentPoint;
-    this.loopId = requestAnimationFrame(this.loop);
+    if (type === 'gap') this.currentPoint = gapLoop([this.currentPoint, this.targetPoint], follow.distance!);
+    if (type === 'time') this.currentPoint = timeLoop([this.currentPoint, this.targetPoint], follow.timeRatio!);
+    this.drawCircle(this.currentPoint);
+    requestAnimationFrame(this.loop);
   };
 
   private init() {
