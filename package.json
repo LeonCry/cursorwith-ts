@@ -33,6 +33,8 @@
     "_version": "cd packages/cursor-with && npm version patch -m \"version %s release\"",
     "_push": "git push origin main --tags",
     "_log": "conventional-changelog -p conventionalcommits -i CHANGELOG.md -s -r 0",
+    "docs-dev": "cd apps/docs &&  pnpm docs:dev",
+    "docs-build": "cd apps/docs &&  pnpm docs:build",
     "prepare": "husky install"
   },
   "devDependencies": {
