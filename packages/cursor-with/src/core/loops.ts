@@ -1,5 +1,7 @@
 import type { Point } from '../types';
 
+const CORRECT_FINAL_DISTANCE_FRAME = 5; // 修正最终距离所需帧数，防止无限抖动(不能为1)
+let frameCount = 0;
 function gapLoop([currentPoint, targetPoint]: [Point, Point], distance: number) {
   const cur = { ...currentPoint };
   const tar = { ...targetPoint };
@@ -9,10 +11,22 @@ function gapLoop([currentPoint, targetPoint]: [Point, Point], distance: number) 
   if (d > distance) {
     cur.x += (dx / d) * distance;
     cur.y += (dy / d) * distance;
+    frameCount = 0;
   }
   else {
-    cur.x = targetPoint.x;
-    cur.y = targetPoint.y;
+    if (frameCount === 0) {
+      frameCount = CORRECT_FINAL_DISTANCE_FRAME;
+    }
+    else if (frameCount === 1) {
+      frameCount = 0;
+      cur.x = targetPoint.x;
+      cur.y = targetPoint.y;
+    }
+    else {
+      frameCount--;
+      cur.x += (dx / d) * ((distance) / CORRECT_FINAL_DISTANCE_FRAME);
+      cur.y += (dy / d) * ((distance) / CORRECT_FINAL_DISTANCE_FRAME);
+    }
   }
   return cur;
 }

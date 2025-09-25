@@ -8,7 +8,7 @@ import { handleDealDefault, handleDealError } from './pre-check-fill';
 
 class CreateCursorWith {
   options: CursorWithOptions;
-  private TRACK_DELAY = 0;
+  private TRACK_DELAY = 10;
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private clientWidth: number;
@@ -51,12 +51,12 @@ class CreateCursorWith {
   private loop = () => {
     const follow = this.options.follow!;
     const type = follow.type;
-    if (type === 'gap') this.currentPoint = gapLoop([this.currentPoint, this.targetPoint], follow.distance!);
-    if (type === 'time') this.currentPoint = timeLoop([this.currentPoint, this.targetPoint], follow.timeRatio!);
     const { x: tx, y: ty } = this.targetPoint;
     const { x: cx, y: cy } = this.currentPoint;
     if (tx !== cx || ty !== cy) {
       this.drawCircle(this.currentPoint);
+      if (type === 'gap') this.currentPoint = gapLoop([this.currentPoint, this.targetPoint], follow.distance!);
+      if (type === 'time') this.currentPoint = timeLoop([this.currentPoint, this.targetPoint], follow.timeRatio!);
     }
     this.loopId = requestAnimationFrame(this.loop);
   };
