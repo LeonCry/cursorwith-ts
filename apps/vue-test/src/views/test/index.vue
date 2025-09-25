@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { CreateCursorWith } from 'cursorwith-core';
+import img from './my.png';
 
 const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
 onMounted(() => {
   cursorWith.value = new CreateCursorWith({
-    style: { radius: 10, color: 'rgba(0,0,0,0.1)', borderWidth: 1, borderColor: 'rgba(0,0,0,1)' },
-    follow: { type: 'time', timeRatio: 0.01 },
+    style: { radius: 10, color: 'rgba(0,0,0,0.5)', borderWidth: 1, borderColor: 'rgba(0,0,0,1)', img },
+    follow: { type: 'time', timeRatio: 0.1 },
   });
 });
 function handlePause() {
@@ -27,5 +28,6 @@ onBeforeUnmount(() => {
     <ElButton @click="handleResume">
       恢复
     </ElButton>
+    <img :src="img">
   </section>
 </template>
