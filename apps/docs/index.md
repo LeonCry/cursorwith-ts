@@ -7,9 +7,8 @@ hero:
   text: "A Tiny, High Performance And Framework-Agnostic Cursor Following Effect."
   tagline: customizable and easy to use.
   image:
-    light: /light.gif
-    dark: /dark.gif
     alt: sign
+    src: /signs.gif
   actions:
     - theme: brand
       text: Get Started
@@ -73,6 +72,8 @@ Start using cursorwith to make your website more vivid and interesting.
 <style>
 :root {
   --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #bd34fe, #41d1ff);
+  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #D16BA5, #5B94FF,#E0FF9A);
+  --vp-home-hero-image-background-image: -webkit-linear-gradient(-45deg,#D16BA5,#5B94FF,#E0FF9A);
+  --vp-home-hero-image-filter:blur(68px);
 }
 </style>
