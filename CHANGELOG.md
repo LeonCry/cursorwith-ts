@@ -1,16 +1,58 @@
-## 1.0.0 (2025-09-23)
+## 1.0.0 (2025-09-25)
 
-* docs: :memo: 新增changeLog ([a1981df](https://github.com/LeonCry/cursor-with/commit/a1981df))
-* fix: :bug: 修复脚本重名问题 ([26b69c4](https://github.com/LeonCry/cursor-with/commit/26b69c4))
-* fix: :bug: 修复因打包命令错误导致的发版失败问题 ([e8ea024](https://github.com/LeonCry/cursor-with/commit/e8ea024))
-* fix(core): :bug: 修复部分文件引入错误 ([33a44f7](https://github.com/LeonCry/cursor-with/commit/33a44f7))
-* chore: :hammer: 统一utils入口 ([48a4e8e](https://github.com/LeonCry/cursor-with/commit/48a4e8e))
-* chore: :hammer: 修改项目private ([f7d49f8](https://github.com/LeonCry/cursor-with/commit/f7d49f8))
-* chore(idea): :hammer: 监听函数包装器idea ([98def11](https://github.com/LeonCry/cursor-with/commit/98def11))
+* chore: :hammer: 新增docs build 自动化脚本 ([978a202](https://github.com/LeonCry/cursor-with/commit/978a202))
+* chore: :hammer: 修改包名称 ([0e6ba48](https://github.com/LeonCry/cursor-with/commit/0e6ba48))
+* chore: :hammer: 修改部分脚本 修改index.md右侧标识 ([994a8db](https://github.com/LeonCry/cursor-with/commit/994a8db))
+* chore: :hammer: 修改docs配置 ([ac355f9](https://github.com/LeonCry/cursor-with/commit/ac355f9))
+* chore: :hammer: vitepress初始化 ([16f4794](https://github.com/LeonCry/cursor-with/commit/16f4794))
+* fix: :bug: 打包脚本修改 ([032878d](https://github.com/LeonCry/cursor-with/commit/032878d))
+* fix: :bug: 更新依赖 ([d6dac86](https://github.com/LeonCry/cursor-with/commit/d6dac86))
+* fix: :bug: 修复导入名称问题 ([1000703](https://github.com/LeonCry/cursor-with/commit/1000703))
+* fix: :bug: 修改错误路径 ([746a127](https://github.com/LeonCry/cursor-with/commit/746a127))
+* fix: :bug: 修改脚本version不同步问题 ([c5335fd](https://github.com/LeonCry/cursor-with/commit/c5335fd))
+* fix: :bug: 修改自动发版脚本 ([95d7dc7](https://github.com/LeonCry/cursor-with/commit/95d7dc7))
+* fix: :bug: 修改core vue-test 执行顺序 ([560f19e](https://github.com/LeonCry/cursor-with/commit/560f19e))
+* fix(loop): :bug: 修正gap模式下小于distance时无限抖动的问题 ([540a3a7](https://github.com/LeonCry/cursor-with/commit/540a3a7))
+* docs: :memo: 更新文档 ([556057e](https://github.com/LeonCry/cursor-with/commit/556057e))
+* docs(readme): :memo: 更新readme文档 ([cf59fde](https://github.com/LeonCry/cursor-with/commit/cf59fde))
+* docs(style): :memo: 更新文档-style ([4b237d1](https://github.com/LeonCry/cursor-with/commit/4b237d1))
+* feat: :sparkles: 新增右侧gif ([44c4835](https://github.com/LeonCry/cursor-with/commit/44c4835))
+* feat(core): :sparkles: 新增图片绘制功能 ([3020115](https://github.com/LeonCry/cursor-with/commit/3020115))
+* feat(core): :sparkles: 新增public method ([1d8aaaf](https://github.com/LeonCry/cursor-with/commit/1d8aaaf))
+* feat(docs): :sparkles: 新增vitePress-docs文档站点 ([95d1ab1](https://github.com/LeonCry/cursor-with/commit/95d1ab1))
+* refactor: :recycle: 去除冗余代码 ([0690e51](https://github.com/LeonCry/cursor-with/commit/0690e51))
+
+
+
+## <small>1.0.3 (2025-09-23)</small>
+
+* 1.0.3 ([b02d9b3](https://github.com/LeonCry/cursor-with/commit/b02d9b3))
+
+
+
+## <small>1.0.2 (2025-09-23)</small>
+
+* 1.0.2 ([7600798](https://github.com/LeonCry/cursor-with/commit/7600798))
+* fix: :bug: 外层version不更改问题 ([3ff6f06](https://github.com/LeonCry/cursor-with/commit/3ff6f06))
+* build: :package: 更新git信息 ([01d60b0](https://github.com/LeonCry/cursor-with/commit/01d60b0))
+
+
+
+## <small>1.0.1 (2025-09-23)</small>
+
 * 改为pnpm + monorepo 结构,删除多余代码 ([ca4124a](https://github.com/LeonCry/cursor-with/commit/ca4124a))
 * 新增测试A ([08091b6](https://github.com/LeonCry/cursor-with/commit/08091b6))
 * Create LICENSE ([ebe133e](https://github.com/LeonCry/cursor-with/commit/ebe133e))
 * init ([95fa880](https://github.com/LeonCry/cursor-with/commit/95fa880))
+* version 1.0.1 release ([f47dde0](https://github.com/LeonCry/cursor-with/commit/f47dde0))
+* fix: :bug: 修复打包顺序 ([2ccab7e](https://github.com/LeonCry/cursor-with/commit/2ccab7e))
+* fix: :bug: 修复脚本重名问题 ([26b69c4](https://github.com/LeonCry/cursor-with/commit/26b69c4))
+* fix: :bug: 修复因打包命令错误导致的发版失败问题 ([e8ea024](https://github.com/LeonCry/cursor-with/commit/e8ea024))
+* fix(core): :bug: 修复部分文件引入错误 ([33a44f7](https://github.com/LeonCry/cursor-with/commit/33a44f7))
+* docs: :memo: 新增changeLog ([a1981df](https://github.com/LeonCry/cursor-with/commit/a1981df))
+* chore: :hammer: 统一utils入口 ([48a4e8e](https://github.com/LeonCry/cursor-with/commit/48a4e8e))
+* chore: :hammer: 修改项目private ([f7d49f8](https://github.com/LeonCry/cursor-with/commit/f7d49f8))
+* chore(idea): :hammer: 监听函数包装器idea ([98def11](https://github.com/LeonCry/cursor-with/commit/98def11))
 * build: :package: 开发脚本优化 ([686c10d](https://github.com/LeonCry/cursor-with/commit/686c10d))
 * build: 新增release 和 npm 自动发版 ([9f287f1](https://github.com/LeonCry/cursor-with/commit/9f287f1))
 * feat: 初始化canvas创建 ([f2b0a9e](https://github.com/LeonCry/cursor-with/commit/f2b0a9e))
