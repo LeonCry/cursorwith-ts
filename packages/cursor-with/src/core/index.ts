@@ -58,7 +58,7 @@ class CreateCursorWith {
     if (tx !== cx || ty !== cy) {
       this.drawCircle(this.currentPoint);
     }
-    requestAnimationFrame(this.loop);
+    this.loopId = requestAnimationFrame(this.loop);
   };
 
   private init() {
@@ -90,6 +90,18 @@ class CreateCursorWith {
   public resume() {
     if (notNone(this.loopId)) return;
     this.loopId = requestAnimationFrame(this.loop);
+  }
+
+  public getCurrentPoint() {
+    return this.currentPoint;
+  }
+
+  public setStyle(style: Partial<CursorWithOptions['style']>) {
+    this.options.style = { ...this.options.style, ...style };
+  }
+
+  public setFollow(follow: CursorWithOptions['follow']) {
+    this.options.follow = { ...this.options.follow!, ...follow };
   }
 
   public destroy() {
