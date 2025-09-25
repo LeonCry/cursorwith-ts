@@ -84,5 +84,8 @@
     "scss",
     "pcss",
     "postcss"
+  ],
+  "cSpell.words": [
+    "cursorwith"
   ]
 }

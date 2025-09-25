@@ -23,12 +23,12 @@
     "framework-Agnostic"
   ],
   "scripts": {
-    "dev": "pnpm --filter cursorwith-core dev & pnpm --filter cursorwith-test dev",
-    "build:core": "pnpm --filter cursorwith-core build",
+    "dev": "pnpm --filter cursorwith-ts dev & pnpm --filter cursorwith-test dev",
+    "build:core": "pnpm --filter cursorwith-ts build",
     "prod": "pnpm --filter cursorwith-test prod & pnpm --filter cursorwith-test prod",
     "cz": "git add . && cz",
-    "pre:pub": "pnpm --filter cursorwith-core build && pnpm --filter cursorwith-core publish --dry-run --no-git-checks",
-    "pub": "pnpm --filter cursorwith-core build && pnpm --filter cursorwith-core publish --access public --no-git-checks",
+    "pre:pub": "pnpm --filter cursorwith-ts build && pnpm --filter cursorwith-ts publish --dry-run --no-git-checks",
+    "pub": "pnpm --filter cursorwith-ts build && pnpm --filter cursorwith-ts publish --access public --no-git-checks",
     "upver:pub": " pnpm _version && pnpm _log && pnpm _push && pnpm _gh_release && pnpm pub && echo '\\n\\nPublished Successfully.\\n\\n'",
     "_gh_release": "gh release create v$(node -p \"require('./packages/cursor-with/package.json').version\") --generate-notes",
     "_version": "cd packages/cursor-with && npm version patch -m \"version %s release\"",
