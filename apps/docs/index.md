@@ -7,10 +7,8 @@ hero:
   text: "A Tiny, High Performance And Framework-Agnostic Cursor Following Effect."
   tagline: customizable and easy to use.
   image:
-    src: /sign.gif
-    light: /sign.gif
-    dark: /sign.gif
     alt: sign
+    src: /signs.gif
   actions:
     - theme: brand
       text: Get Started
@@ -40,10 +38,10 @@ features:
 ## Install
 
 ::: code-group
-```bash [npm]
+```sh [npm]
 npm install cursorwith
 ```
-```bash [pnpm]
+```sh [pnpm]
 pnpm add cursorwith
 ```
 :::
@@ -55,8 +53,16 @@ import { CreateCursorWith } from 'cursorwith-core';
 
 // create a cursorwith instance
 const cw = new CreateCursorWith({
-  style: { radius: 10, color: 'rgba(0,0,0,0.1)', borderWidth: 1, borderColor: '#000000' },
-  follow: { type: 'time', timeRatio: 0.04 },
+  style: { 
+    radius: 10, 
+    color: 'rgba(0,0,0,0.1)', 
+    borderWidth: 1, 
+    borderColor: '#000000' 
+    },
+  follow: { 
+    type: 'time', 
+    timeRatio: 0.04 
+    },
 })
 ```
 
@@ -74,6 +80,8 @@ Start using cursorwith to make your website more vivid and interesting.
 <style>
 :root {
   --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #bd34fe, #41d1ff);
+  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #D16BA5, #5B94FF,#E0FF9A);
+  --vp-home-hero-image-background-image: -webkit-linear-gradient(-45deg,#D16BA5,#5B94FF,#E0FF9A);
+  --vp-home-hero-image-filter:blur(68px);
 }
 </style>

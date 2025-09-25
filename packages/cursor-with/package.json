@@ -1,7 +1,7 @@
 {
-  "name": "cursorwith-core",
+  "name": "cursorwith-ts",
   "type": "module",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "private": false,
   "description": "A tiny, customizable, easy-to-use, framework-Agnostic, and high performance cursor following effect.",
   "author": "voidis <lbh_ldu@outlook.com>",
@@ -32,8 +32,13 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
-    "test": "tsup --watch"
+    "build": "tsc -b ../../tsconfig.build.json && tsup",
+    "prepublishOnly": "pnpm build",
+    "dev": "tsup --watch"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
     "radash": "12.1.1"

@@ -1,13 +1,13 @@
 # Cursorwith Install
 
 ::: code-group
-```bash [npm]
+```sh [npm]
 npm install cursorwith
 ```
-```bash [pnpm]
+```sh [pnpm]
 pnpm add cursorwith
 ```
-```bash [yarn]
+```sh [yarn]
 yarn add cursorwith
 ```
 :::
@@ -20,7 +20,7 @@ yarn add cursorwith
 ### ES6 Modules
 
 ```ts
-import { CreateCursorWith } from 'cursorwith-core';
+import { CreateCursorWith } from 'cursorwith-ts';
 
 const cw = new CreateCursorWith({
   style: { 
@@ -60,8 +60,8 @@ const cw = new CreateCursorWith({
 cursorwith fully support TypeScript, with complete type definitions for all functions.
 
 ```ts
-import { CreateCursorWith } from 'cursorwith-core';
-import type { CursorWithOptions } from 'cursorwith-core';
+import { CreateCursorWith } from 'cursorwith-ts';
+import type { CursorWithOptions } from 'cursorwith-ts';
 
 const options:CursorWithOptions = {
   style: { 

@@ -1,6 +1,7 @@
 interface StyleOptions {
   radius: number
   color: string
+  img?: string
   borderWidth?: number
   borderColor?: string
 }

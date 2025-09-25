@@ -40,4 +40,26 @@ function outerCircleDrawer(
   }
 }
 
-export { innerCircleDrawer, outerCircleDrawer };
+/**
+ * 绘制图像
+ * @param ctx ctx实例
+ * @param point 中心点
+ * @param style 图像样式
+ */
+function imageDrawer(
+  ctx: CanvasRenderingContext2D,
+  point: Point,
+  style: Pick<CursorWithOptions['style'], 'radius' | 'img'>,
+) {
+  const { x, y } = point;
+  const { radius, img } = style;
+  if (!img) return;
+  const image = new Image();
+  image.crossOrigin = 'anonymous';
+  image.src = img;
+  ctx.save();
+  ctx.drawImage(image, x - radius, y - radius, radius * 2, radius * 2);
+  ctx.restore();
+}
+
+export { imageDrawer, innerCircleDrawer, outerCircleDrawer };
