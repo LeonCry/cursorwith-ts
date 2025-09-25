@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CreateCursorWith } from 'cursorwith-core';
+import { CreateCursorWith } from 'cursorwith-ts';
 
 const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
 onMounted(() => {

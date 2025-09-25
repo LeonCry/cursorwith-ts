@@ -49,7 +49,7 @@ pnpm add cursorwith
 ## Basic usage
 
 ```ts
-import { CreateCursorWith } from 'cursorwith-core';
+import { CreateCursorWith } from 'cursorwith-ts';
 
 // create a cursorwith instance
 const cw = new CreateCursorWith({
