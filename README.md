@@ -99,7 +99,7 @@ Implemented natively with Canvas and zero DOM manipulation, zero render-thread b
 
 ## Cursorwith Install
 
-```bash [npm]
+```sh [npm]
 npm install cursorwith
 ```
 

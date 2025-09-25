@@ -96,7 +96,7 @@ class CreateCursorWith {
     return this.currentPoint;
   }
 
-  public setStyle(style: Partial<CursorWithOptions['style']>) {
+  public setStyle(style: CursorWithOptions['style']) {
     this.options.style = { ...this.options.style, ...style };
   }
 

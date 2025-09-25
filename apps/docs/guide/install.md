@@ -1,13 +1,13 @@
 # Cursorwith Install
 
 ::: code-group
-```bash [npm]
+```sh [npm]
 npm install cursorwith
 ```
-```bash [pnpm]
+```sh [pnpm]
 pnpm add cursorwith
 ```
-```bash [yarn]
+```sh [yarn]
 yarn add cursorwith
 ```
 :::

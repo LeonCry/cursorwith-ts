@@ -38,10 +38,10 @@ features:
 ## Install
 
 ::: code-group
-```bash [npm]
+```sh [npm]
 npm install cursorwith
 ```
-```bash [pnpm]
+```sh [pnpm]
 pnpm add cursorwith
 ```
 :::
@@ -53,8 +53,16 @@ import { CreateCursorWith } from 'cursorwith-core';
 
 // create a cursorwith instance
 const cw = new CreateCursorWith({
-  style: { radius: 10, color: 'rgba(0,0,0,0.1)', borderWidth: 1, borderColor: '#000000' },
-  follow: { type: 'time', timeRatio: 0.04 },
+  style: { 
+    radius: 10, 
+    color: 'rgba(0,0,0,0.1)', 
+    borderWidth: 1, 
+    borderColor: '#000000' 
+    },
+  follow: { 
+    type: 'time', 
+    timeRatio: 0.04 
+    },
 })
 ```
 
