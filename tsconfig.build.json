@@ -1,0 +1,6 @@
+{
+  "references": [
+    { "path": "packages/cursor-with" }
+  ],
+  "files": []
+}
