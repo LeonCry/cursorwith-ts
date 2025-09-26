@@ -1,14 +1,15 @@
 {
-  "name": "cursorwith-ts",
+  "name": "@leoncry/cursorwith-ts",
   "type": "module",
   "version": "0.1.6",
   "private": false,
   "description": "A tiny, customizable, easy-to-use, framework-Agnostic, and high performance cursor following effect.",
   "author": "voidis <lbh_ldu@outlook.com>",
   "license": "MIT",
+  "homepage": "https://leoncry.github.io/cursor-with",
   "repository": {
     "type": "git",
-    "url": "https://github.com/LeonCry/cursor-with"
+    "url": "https://github.com/LeonCry/cursor-with.git"
   },
   "bugs": "https://github.com/LeonCry/cursor-with/issues",
   "keywords": [
