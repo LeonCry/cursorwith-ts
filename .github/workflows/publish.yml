@@ -1,18 +1,12 @@
 name: Publish Package (npm + GitHub Packages)
 
+# Trigger only when a GitHub Release is published (i.e. not draft / prerelease creation unless published)
 on:
-  push:
-    tags:
-      - 'v*.*.*'
-  workflow_dispatch:
-    inputs:
-      dry_run:
-        description: 'Dry run (skip actual publish)'
-        required: false
-        default: 'false'
+  release:
+    types: [published]
 
 concurrency:
-  group: publish-${{ github.ref }}
+  group: publish-${{ github.event.release.tag_name }}
   cancel-in-progress: false
 
 jobs:
@@ -49,23 +43,31 @@ jobs:
 
       - name: Show package info
         run: |
+          echo "Release tag: ${{ github.event.release.tag_name }}"
           node -p "require('./${PKG_DIR}/package.json').name + ' v' + require('./${PKG_DIR}/package.json').version"
 
+      - name: Verify tag matches package version
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          PKG_VERSION=$(node -p "require('./${PKG_DIR}/package.json').version")
+          if [ "v$PKG_VERSION" != "$TAG" ]; then
+            echo "Tag ($TAG) does not match package version (v$PKG_VERSION)" >&2
+            exit 1
+          fi
+          echo "Tag matches package version ✅"
+
       - name: Prepare npm auth
-        if: ${{ inputs.dry_run != 'true' }}
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish to npm
-        if: ${{ inputs.dry_run != 'true' }}
         working-directory: ${{ env.PKG_DIR }}
         run: |
           npm publish --access public --registry=https://registry.npmjs.org/
 
       - name: Prepare GitHub Packages auth
-        if: ${{ inputs.dry_run != 'true' }}
         run: |
           echo "${SCOPE}:registry=https://npm.pkg.github.com" >> ~/.npmrc
           echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> ~/.npmrc
@@ -73,20 +75,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN || secrets.GH_PKG_TOKEN }}
 
       - name: Publish to GitHub Packages
-        if: ${{ inputs.dry_run != 'true' }}
         working-directory: ${{ env.PKG_DIR }}
         run: |
           npm publish --access public --registry=https://npm.pkg.github.com
 
-      - name: Dry-run notice
-        if: ${{ inputs.dry_run == 'true' }}
-        run: |
-          echo "Dry run enabled: build completed, skipping publish steps."
-
       - name: Summary
         run: |
           echo "### Publish summary" >> $GITHUB_STEP_SUMMARY
-          echo "Tag: $GITHUB_REF" >> $GITHUB_STEP_SUMMARY
+          echo "Release: ${{ github.event.release.name || github.event.release.tag_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "Tag: ${{ github.event.release.tag_name }}" >> $GITHUB_STEP_SUMMARY
           echo "Package: $(node -p \"require('./${PKG_DIR}/package.json').name\")" >> $GITHUB_STEP_SUMMARY
           echo "Version: $(node -p \"require('./${PKG_DIR}/package.json').version\")" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ inputs.dry_run }}" = "true" ]; then echo "Mode: DRY RUN" >> $GITHUB_STEP_SUMMARY; else echo "Mode: PUBLISH" >> $GITHUB_STEP_SUMMARY; fi
+          echo "Mode: PUBLISH" >> $GITHUB_STEP_SUMMARY

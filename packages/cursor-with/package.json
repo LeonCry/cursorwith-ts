@@ -35,8 +35,7 @@
   "scripts": {
     "build": "tsc -b ../../tsconfig.build.json && tsup",
     "prepublishOnly": "pnpm build",
-    "dev": "tsup --watch",
-    "publish:gh": "npm publish --registry=https://npm.pkg.github.com"
+    "dev": "tsup --watch"
   },
   "publishConfig": {
     "access": "public",
