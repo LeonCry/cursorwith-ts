@@ -29,11 +29,14 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
+      - name: Enable corepack & setup pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.0.0 --activate
+          echo "PNPM PATH: $(which pnpm)"
+          pnpm --version
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
+      # (Optional) If you still prefer the action-based setup, you can re-add pnpm/action-setup here.
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -72,7 +75,7 @@ jobs:
           echo "${SCOPE}:registry=https://npm.pkg.github.com" >> ~/.npmrc
           echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> ~/.npmrc
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN || secrets.GH_PKG_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to GitHub Packages
         working-directory: ${{ env.PKG_DIR }}

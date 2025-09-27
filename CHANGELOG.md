@@ -1,4 +1,5 @@
-## [1.0.0](https://github.com/LeonCry/cursor-with/compare/v0.1.6...v1.0.0) (2025-09-27)
+## [1.0.0](https://github.com/LeonCry/cursor-with/compare/v0.1.7-alpha.2...v1.0.0) (2025-09-27)
+## [0.1.7-alpha.2](https://github.com/LeonCry/cursor-with/compare/v0.1.6...v0.1.7-alpha.2) (2025-09-27)
 
 ### Features
 
