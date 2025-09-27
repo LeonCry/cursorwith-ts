@@ -13,11 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
-      id-token: write
+      packages: write        # 推送 GitHub Packages
+      id-token: write        # npm provenance
     env:
       PKG_DIR: packages/cursor-with
     steps:
+      # ---------- 基础准备 ----------
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -30,63 +31,66 @@ jobs:
         run: |
           corepack enable
           corepack prepare pnpm@9.0.0 --activate
-          echo "$(dirname $(which pnpm))" >> $GITHUB_PATH
+          echo "$(dirname "$(command -v pnpm)")" >> $GITHUB_PATH
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Enable corepack & setup pnpm
-        run: |
-          corepack enable
-          corepack prepare pnpm@9.0.0 --activate
-
+      # ---------- 安装 & 构建 ----------
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Build package
         run: pnpm build:core
 
+      # ---------- 版本校验 ----------
       - name: Verify version
         run: |
           TAG="${{ github.event.release.tag_name }}"
           VER="v$(node -p "require('./${PKG_DIR}/package.json').version")"
-          if [ "$VER" != "$TAG" ]; then echo "Version mismatch"; exit 1; fi
+          if [ "$VER" != "$TAG" ]; then
+            echo "Version mismatch: $VER vs $TAG"; exit 1
+          fi
 
-      # ---------- 1. 发布到 npm（去 scope） ----------
-      - name: Backup & De-scope package.json for npm
+      # ---------- 1. 去 scope 推 npm ----------
+      - name: De-scope package.json for npm
         working-directory: ${{ env.PKG_DIR }}
         run: |
           cp package.json package.json.bak
           node -e "
             const p = JSON.parse(require('fs').readFileSync('package.json','utf8'));
-            p.name = 'cursorwith-ts';           // 去 scope
-            delete p.publishConfig;             // 用默认 registry
-            require('fs').writeFileSync('package.json', JSON.stringify(p,null,2));
+            p.name = 'cursorwith-ts';
+            delete p.publishConfig;
+            require('fs').writeFileSync('package.json', JSON.stringify(p, null, 2));
           "
 
-          - name: Setup npm auth
-            run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-            env:
-              NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-    
-          - name: Publish to npm
-            working-directory: ${{ env.PKG_DIR }}
-            run: npm publish --access public --provenance
+      - name: Setup npm auth
+        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      # ---------- 2. 发布到 GitHub Packages（还原 scoped） ----------
+      - name: Publish to npm
+        working-directory: ${{ env.PKG_DIR }}
+        run: npm publish --access public --provenance
+
+      # ---------- 2. 还原 scoped 推 GitHub Packages ----------
       - name: Restore scoped package.json
         working-directory: ${{ env.PKG_DIR }}
         run: mv package.json.bak package.json
 
+      - name: Setup GitHub Packages auth
+        working-directory: ${{ env.PKG_DIR }}
+        run: |
+          echo "@leoncry:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Publish to GitHub Packages
         working-directory: ${{ env.PKG_DIR }}
         run: npm publish --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # ---------- 任务总结 ----------
       - name: Job summary
         run: |
-          echo "npm: https://www.npmjs.com/package/cursorwith-ts" >> $GITHUB_STEP_SUMMARY
-          echo "GitHub Packages: https://github.com/leoncry/cursorwith-ts/pkgs/npm/cursorwith-ts" >> $GITHUB_STEP_SUMMARY
+          echo "| Registry | Package |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|---------|" >> $GITHUB_STEP_SUMMARY
+          echo "| npm | [cursorwith-ts](https://www.npmjs.com/package/cursorwith-ts) |" >> $GITHUB_STEP_SUMMARY
+          echo "| GitHub Packages | [@leoncry/cursorwith-ts](https://github.com/leoncry/cursorwith-ts/pkgs/npm/cursorwith-ts) |" >> $GITHUB_STEP_SUMMARY
