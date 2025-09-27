@@ -1,6 +1,5 @@
 name: Publish Package (npm + GitHub Packages)
 
-# Trigger only when a GitHub Release is published (i.e. not draft / prerelease creation unless published)
 on:
   release:
     types: [published]
@@ -14,12 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write   # for GitHub Packages
-      id-token: write   # provenance / OIDC (optional, for npm provenance)
+      packages: write
+      id-token: write
     env:
-      # Workspace relative path to the package directory
       PKG_DIR: packages/cursor-with
-      SCOPE: '@leoncry'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,14 +26,11 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
+
       - name: Enable corepack & setup pnpm
         run: |
           corepack enable
           corepack prepare pnpm@9.0.0 --activate
-          echo "PNPM PATH: $(which pnpm)"
-          pnpm --version
-
-      # (Optional) If you still prefer the action-based setup, you can re-add pnpm/action-setup here.
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -44,49 +38,42 @@ jobs:
       - name: Build package
         run: pnpm build:core
 
-      - name: Show package info
-        run: |
-          echo "Release tag: ${{ github.event.release.tag_name }}"
-          node -p "require('./${PKG_DIR}/package.json').name + ' v' + require('./${PKG_DIR}/package.json').version"
-
-      - name: Verify tag matches package version
+      - name: Verify version
         run: |
           TAG="${{ github.event.release.tag_name }}"
-          PKG_VERSION=$(node -p "require('./${PKG_DIR}/package.json').version")
-          if [ "v$PKG_VERSION" != "$TAG" ]; then
-            echo "Tag ($TAG) does not match package version (v$PKG_VERSION)" >&2
-            exit 1
-          fi
-          echo "Tag matches package version ✅"
+          VER="v$(node -p "require('./${PKG_DIR}/package.json').version")"
+          if [ "$VER" != "$TAG" ]; then echo "Version mismatch"; exit 1; fi
 
-      - name: Prepare npm auth
+      # ---------- 1. 发布到 npm（去 scope） ----------
+      - name: Backup & De-scope package.json for npm
+        working-directory: ${{ env.PKG_DIR }}
         run: |
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          cp package.json package.json.bak
+          node -e "
+            const p = JSON.parse(require('fs').readFileSync('package.json','utf8'));
+            p.name = 'cursorwith-ts';           // 去 scope
+            delete p.publishConfig;             // 用默认 registry
+            require('fs').writeFileSync('package.json', JSON.stringify(p,null,2));
+          "
 
       - name: Publish to npm
         working-directory: ${{ env.PKG_DIR }}
-        run: |
-          npm publish --access public --registry=https://registry.npmjs.org/
-
-      - name: Prepare GitHub Packages auth
-        run: |
-          echo "${SCOPE}:registry=https://npm.pkg.github.com" >> ~/.npmrc
-          echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> ~/.npmrc
+        run: npm publish --access public --provenance
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # ---------- 2. 发布到 GitHub Packages（还原 scoped） ----------
+      - name: Restore scoped package.json
+        working-directory: ${{ env.PKG_DIR }}
+        run: mv package.json.bak package.json
 
       - name: Publish to GitHub Packages
         working-directory: ${{ env.PKG_DIR }}
-        run: |
-          npm publish --access public --registry=https://npm.pkg.github.com
+        run: npm publish --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Summary
+      - name: Job summary
         run: |
-          echo "### Publish summary" >> $GITHUB_STEP_SUMMARY
-          echo "Release: ${{ github.event.release.name || github.event.release.tag_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "Tag: ${{ github.event.release.tag_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "Package: $(node -p \"require('./${PKG_DIR}/package.json').name\")" >> $GITHUB_STEP_SUMMARY
-          echo "Version: $(node -p \"require('./${PKG_DIR}/package.json').version\")" >> $GITHUB_STEP_SUMMARY
-          echo "Mode: PUBLISH" >> $GITHUB_STEP_SUMMARY
+          echo "npm: https://www.npmjs.com/package/cursorwith-ts" >> $GITHUB_STEP_SUMMARY
+          echo "GitHub Packages: https://github.com/leoncry/cursorwith-ts/pkgs/npm/cursorwith-ts" >> $GITHUB_STEP_SUMMARY
