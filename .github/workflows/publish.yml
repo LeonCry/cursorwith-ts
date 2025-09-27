@@ -64,9 +64,14 @@ jobs:
             require('fs').writeFileSync('package.json', JSON.stringify(p,null,2));
           "
 
-      - name: Publish to npm
-        working-directory: ${{ env.PKG_DIR }}
-        run: npm publish --access public --provenance
+          - name: Setup npm auth
+            run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+            env:
+              NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    
+          - name: Publish to npm
+            working-directory: ${{ env.PKG_DIR }}
+            run: npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
