@@ -1,3 +1,3 @@
 export function throwError(message: string): never {
-  throw new Error(`cursor-with:[Error]:${message}`);
+  throw new Error(`cursorwith-ts:[Error]:${message}`);
 }

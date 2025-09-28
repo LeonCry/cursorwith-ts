@@ -15,7 +15,7 @@
 <p align="center">A tiny, zero-dependency, TypeScript-powered cursor trail / follow effect for modern web apps.</p>
 
 <div align="center">
-  <a href="https://leoncry.github.io/cursor-with" target="_blank">
+  <a href="https://leoncry.github.io/cursorwith-ts" target="_blank">
       Full Documentation
   </a>
 </div>
@@ -227,7 +227,7 @@ instance.destroy();
 | `follow.timeRatio`     | `number`                      | Time easing factor (for time mode)  |
 | `...`                  | `...`                         | ...                                 |
 
-> For full option details see the <a href="https://leoncry.github.io/cursor-with" target="_blank">
+> For full option details see the <a href="https://leoncry.github.io/cursorwith-ts/" target="_blank">
        documentation
   </a>
 
