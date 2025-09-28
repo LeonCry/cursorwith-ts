@@ -1,2 +1,2 @@
-export { CreateCursorWith } from './core';
-export type { CursorWithOptions } from './types';
+export * from './core';
+export * from './types';

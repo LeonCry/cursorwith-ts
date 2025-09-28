@@ -33,7 +33,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc -b ../../tsconfig.build.json && tsup",
+    "build": "tsup",
     "prepublishOnly": "pnpm build",
     "dev": "tsup --watch"
   },

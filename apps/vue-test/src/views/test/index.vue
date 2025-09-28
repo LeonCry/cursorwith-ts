@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CreateCursorWith } from 'cursorwith-ts';
+import { CreateCursorWith } from '@leoncry/cursorwith-ts';
 
 const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
 onMounted(() => {
@@ -16,7 +16,7 @@ function handleResume() {
   cursorWith.value?.resume();
 }
 function handleStyleChange() {
-  cursorWith.value?.setStyle({ color: 'rgba(255,0,0,0.2)', borderColor: 'rgba(255,0,0,1)' });
+  cursorWith.value?.setStyle({ color: 'rgba(255,0,0,0.2)', borderColor: 'rgba(255,0,0,1)', radius: 20 });
 }
 function handleFollowChange() {
   cursorWith.value?.setFollow({ type: 'gap', distance: 10 });

@@ -60,15 +60,15 @@ importers:
 
   apps/vue-test:
     dependencies:
+      '@leoncry/cursorwith-ts':
+        specifier: workspace:*
+        version: link:../../packages/cursor-with
       '@tabler/icons-vue':
         specifier: ^3.34.0
         version: 3.35.0(vue@3.5.21(typescript@5.9.2))
       '@vueuse/core':
         specifier: ^13.4.0
         version: 13.9.0(vue@3.5.21(typescript@5.9.2))
-      cursorwith-ts:
-        specifier: workspace:*
-        version: link:../../packages/cursor-with
       element-plus:
         specifier: ^2.11.1
         version: 2.11.2(vue@3.5.21(typescript@5.9.2))

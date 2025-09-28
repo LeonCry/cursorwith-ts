@@ -2,13 +2,13 @@
 
 ::: code-group
 ```sh [npm]
-npm install cursorwith
+npm install @leoncry/cursorwith-ts
 ```
 ```sh [pnpm]
-pnpm add cursorwith
+pnpm add @leoncry/cursorwith-ts
 ```
 ```sh [yarn]
-yarn add cursorwith
+yarn add @leoncry/cursorwith-ts
 ```
 :::
 
@@ -20,7 +20,7 @@ yarn add cursorwith
 ### ES6 Modules
 
 ```ts
-import { CreateCursorWith } from 'cursorwith-ts';
+import { CreateCursorWith } from '@leoncry/cursorwith-ts';
 
 const cw = new CreateCursorWith({
   style: { 
@@ -60,8 +60,8 @@ const cw = new CreateCursorWith({
 cursorwith fully support TypeScript, with complete type definitions for all functions.
 
 ```ts
-import { CreateCursorWith } from 'cursorwith-ts';
-import type { CursorWithOptions } from 'cursorwith-ts';
+import { CreateCursorWith } from '@leoncry/cursorwith-ts';
+import type { CursorWithOptions } from '@leoncry/cursorwith-ts';
 
 const options:CursorWithOptions = {
   style: { 
