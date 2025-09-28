@@ -45,7 +45,7 @@ timeRatio – time-scaling factor; lower values = slower transit (fixed-time mod
 ## Example
 
 ```ts{5,14}
-import { CreateCursorWith } from 'cursorwith-ts';
+import { CreateCursorWith } from '@leoncry/cursorwith-ts';
 
 // fixed time follow instance
 const cw = new CreateCursorWith({

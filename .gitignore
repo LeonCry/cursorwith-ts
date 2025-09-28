@@ -8,3 +8,5 @@ dist-ssr
 node_modules
 .idea/
 *.log
+# VitePress cache
+/apps/docs/.vitepress/cache/
