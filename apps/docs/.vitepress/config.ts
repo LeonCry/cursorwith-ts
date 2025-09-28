@@ -1,9 +1,9 @@
 import { defineConfig } from 'vitepress';
 
 export default defineConfig({
-  base: '/cursor-with/',
+  base: '/cursorwith-ts/',
   title: 'cursorwith-docs',
-  head: [['link', { rel: 'icon', href: '/cursor-with/favicon.ico' }]],
+  head: [['link', { rel: 'icon', href: '/cursorwith-ts/favicon.ico' }]],
   description: 'A tiny, customizable, easy-to-use, framework-agnostic, and high performance cursor following effect.',
   themeConfig: {
     siteTitle: 'CURSORWITH',
