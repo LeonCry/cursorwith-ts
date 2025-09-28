@@ -1,4 +1,4 @@
-import type { CursorWithOptions, Point } from '../types';
+import type { CursorWithOptions, Point, Track } from '../types';
 import { debounce, throttle } from 'radash';
 import { listenerUnWrapper, listenerWrapper, notNone } from '../utils';
 import { canvasCreator } from './creator';
@@ -15,6 +15,7 @@ class CreateCursorWith {
   private clientHeight: number;
   private currentPoint: Point;
   private targetPoint: Point;
+  private trackPoints: Track[];
   private loopId: number | null;
   constructor(options: CursorWithOptions) {
     handleDealDefault(options);
@@ -23,6 +24,7 @@ class CreateCursorWith {
     this.clientHeight = document.documentElement.clientHeight;
     this.currentPoint = { x: this.clientWidth / 2, y: this.clientHeight / 2 };
     this.targetPoint = { x: this.clientWidth / 2, y: this.clientHeight / 2 };
+    this.trackPoints = [];
     this.loopId = null;
     this.options = options;
     this.canvas = this.create();
@@ -32,6 +34,30 @@ class CreateCursorWith {
 
   private create() {
     return canvasCreator(this.clientWidth, this.clientHeight);
+  }
+
+  private init() {
+    window.addEventListener('mousemove', listenerWrapper(throttle(
+      { interval: this.TRACK_DELAY },
+      (e: MouseEvent) => {
+        const { clientX, clientY } = e;
+        this.targetPoint = { x: clientX, y: clientY };
+        if (this.options.follow?.type === 'track') {
+          const now = performance.now();
+          this.trackPoints.push({ x: clientX, y: clientY, t: now });
+        }
+      },
+    ), 'mousemove'));
+    window.addEventListener('resize', listenerWrapper(debounce(
+      { delay: 300 },
+      () => {
+        this.clientWidth = document.documentElement.clientWidth;
+        this.clientHeight = document.documentElement.clientHeight;
+        this.canvas.width = this.clientWidth;
+        this.canvas.height = this.clientHeight;
+      },
+    ), 'resize'));
+    this.loopId = requestAnimationFrame(this.loop);
   }
 
   private drawCircle(point: Point) {
@@ -57,29 +83,10 @@ class CreateCursorWith {
       this.drawCircle(this.currentPoint);
       if (type === 'gap') this.currentPoint = gapLoop([this.currentPoint, this.targetPoint], follow.distance!);
       if (type === 'time') this.currentPoint = timeLoop([this.currentPoint, this.targetPoint], follow.timeRatio!);
+      // if (type === 'track') this.currentPoint = trackLoop(this.trackPoints, follow.delay!);
     }
     this.loopId = requestAnimationFrame(this.loop);
   };
-
-  private init() {
-    window.addEventListener('mousemove', listenerWrapper(throttle(
-      { interval: this.TRACK_DELAY },
-      (e: MouseEvent) => {
-        const { clientX, clientY } = e;
-        this.targetPoint = { x: clientX, y: clientY };
-      },
-    ), 'mousemove'));
-    window.addEventListener('resize', listenerWrapper(debounce(
-      { delay: 300 },
-      () => {
-        this.clientWidth = document.documentElement.clientWidth;
-        this.clientHeight = document.documentElement.clientHeight;
-        this.canvas.width = this.clientWidth;
-        this.canvas.height = this.clientHeight;
-      },
-    ), 'resize'));
-    this.loopId = requestAnimationFrame(this.loop);
-  }
 
   public pause() {
     if (!notNone(this.loopId)) return;

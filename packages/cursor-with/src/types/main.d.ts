@@ -16,7 +16,13 @@ interface GapFollow {
   type: 'gap'
   distance?: number
 }
-type Follow = TimeFollow | GapFollow;
+
+// track跟踪方式
+interface TrackFollow {
+  type: 'track'
+  delay?: number
+}
+type Follow = TimeFollow | GapFollow | TrackFollow;
 
 interface CursorWithOptions { style: StyleOptions, follow?: Follow }
 

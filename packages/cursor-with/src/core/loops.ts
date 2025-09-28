@@ -1,4 +1,4 @@
-import type { Point } from '../types';
+import type { Point, Track } from '../types';
 
 const CORRECT_FINAL_DISTANCE_FRAME = 5; // 修正最终距离所需帧数，防止无限抖动(不能为1)
 let frameCount = 0;
@@ -39,6 +39,10 @@ function timeLoop([currentPoint, targetPoint]: [Point, Point], timeRatio: number
   if (Math.abs(tar.x - cur.x) <= CORRECT_FACTOR) cur.x = tar.x;
   if (Math.abs(tar.y - cur.y) <= CORRECT_FACTOR) cur.y = tar.y;
   return cur;
+}
+
+function trackLoop(trackPoints: Track[], currentPoints: Track[], delay: number) {
+
 }
 
 export { gapLoop, timeLoop };

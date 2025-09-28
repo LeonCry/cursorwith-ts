@@ -6,6 +6,7 @@ function handleDealDefault(options: CursorWithOptions) {
   if (!options.follow) options.follow = { type: 'time', timeRatio: 0.01 };
   if (options.follow.type === 'time' && !options.follow.timeRatio) options.follow.timeRatio = 0.01;
   if (options.follow.type === 'gap' && !options.follow.distance) options.follow.distance = 5;
+  if (options.follow.type === 'track' && !options.follow.delay) options.follow.delay = 200;
 }
 
 function handleDealError(options: CursorWithOptions) {
