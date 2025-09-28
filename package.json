@@ -8,7 +8,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/LeonCry/cursor-with"
+    "url": "https://github.com/LeonCry/cursor-with.git"
   },
   "bugs": "https://github.com/LeonCry/cursor-with/issues",
   "keywords": [
@@ -23,8 +23,8 @@
     "framework-Agnostic"
   ],
   "scripts": {
-    "dev": "pnpm --filter @leoncry/cursorwith-ts dev & pnpm --filter cursorwith-test dev",
-    "build:core": "pnpm --filter @leoncry/cursorwith-ts build",
+    "dev": "pnpm --filter cursorwith-ts dev & pnpm --filter cursorwith-test dev",
+    "build:core": "pnpm --filter cursorwith-ts build",
     "prod": "pnpm --filter cursorwith-test prod & pnpm --filter cursorwith-test prod",
     "cz": "git add . && cz",
     "changelog:update": "conventional-changelog -p conventionalcommits -i CHANGELOG.md -s -r 0",

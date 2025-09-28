@@ -1,4 +1,4 @@
-name: Publish Package (npm + GitHub Packages)
+name: Publish Package (npm)
 
 on:
   release:
@@ -13,8 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write        # 推送 GitHub Packages
-      id-token: write        # npm provenance
+      id-token: write   # npm provenance
     env:
       PKG_DIR: packages/cursor-with
     steps:
@@ -49,18 +48,7 @@ jobs:
             echo "Version mismatch: $VER vs $TAG"; exit 1
           fi
 
-      # ---------- 1. 去 scope 推 npm ----------
-      - name: De-scope package.json for npm
-        working-directory: ${{ env.PKG_DIR }}
-        run: |
-          cp package.json package.json.bak
-          node -e "
-            const p = JSON.parse(require('fs').readFileSync('package.json','utf8'));
-            p.name = 'cursorwith-ts';
-            delete p.publishConfig;
-            require('fs').writeFileSync('package.json', JSON.stringify(p, null, 2));
-          "
-
+      # ---------- 发布到 npm ----------
       - name: Setup npm auth
         run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
         env:
@@ -70,27 +58,9 @@ jobs:
         working-directory: ${{ env.PKG_DIR }}
         run: npm publish --access public --provenance
 
-      # ---------- 2. 还原 scoped 推 GitHub Packages ----------
-      - name: Restore scoped package.json
-        working-directory: ${{ env.PKG_DIR }}
-        run: mv package.json.bak package.json
-
-      - name: Setup GitHub Packages auth
-        working-directory: ${{ env.PKG_DIR }}
-        run: |
-          echo "@leoncry:registry=https://npm.pkg.github.com" >> .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish to GitHub Packages
-        working-directory: ${{ env.PKG_DIR }}
-        run: npm publish --provenance
-
       # ---------- 任务总结 ----------
       - name: Job summary
         run: |
           echo "| Registry | Package |" >> $GITHUB_STEP_SUMMARY
           echo "|----------|---------|" >> $GITHUB_STEP_SUMMARY
           echo "| npm | [cursorwith-ts](https://www.npmjs.com/package/cursorwith-ts) |" >> $GITHUB_STEP_SUMMARY
-          echo "| GitHub Packages | [@leoncry/cursorwith-ts](https://github.com/leoncry/cursorwith-ts/pkgs/npm/cursorwith-ts) |" >> $GITHUB_STEP_SUMMARY

@@ -39,17 +39,17 @@ features:
 
 ::: code-group
 ```sh [npm]
-npm install @leoncry/cursorwith-ts
+npm install cursorwith-ts
 ```
 ```sh [pnpm]
-pnpm add @leoncry/cursorwith-ts
+pnpm add cursorwith-ts
 ```
 :::
 
 ## Basic usage
 
 ```ts
-import { CreateCursorWith } from '@leoncry/cursorwith-ts';
+import { CreateCursorWith } from 'cursorwith-ts';
 
 // create a cursorwith instance
 const cw = new CreateCursorWith({

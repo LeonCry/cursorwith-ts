@@ -34,7 +34,7 @@ interface StyleOptions {
 
 ## Example
 ```ts
-import { CreateCursorWith } from '@leoncry/cursorwith-ts';
+import { CreateCursorWith } from 'cursorwith-ts';
 
 // instance
 const cw = new CreateCursorWith({

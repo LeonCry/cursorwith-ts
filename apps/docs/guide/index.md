@@ -9,7 +9,7 @@ Just **≈ 4 kB**, zero-deps-one line and your cursor grows a tail.
 
 ```ts
 // only 4.4kb gzipped 1.6kb (computed from vscode extension [Import Cost])
-import { CreateCursorWith } from '@leoncry/cursorwith-ts';
+import { CreateCursorWith } from 'cursorwith-ts';
 ```
 
 ## 🚀  Zero-Dependency
@@ -21,7 +21,7 @@ No third-party libraries are required; all functionality is implemented internal
 Written entirely in TypeScript across the stack, complete with type definitions to enhance development safety.
 
 ```ts
-import type { CursorWithOptions } from '@leoncry/cursorwith-ts';
+import type { CursorWithOptions } from 'cursorwith-ts';
 
 ```
 
@@ -32,7 +32,7 @@ Built without any framework dependencies—pure native implementation that can b
 
 ::: code-group
 ```ts [app.vue]
-import { CreateCursorWith } from '@leoncry/cursorwith-ts';
+import { CreateCursorWith } from 'cursorwith-ts';
 import {onMounted, onBeforeUnmount, ref} from "vue";
 const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
 onMounted(() => {
@@ -55,7 +55,7 @@ onBeforeUnmount(() => {
 ```
 ```tsx [react.tsx]
 import { useEffect, useRef } from 'react';
-import { CreateCursorWith } from '@leoncry/cursorwith-ts';
+import { CreateCursorWith } from 'cursorwith-ts';
 
 export default function App() {
   const cursorRef = useRef<InstanceType<typeof CreateCursorWith> | null>(null);
