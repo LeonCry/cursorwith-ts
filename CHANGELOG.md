@@ -1,6 +1,15 @@
 ## 1.0.0 (2025-09-28)
 
+* chore: :hammer: rename ([f42b7db](https://github.com/LeonCry/cursor-with/commit/f42b7db))
+* chore: :hammer: update readme.md ([ef09df6](https://github.com/LeonCry/cursor-with/commit/ef09df6))
+* feat(core): :sparkles: track模式init ([e727703](https://github.com/LeonCry/cursor-with/commit/e727703))
+
+
+
+## <small>0.1.10 (2025-09-28)</small>
+
 * chore: :hammer: update readme.md ([42e2a0a](https://github.com/LeonCry/cursor-with/commit/42e2a0a))
+* chore(build): :hammer: create release and update version 0.1.10 ([115d0a7](https://github.com/LeonCry/cursor-with/commit/115d0a7))
 * chore(packages): :hammer: 删除github packages的构建,恢复默认库名\ ([2012ed0](https://github.com/LeonCry/cursor-with/commit/2012ed0))
 
 
