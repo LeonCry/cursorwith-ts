@@ -8,7 +8,6 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/cursorwith-ts"><img src="https://img.shields.io/npm/v/cursorwith-ts.svg?color=3178c6&label=npm" alt="npm version" /></a>
-  <a href="https://bundlephobia.com/package/cursorwith-ts"><img src="https://img.shields.io/bundlephobia/minzip/cursorwith-ts?label=bundle" alt="bundle size" /></a>
   <a href="https://www.npmjs.com/package/cursorwith-ts"><img src="https://img.shields.io/npm/dm/cursorwith-ts.svg?label=downloads" alt="downloads" /></a>
   <a href="./LICENSE"><img src="https://img.shields.io/npm/l/cursorwith-ts.svg?label=license" alt="license" /></a>
 </p>
@@ -137,8 +136,6 @@ pnpm add cursorwith-ts
 # yarn
 yarn add cursorwith-ts
 
-# bun
-bun add cursorwith-ts
 ```
 
 ---
@@ -205,7 +202,6 @@ const cw = new CreateCursorWith(options);
 ## 🌍 Environment Requirements 
 
 - Modern browsers supporting ES modules & Canvas
-- No IE (and no plan to support it)
 
 ## ⚙️ Minimal API (Quick Reference)
 
@@ -229,15 +225,11 @@ instance.destroy();
 | `style.borderColor`    | `string`                      | Border stroke color                 |
 | `follow.type`          | `'time' | 'gap'` (example)    | Follow strategy mode                |
 | `follow.timeRatio`     | `number`                      | Time easing factor (for time mode)  |
+| `...`                  | `...`                         | ...                                 |
 
-> For full option details see the docs (coming soon / see `src/types`).
-
-## 🗺 Roadmap
-
-- [ ] Additional follow strategies
-- [ ] Custom shape support
-- [ ] Official Vue / React helper wrappers
-- [ ] Accessibility / reduced motion tweak
+> For full option details see the <a href="https://leoncry.github.io/cursor-with" target="_blank">
+       documentation
+  </a>
 
 ## 🤝 Contributing
 
