@@ -8,7 +8,7 @@ hero:
   tagline: customizable and easy to use.
   image:
     alt: sign
-    src: /signs.gif
+    src: /rrlogo.gif
   actions:
     - theme: brand
       text: Get Started

@@ -1,6 +1,8 @@
-# Cursor-with
+# Cursorwith-ts
 
-cursorwith is a **tiny**, **zero-dependency**, **TypeScript-powered**, **framework-agnostic**, **high-performance** mouse-trailing effect.
+<img src="https://cdn.jsdelivr.net/gh/voidissss/picture-bed@main/images/logoTTwGbB.png" alt="logo" style="zoom:25%;" />
+
+cursorwith-ts is a **tiny**, **zero-dependency**, **TypeScript-powered**, **framework-agnostic**, **high-performance** mouse-trailing effect.
 
 ## 🎈  Tiny
 
