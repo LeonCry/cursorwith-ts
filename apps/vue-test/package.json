@@ -7,7 +7,7 @@
     "dev": "vite --mode dev --host"
   },
   "dependencies": {
-    "@leoncry/cursorwith-ts": "workspace:*",
+    "cursorwith-ts": "workspace:*",
     "@tabler/icons-vue": "^3.34.0",
     "@vueuse/core": "^13.4.0",
     "element-plus": "^2.11.1",

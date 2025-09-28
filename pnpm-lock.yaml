@@ -60,7 +60,7 @@ importers:
 
   apps/vue-test:
     dependencies:
-      '@leoncry/cursorwith-ts':
+      'cursorwith-ts':
         specifier: workspace:*
         version: link:../../packages/cursor-with
       '@tabler/icons-vue':
