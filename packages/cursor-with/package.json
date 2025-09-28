@@ -1,7 +1,7 @@
 {
   "name": "cursorwith-ts",
   "type": "module",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "private": false,
   "description": "A tiny, customizable, easy-to-use, framework-Agnostic, and high performance cursor following effect.",
   "author": "voidis <lbh_ldu@outlook.com>",

@@ -1,15 +1,12 @@
 ## 1.0.0 (2025-09-28)
 
-* fix: :bug: 打包脚本修改 ([032878d](https://github.com/LeonCry/cursor-with/commit/032878d))
-* fix: :bug: 更新依赖 ([d6dac86](https://github.com/LeonCry/cursor-with/commit/d6dac86))
-* fix: :bug: 修复导入名称问题 ([1000703](https://github.com/LeonCry/cursor-with/commit/1000703))
-* fix: :bug: 修改错误路径 ([746a127](https://github.com/LeonCry/cursor-with/commit/746a127))
-* fix: :bug: 修改脚本version不同步问题 ([c5335fd](https://github.com/LeonCry/cursor-with/commit/c5335fd))
-* fix: :bug: 修改自动发版脚本 ([95d7dc7](https://github.com/LeonCry/cursor-with/commit/95d7dc7))
-* fix: :bug: 修改core vue-test 执行顺序 ([560f19e](https://github.com/LeonCry/cursor-with/commit/560f19e))
-* fix: :bug: update version ([51c6495](https://github.com/LeonCry/cursor-with/commit/51c6495))
-* fix(build): :bug: 修改打包配置 ([75c3628](https://github.com/LeonCry/cursor-with/commit/75c3628))
-* fix(loop): :bug: 修正gap模式下小于distance时无限抖动的问题 ([540a3a7](https://github.com/LeonCry/cursor-with/commit/540a3a7))
+* chore: :hammer: update readme.md ([42e2a0a](https://github.com/LeonCry/cursor-with/commit/42e2a0a))
+* chore(packages): :hammer: 删除github packages的构建,恢复默认库名\ ([2012ed0](https://github.com/LeonCry/cursor-with/commit/2012ed0))
+
+
+
+## <small>0.1.9 (2025-09-28)</small>
+
 * chore: :hammer: 新增docs build 自动化脚本 ([978a202](https://github.com/LeonCry/cursor-with/commit/978a202))
 * chore: :hammer: 修改包名称 ([0e6ba48](https://github.com/LeonCry/cursor-with/commit/0e6ba48))
 * chore: :hammer: 修改部分脚本 修改index.md右侧标识 ([994a8db](https://github.com/LeonCry/cursor-with/commit/994a8db))
@@ -20,6 +17,17 @@
 * chore: :hammer: update version v0.1.7-alpha.3 ([eb11bab](https://github.com/LeonCry/cursor-with/commit/eb11bab))
 * chore: :hammer: vitepress初始化 ([16f4794](https://github.com/LeonCry/cursor-with/commit/16f4794))
 * chore: ignore VitePress cache directory and remove cached files ([d5c69bd](https://github.com/LeonCry/cursor-with/commit/d5c69bd))
+* chore(update): :hammer: create release and version update ([6a2aab5](https://github.com/LeonCry/cursor-with/commit/6a2aab5))
+* fix: :bug: 打包脚本修改 ([032878d](https://github.com/LeonCry/cursor-with/commit/032878d))
+* fix: :bug: 更新依赖 ([d6dac86](https://github.com/LeonCry/cursor-with/commit/d6dac86))
+* fix: :bug: 修复导入名称问题 ([1000703](https://github.com/LeonCry/cursor-with/commit/1000703))
+* fix: :bug: 修改错误路径 ([746a127](https://github.com/LeonCry/cursor-with/commit/746a127))
+* fix: :bug: 修改脚本version不同步问题 ([c5335fd](https://github.com/LeonCry/cursor-with/commit/c5335fd))
+* fix: :bug: 修改自动发版脚本 ([95d7dc7](https://github.com/LeonCry/cursor-with/commit/95d7dc7))
+* fix: :bug: 修改core vue-test 执行顺序 ([560f19e](https://github.com/LeonCry/cursor-with/commit/560f19e))
+* fix: :bug: update version ([51c6495](https://github.com/LeonCry/cursor-with/commit/51c6495))
+* fix(build): :bug: 修改打包配置 ([75c3628](https://github.com/LeonCry/cursor-with/commit/75c3628))
+* fix(loop): :bug: 修正gap模式下小于distance时无限抖动的问题 ([540a3a7](https://github.com/LeonCry/cursor-with/commit/540a3a7))
 * docs: :memo: 更新文档 ([556057e](https://github.com/LeonCry/cursor-with/commit/556057e))
 * docs: :memo: 新增core readme.md文件 ([3192ee9](https://github.com/LeonCry/cursor-with/commit/3192ee9))
 * docs: :memo: update logo ([2840062](https://github.com/LeonCry/cursor-with/commit/2840062))
