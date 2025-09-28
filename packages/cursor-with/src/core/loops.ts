@@ -41,8 +41,21 @@ function timeLoop([currentPoint, targetPoint]: [Point, Point], timeRatio: number
   return cur;
 }
 
-function trackLoop(trackPoints: Track[], currentPoints: Track[], delay: number) {
-
+function trackLoop(trackPoints: Track[], currentPoint: Point, delay: number, time: number) {
+  let cur = { ...currentPoint };
+  if (trackPoints.length === 0) return cur;
+  while (1) {
+    const { x, y, t } = trackPoints[0];
+    if (t <= time - delay) {
+      cur = { x, y };
+      trackPoints.shift();
+      if (trackPoints.length === 0) break;
+    }
+    else {
+      break;
+    }
+  }
+  return cur;
 }
 
-export { gapLoop, timeLoop };
+export { gapLoop, timeLoop, trackLoop };

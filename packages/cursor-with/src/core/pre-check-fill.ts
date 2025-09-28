@@ -18,6 +18,7 @@ function handleDealError(options: CursorWithOptions) {
     [() => typeof style.borderWidth === 'number' && style.borderWidth <= 0, 'BorderWidth must be a positive number.'],
     [() => follow.type === 'time' && notNone(follow.timeRatio) && follow.timeRatio <= 0, 'TimeRatio must be a positive number.'],
     [() => follow.type === 'gap' && notNone(follow.distance) && follow.distance <= 0, 'Distance must be a positive number.'],
+    [() => follow.type === 'track' && notNone(follow.delay) && follow.delay <= 0, 'Delay must be a positive number.'],
   ];
   errorList.forEach(([condition, msg]) => {
     if (condition()) throwError(msg);

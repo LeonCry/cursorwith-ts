@@ -3,12 +3,12 @@ import { debounce, throttle } from 'radash';
 import { listenerUnWrapper, listenerWrapper, notNone } from '../utils';
 import { canvasCreator } from './creator';
 import { imageDrawer, innerCircleDrawer, outerCircleDrawer } from './draw';
-import { gapLoop, timeLoop } from './loops';
+import { gapLoop, timeLoop, trackLoop } from './loops';
 import { handleDealDefault, handleDealError } from './pre-check-fill';
 
 class CreateCursorWith {
   options: CursorWithOptions;
-  private TRACK_DELAY = 10;
+  private TRACK_DELAY = 0;
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private clientWidth: number;
@@ -37,13 +37,14 @@ class CreateCursorWith {
   }
 
   private init() {
+    const baseTime = performance.now();
     window.addEventListener('mousemove', listenerWrapper(throttle(
       { interval: this.TRACK_DELAY },
       (e: MouseEvent) => {
         const { clientX, clientY } = e;
         this.targetPoint = { x: clientX, y: clientY };
         if (this.options.follow?.type === 'track') {
-          const now = performance.now();
+          const now = performance.now() - baseTime;
           this.trackPoints.push({ x: clientX, y: clientY, t: now });
         }
       },
@@ -74,7 +75,7 @@ class CreateCursorWith {
     }
   }
 
-  private loop = () => {
+  private loop = (time: number) => {
     const follow = this.options.follow!;
     const type = follow.type;
     const { x: tx, y: ty } = this.targetPoint;
@@ -83,7 +84,7 @@ class CreateCursorWith {
       this.drawCircle(this.currentPoint);
       if (type === 'gap') this.currentPoint = gapLoop([this.currentPoint, this.targetPoint], follow.distance!);
       if (type === 'time') this.currentPoint = timeLoop([this.currentPoint, this.targetPoint], follow.timeRatio!);
-      // if (type === 'track') this.currentPoint = trackLoop(this.trackPoints, follow.delay!);
+      if (type === 'track') this.currentPoint = trackLoop(this.trackPoints, this.currentPoint, follow.delay!, time);
     }
     this.loopId = requestAnimationFrame(this.loop);
   };
