@@ -18,7 +18,7 @@ hero:
       link: /api/
     - theme: alt
       text: View on GitHub
-      link: https://github.com/LeonCry/cursor-with
+      link: https://github.com/LeonCry/cursorwith-ts
 
 features:
   - title: Zero-dependency

@@ -1,12 +1,11 @@
 {
-  "name": "cursor-with",
+  "name": "cursorwith",
   "type": "module",
   "version": "1.0.0",
   "private": true,
   "description": "A tiny, customizable, easy-to-use, framework-Agnostic, and high performance cursor following effect.",
   "author": "voidis <lbh_ldu@outlook.com>",
   "license": "MIT",
-  "bugs": "https://github.com/LeonCry/cursor-with/issues",
   "keywords": [
     "cursor",
     "mouse",

@@ -6,12 +6,12 @@
   "description": "A tiny, customizable, easy-to-use, framework-Agnostic, and high performance cursor following effect.",
   "author": "voidis <lbh_ldu@outlook.com>",
   "license": "MIT",
-  "homepage": "https://leoncry.github.io/cursor-with",
+  "homepage": "https://leoncry.github.io/cursorwith-ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/LeonCry/cursor-with"
+    "url": "git+https://github.com/LeonCry/cursorwith-ts.git"
   },
-  "bugs": "https://github.com/LeonCry/cursor-with/issues",
+  "bugs": "https://github.com/LeonCry/cursorwith-ts/issues",
   "keywords": [
     "cursor",
     "mouse",
