@@ -5,24 +5,24 @@ interface StyleOptions {
   borderWidth?: number
   borderColor?: string
 }
-
-// 定时跟踪方式
 interface TimeFollow {
   type: 'time'
   timeRatio?: number
 }
-// 定长跟踪方式
 interface GapFollow {
   type: 'gap'
   distance?: number
 }
-
-// track跟踪方式
 interface TrackFollow {
   type: 'track'
   maxDistance?: number
 }
-type Follow = TimeFollow | GapFollow | TrackFollow;
+interface SpringFollow {
+  type: 'spring'
+  stiffness?: number
+  damping?: number
+}
+type Follow = TimeFollow | GapFollow | TrackFollow | SpringFollow;
 
 interface CursorWithOptions { style: StyleOptions, follow?: Follow }
 

@@ -3,7 +3,7 @@ import { debounce, throttle } from 'radash';
 import { listenerUnWrapper, listenerWrapper, notNone } from '../utils';
 import { canvasCreator } from './creator';
 import { imageDrawer, innerCircleDrawer, outerCircleDrawer } from './draw';
-import { gapLoop, timeLoop, trackLoop } from './loops';
+import { gapLoop, springLoop, timeLoop, trackLoop } from './loops';
 import { handleDealDefault, handleDealError } from './pre-check-fill';
 
 class CreateCursorWith {
@@ -83,6 +83,13 @@ class CreateCursorWith {
       if (type === 'gap') this.currentPoint = gapLoop([this.currentPoint, this.targetPoint], follow.distance!);
       if (type === 'time') this.currentPoint = timeLoop([this.currentPoint, this.targetPoint], follow.timeRatio!);
       if (type === 'track') this.currentPoint = trackLoop(this.trackPoints, this.currentPoint, follow.maxDistance!);
+      if (type === 'spring') {
+        this.currentPoint = springLoop(
+          [this.currentPoint, this.targetPoint],
+          follow.stiffness!,
+          follow.damping!,
+        );
+      }
     }
     this.loopId = requestAnimationFrame(this.loop);
   };
