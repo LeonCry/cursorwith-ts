@@ -24,6 +24,15 @@ interface SpringFollow {
 }
 type Follow = TimeFollow | GapFollow | TrackFollow | SpringFollow;
 
-interface CursorWithOptions { style: StyleOptions, follow?: Follow }
+interface Tail {
+  show: boolean
+  length: number
+  color: string
+}
+interface CursorWithOptions {
+  style: StyleOptions
+  follow?: Follow
+  tail?: Tail
+}
 
 export { CursorWithOptions };

@@ -2,7 +2,7 @@ import type { CursorWithOptions, Point, TrackPoint } from '../types';
 import { debounce, throttle } from 'radash';
 import { listenerUnWrapper, listenerWrapper, notNone } from '../utils';
 import { canvasCreator } from './creator';
-import { imageDrawer, innerCircleDrawer, outerCircleDrawer } from './draw';
+import { imageDrawer, innerCircleDrawer, outerCircleDrawer, tailDrawer } from './draw';
 import { gapLoop, springLoop, timeLoop, trackLoop } from './loops';
 import { handleDealDefault, handleDealError } from './pre-check-fill';
 
@@ -63,7 +63,6 @@ class CreateCursorWith {
     const { x, y } = point;
     const { radius, color, borderWidth, borderColor, img } = this.options.style;
     if (!this.ctx) return;
-    this.ctx.clearRect(0, 0, this.clientWidth, this.clientHeight);
     if (borderWidth) {
       outerCircleDrawer(this.ctx, { x, y }, { radius, borderWidth, borderColor });
     }
@@ -74,12 +73,12 @@ class CreateCursorWith {
   }
 
   private loop = (t: number) => {
+    this.ctx.clearRect(0, 0, this.clientWidth, this.clientHeight);
     const follow = this.options.follow!;
     const type = follow.type;
     const { x: tx, y: ty } = this.targetPoint;
     const { x: cx, y: cy } = this.currentPoint;
     if (tx !== cx || ty !== cy) {
-      this.drawCircle(this.currentPoint);
       if (type === 'gap') this.currentPoint = gapLoop([this.currentPoint, this.targetPoint], follow.distance!);
       if (type === 'time') this.currentPoint = timeLoop([this.currentPoint, this.targetPoint], follow.timeRatio!);
       if (type === 'track') this.currentPoint = trackLoop(this.trackPoints, this.currentPoint, t, follow.delay!);
@@ -90,6 +89,10 @@ class CreateCursorWith {
           follow.damping!,
         );
       }
+    }
+    this.drawCircle(this.currentPoint);
+    if (this.options.tail?.show) {
+      tailDrawer(this.ctx, this.currentPoint, this.targetPoint, this.options.tail!, this.options.style.radius);
     }
     this.loopId = requestAnimationFrame(this.loop);
   };

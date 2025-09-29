@@ -10,8 +10,11 @@ declare module 'vue' {
   export interface GlobalComponents {
     DefaultLayout: typeof import('./src/layouts/defaultLayout.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElTable: typeof import('element-plus/es')['ElTable']
+    ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Test: typeof import('./src/views/test/index.vue')['default']
+    TestTable: typeof import('./src/views/test/TestTable.vue')['default']
   }
 }

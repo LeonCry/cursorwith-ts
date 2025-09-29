@@ -16,6 +16,7 @@ function innerCircleDrawer(
   ctx.arc(x, y, radius, 0, Math.PI * 2);
   ctx.fillStyle = color;
   ctx.fill();
+  ctx.closePath();
 }
 
 /**
@@ -37,6 +38,7 @@ function outerCircleDrawer(
     ctx.strokeStyle = borderColor;
     ctx.lineWidth = borderWidth;
     ctx.stroke();
+    ctx.closePath();
   }
 }
 
@@ -57,9 +59,47 @@ function imageDrawer(
   const image = new Image();
   image.crossOrigin = 'anonymous';
   image.src = img;
+  ctx.beginPath();
   ctx.save();
   ctx.drawImage(image, x - radius, y - radius, radius * 2, radius * 2);
   ctx.restore();
+  ctx.closePath();
 }
 
-export { imageDrawer, innerCircleDrawer, outerCircleDrawer };
+/**
+ * 绘制尾巴
+ * @param ctx ctx实例
+ * @param points 当前点
+ * @param style 尾巴样式
+ */
+const tailPoints: Point[] = [];
+function tailDrawer(
+  ctx: CanvasRenderingContext2D,
+  currentPoint: Point,
+  targetPoint: Point,
+  style: CursorWithOptions['tail'],
+  radius: number,
+) {
+  if (!style) return;
+  const { x: tx, y: ty } = targetPoint;
+  const { x: cx, y: cy } = currentPoint;
+  const { length, color } = style;
+  if (tx !== cx || ty !== cy) {
+    tailPoints.push(currentPoint);
+  }
+  else {
+    tailPoints.shift();
+  }
+  if (tailPoints.length > length) {
+    tailPoints.shift();
+  }
+  tailPoints.forEach((point, index) => {
+    ctx.beginPath();
+    ctx.fillStyle = color;
+    ctx.arc(point.x, point.y, radius * (index / tailPoints.length), 0, Math.PI * 2);
+    ctx.fill();
+    ctx.closePath();
+  });
+}
+
+export { imageDrawer, innerCircleDrawer, outerCircleDrawer, tailDrawer };
