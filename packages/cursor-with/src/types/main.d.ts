@@ -20,7 +20,7 @@ interface GapFollow {
 // track跟踪方式
 interface TrackFollow {
   type: 'track'
-  delay?: number
+  maxDistance?: number
 }
 type Follow = TimeFollow | GapFollow | TrackFollow;
 

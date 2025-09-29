@@ -1,4 +1,4 @@
-import type { CursorWithOptions, Point, Track } from '../types';
+import type { CursorWithOptions, Point } from '../types';
 import { debounce, throttle } from 'radash';
 import { listenerUnWrapper, listenerWrapper, notNone } from '../utils';
 import { canvasCreator } from './creator';
@@ -15,7 +15,7 @@ class CreateCursorWith {
   private clientHeight: number;
   private currentPoint: Point;
   private targetPoint: Point;
-  private trackPoints: Track[];
+  private trackPoints: Point[];
   private loopId: number | null;
   constructor(options: CursorWithOptions) {
     handleDealDefault(options);
@@ -37,15 +37,13 @@ class CreateCursorWith {
   }
 
   private init() {
-    const baseTime = performance.now();
     window.addEventListener('mousemove', listenerWrapper(throttle(
       { interval: this.TRACK_DELAY },
       (e: MouseEvent) => {
         const { clientX, clientY } = e;
         this.targetPoint = { x: clientX, y: clientY };
         if (this.options.follow?.type === 'track') {
-          const now = performance.now() - baseTime;
-          this.trackPoints.push({ x: clientX, y: clientY, t: now });
+          this.trackPoints.push({ x: clientX, y: clientY });
         }
       },
     ), 'mousemove'));
@@ -75,7 +73,7 @@ class CreateCursorWith {
     }
   }
 
-  private loop = (time: number) => {
+  private loop = () => {
     const follow = this.options.follow!;
     const type = follow.type;
     const { x: tx, y: ty } = this.targetPoint;
@@ -84,7 +82,7 @@ class CreateCursorWith {
       this.drawCircle(this.currentPoint);
       if (type === 'gap') this.currentPoint = gapLoop([this.currentPoint, this.targetPoint], follow.distance!);
       if (type === 'time') this.currentPoint = timeLoop([this.currentPoint, this.targetPoint], follow.timeRatio!);
-      if (type === 'track') this.currentPoint = trackLoop(this.trackPoints, this.currentPoint, follow.delay!, time);
+      if (type === 'track') this.currentPoint = trackLoop(this.trackPoints, this.currentPoint, follow.maxDistance!);
     }
     this.loopId = requestAnimationFrame(this.loop);
   };
