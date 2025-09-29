@@ -6,7 +6,7 @@ function handleDealDefault(options: CursorWithOptions) {
   if (!options.follow) options.follow = { type: 'time', timeRatio: 0.01 };
   if (options.follow.type === 'time' && !options.follow.timeRatio) options.follow.timeRatio = 0.01;
   if (options.follow.type === 'gap' && !options.follow.distance) options.follow.distance = 5;
-  if (options.follow.type === 'track' && !options.follow.maxDistance) options.follow.maxDistance = 25;
+  if (options.follow.type === 'track' && !options.follow.delay) options.follow.delay = 500;
   if (options.follow.type === 'spring' && !options.follow.stiffness) options.follow.stiffness = 0.05;
   if (options.follow.type === 'spring' && !options.follow.damping) options.follow.damping = 0.25;
 }
@@ -20,7 +20,7 @@ function handleDealError(options: CursorWithOptions) {
     [() => typeof style.borderWidth === 'number' && style.borderWidth <= 0, 'BorderWidth must be a positive number.'],
     [() => follow.type === 'time' && notNone(follow.timeRatio) && follow.timeRatio <= 0, 'TimeRatio must be a positive number.'],
     [() => follow.type === 'gap' && notNone(follow.distance) && follow.distance <= 0, 'Distance must be a positive number.'],
-    [() => follow.type === 'track' && notNone(follow.maxDistance) && follow.maxDistance <= 0, 'maxDistance must be a positive number.'],
+    [() => follow.type === 'track' && notNone(follow.delay) && follow.delay <= 0, 'Delay must be a positive number.'],
     [() => follow.type === 'spring' && notNone(follow.stiffness) && follow.stiffness <= 0, 'Stiffness must be a positive number.'],
     [() => follow.type === 'spring' && notNone(follow.damping) && follow.damping <= 0, 'Damping must be a positive number.'],
   ];

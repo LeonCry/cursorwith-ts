@@ -5,7 +5,7 @@ const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
 onMounted(() => {
   cursorWith.value = new CreateCursorWith({
     style: { radius: 10, color: 'rgba(0,0,0,0.2)', borderWidth: 1, borderColor: 'rgba(0,0,0,1)' },
-    follow: { type: 'spring', stiffness: 0.05, damping: 0.25 },
+    follow: { type: 'track', delay: 2000 },
   });
 });
 

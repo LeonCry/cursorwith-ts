@@ -1,4 +1,4 @@
-import type { Point } from '../types';
+import type { Point, TrackPoint } from '../types';
 
 const CORRECT_FINAL_DISTANCE_FRAME = 5; // 修正最终距离所需帧数，防止无限抖动(不能为1)
 let frameCount = 0;
@@ -68,21 +68,17 @@ function springLoop([currentPoint, targetPoint]: [Point, Point], stiffness: numb
   return cur;
 }
 
-let curLocation: Point | undefined;
 /**
  * 轨迹跟随模式
  */
-function trackLoop(trackPoints: Point[], currentPoint: Point, maxDistance: number) {
-  let cur = curLocation || { ...currentPoint };
+function trackLoop(trackPoints: TrackPoint[], currentPoint: Point, time: number, delay: number) {
+  let cur = { ...currentPoint };
   if (trackPoints.length === 0) return cur;
-  const { x, y } = trackPoints[0];
-  const distance = Math.sqrt((x - cur.x) ** 2 + (y - cur.y) ** 2);
-  cur = gapLoop([cur, { x, y }], Math.min(maxDistance, distance));
-  curLocation = cur;
-  if (cur.x === x && cur.y === y) {
+  const { x, y, t } = trackPoints[0];
+  if (t <= time - delay) {
+    cur = { x, y };
     trackPoints.shift();
   }
-  if (trackPoints.length === 0) curLocation = undefined;
   return cur;
 }
 

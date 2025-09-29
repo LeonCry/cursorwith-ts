@@ -2,5 +2,5 @@ interface Point {
   x: number
   y: number
 }
-
-export { Point };
+interface TrackPoint extends Point { t: number }
+export { Point, TrackPoint };

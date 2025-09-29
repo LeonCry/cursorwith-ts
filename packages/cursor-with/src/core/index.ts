@@ -1,4 +1,4 @@
-import type { CursorWithOptions, Point } from '../types';
+import type { CursorWithOptions, Point, TrackPoint } from '../types';
 import { debounce, throttle } from 'radash';
 import { listenerUnWrapper, listenerWrapper, notNone } from '../utils';
 import { canvasCreator } from './creator';
@@ -15,7 +15,7 @@ class CreateCursorWith {
   private clientHeight: number;
   private currentPoint: Point;
   private targetPoint: Point;
-  private trackPoints: Point[];
+  private trackPoints: TrackPoint[];
   private loopId: number | null;
   constructor(options: CursorWithOptions) {
     handleDealDefault(options);
@@ -43,7 +43,7 @@ class CreateCursorWith {
         const { clientX, clientY } = e;
         this.targetPoint = { x: clientX, y: clientY };
         if (this.options.follow?.type === 'track') {
-          this.trackPoints.push({ x: clientX, y: clientY });
+          this.trackPoints.push({ x: clientX, y: clientY, t: performance.now() });
         }
       },
     ), 'mousemove'));
@@ -73,7 +73,7 @@ class CreateCursorWith {
     }
   }
 
-  private loop = () => {
+  private loop = (t: number) => {
     const follow = this.options.follow!;
     const type = follow.type;
     const { x: tx, y: ty } = this.targetPoint;
@@ -82,7 +82,7 @@ class CreateCursorWith {
       this.drawCircle(this.currentPoint);
       if (type === 'gap') this.currentPoint = gapLoop([this.currentPoint, this.targetPoint], follow.distance!);
       if (type === 'time') this.currentPoint = timeLoop([this.currentPoint, this.targetPoint], follow.timeRatio!);
-      if (type === 'track') this.currentPoint = trackLoop(this.trackPoints, this.currentPoint, follow.maxDistance!);
+      if (type === 'track') this.currentPoint = trackLoop(this.trackPoints, this.currentPoint, t, follow.delay!);
       if (type === 'spring') {
         this.currentPoint = springLoop(
           [this.currentPoint, this.targetPoint],

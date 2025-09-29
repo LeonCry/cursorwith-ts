@@ -15,7 +15,7 @@ interface GapFollow {
 }
 interface TrackFollow {
   type: 'track'
-  maxDistance?: number
+  delay?: number
 }
 interface SpringFollow {
   type: 'spring'
