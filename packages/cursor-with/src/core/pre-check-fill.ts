@@ -4,11 +4,13 @@ import { notNone, throwError } from '../utils';
 function handleDealDefault(options: CursorWithOptions) {
   // 默认跟踪方式，定时:r = 0.01
   if (!options.follow) options.follow = { type: 'time', timeRatio: 0.01 };
+  if (!notNone(options.style.borderWidth)) options.style.borderWidth = 0;
+  if (!notNone(options.style.borderColor)) options.style.borderColor = 'transparent';
   if (options.follow.type === 'time' && !options.follow.timeRatio) options.follow.timeRatio = 0.01;
   if (options.follow.type === 'gap' && !options.follow.distance) options.follow.distance = 5;
-  if (options.follow.type === 'track' && !options.follow.delay) options.follow.delay = 500;
-  if (options.follow.type === 'spring' && !options.follow.stiffness) options.follow.stiffness = 0.05;
-  if (options.follow.type === 'spring' && !options.follow.damping) options.follow.damping = 0.25;
+  if (options.follow.type === 'track' && !notNone(options.follow.delay)) options.follow.delay = 500;
+  if (options.follow.type === 'spring' && !notNone(options.follow.stiffness)) options.follow.stiffness = 0.05;
+  if (options.follow.type === 'spring' && !notNone(options.follow.damping)) options.follow.damping = 0.25;
 }
 
 function handleDealError(options: CursorWithOptions) {

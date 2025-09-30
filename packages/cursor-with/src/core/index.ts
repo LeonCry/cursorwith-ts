@@ -86,8 +86,8 @@ class CreateCursorWith {
   }
 
   private drawRect(point: Point) {
-    outerRectDrawer(this.ctx, point, this.options.style!, this.targetStyle!, this.options.hoverEffect!.padding);
-    innerRectDrawer(this.ctx, point, this.options.style!, this.targetStyle!, this.options.hoverEffect!.padding);
+    outerRectDrawer(this.ctx, point, this.options.style, this.targetStyle!, this.options.hoverEffect!.padding);
+    innerRectDrawer(this.ctx, point, this.options.style, this.targetStyle!, this.options.hoverEffect!.padding);
   }
 
   private loop = (t: number) => {

@@ -35,13 +35,11 @@ function outerCircleDrawer(
   const { x, y } = point;
   const {
     radius,
-    borderWidth = 0,
-    borderColor = 'transparent',
     shadowBlur,
     shadowColor,
     shadowOffset,
-
   } = style;
+  const { borderWidth, borderColor } = style as Required<CursorWithOptions['style']>;
   ctx.save();
   if (shadowBlur && shadowColor) {
     ctx.shadowOffsetX = shadowOffset?.[0] || 0;
@@ -145,9 +143,8 @@ function outerRectDrawer(
   targetStyle: TargetBound,
   padding: number = 0,
 ) {
-  const { borderWidth = 0, borderColor = 'transparent' } = style;
+  const { borderWidth, borderColor } = style as Required<CursorWithOptions['style']>;
   const { width, height, left, top } = targetStyle;
-
   ctx.save();
   ctx.strokeStyle = borderColor;
   ctx.lineWidth = borderWidth;
