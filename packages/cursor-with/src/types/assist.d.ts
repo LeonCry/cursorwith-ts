@@ -2,6 +2,13 @@ interface Point {
   x: number
   y: number
 }
-interface Track extends Point { t: number }
+interface TrackPoint extends Point { t: number }
 
-export { Point, Track };
+interface TargetBound {
+  top: number
+  left: number
+  width: number
+  height: number
+  borderRadius: string
+}
+export { Point, TargetBound, TrackPoint };

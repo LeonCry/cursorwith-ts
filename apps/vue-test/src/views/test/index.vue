@@ -4,8 +4,14 @@ import { CreateCursorWith } from 'cursorwith-ts';
 const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
 onMounted(() => {
   cursorWith.value = new CreateCursorWith({
-    style: { radius: 10, color: 'rgba(0,0,0,0.2)', borderWidth: 1, borderColor: 'rgba(0,0,0,1)' },
-    follow: { type: 'time', timeRatio: 0.1 },
+    style: {
+      radius: 10,
+      color: 'rgba(0,0,0,0.2)',
+      borderWidth: 1,
+      borderColor: 'rgba(0,0,0,1)',
+    },
+    follow: { type: 'time', timeRatio: 0.15 },
+    hoverEffect: { active: true, scope: { dataset: ['test'] }, padding: 20 },
   });
 });
 
@@ -49,5 +55,14 @@ window.addEventListener('keydown', (e) => {
     <ElButton type="danger" @click="handleDestroy">
       销毁
     </ElButton>
+
+    <button data-test class="absolute top-80 left-1/2 border p-4">
+      外元素
+      <p class="px-4 border border-blue-100">
+        内元素
+      </p>
+    </button>
+
+    <TestTable class=" absolute top-1/2 -translate-y-1/2" />
   </section>
 </template>

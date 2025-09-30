@@ -4,26 +4,49 @@ interface StyleOptions {
   img?: string
   borderWidth?: number
   borderColor?: string
+  shadowBlur?: number
+  shadowColor?: string
+  shadowOffset?: [number, number]
 }
-
-// 定时跟踪方式
 interface TimeFollow {
   type: 'time'
   timeRatio?: number
 }
-// 定长跟踪方式
 interface GapFollow {
   type: 'gap'
   distance?: number
 }
-
-// track跟踪方式
 interface TrackFollow {
   type: 'track'
   delay?: number
 }
-type Follow = TimeFollow | GapFollow | TrackFollow;
+interface SpringFollow {
+  type: 'spring'
+  stiffness?: number
+  damping?: number
+}
+type Follow = TimeFollow | GapFollow | TrackFollow | SpringFollow;
 
-interface CursorWithOptions { style: StyleOptions, follow?: Follow }
+interface Tail {
+  show: boolean
+  length: number
+  color: string
+}
+
+interface HoverEffect {
+  active: boolean
+  scope: {
+    dataset?: string[]
+    class?: string[]
+  }
+  padding?: number
+}
+
+interface CursorWithOptions {
+  style: StyleOptions
+  follow?: Follow
+  tail?: Tail
+  hoverEffect?: HoverEffect
+}
 
 export { CursorWithOptions };
