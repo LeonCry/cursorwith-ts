@@ -61,14 +61,13 @@ class CreateCursorWith {
 
   private drawCircle(point: Point) {
     const { x, y } = point;
-    const { radius, color, borderWidth, borderColor, img } = this.options.style;
     if (!this.ctx) return;
-    if (borderWidth) {
-      outerCircleDrawer(this.ctx, { x, y }, { radius, borderWidth, borderColor });
+    if (this.options.style.borderWidth) {
+      outerCircleDrawer(this.ctx, { x, y }, this.options.style);
     }
-    innerCircleDrawer(this.ctx, { x, y }, { radius, color });
-    if (img) {
-      imageDrawer(this.ctx, { x, y }, { radius, img });
+    innerCircleDrawer(this.ctx, { x, y }, this.options.style);
+    if (this.options.style.img) {
+      imageDrawer(this.ctx, { x, y }, this.options.style);
     }
   }
 

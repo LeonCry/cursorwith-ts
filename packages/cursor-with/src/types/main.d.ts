@@ -4,6 +4,9 @@ interface StyleOptions {
   img?: string
   borderWidth?: number
   borderColor?: string
+  shadowBlur?: number
+  shadowColor?: string
+  shadowOffset?: [number, number]
 }
 interface TimeFollow {
   type: 'time'

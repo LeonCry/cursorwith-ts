@@ -4,7 +4,14 @@ import { CreateCursorWith } from 'cursorwith-ts';
 const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
 onMounted(() => {
   cursorWith.value = new CreateCursorWith({
-    style: { radius: 10, color: 'rgba(0,0,0,0.2)', borderWidth: 1, borderColor: 'rgba(0,0,0,1)' },
+    style: {
+      radius: 10,
+      color: 'rgba(0,0,0,0.2)',
+      borderWidth: 1,
+      borderColor: 'rgba(0,0,0,1)',
+      shadowBlur: 10,
+      shadowColor: 'rgba(0,0,0,1)',
+    },
     follow: { type: 'time', timeRatio: 0.15 },
     tail: {
       show: true,
