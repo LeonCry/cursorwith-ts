@@ -32,10 +32,21 @@ interface Tail {
   length: number
   color: string
 }
+
+interface HoverEffect {
+  active: boolean
+  scope: {
+    dataset?: string[]
+    class?: string[]
+  }
+  padding?: number
+}
+
 interface CursorWithOptions {
   style: StyleOptions
   follow?: Follow
   tail?: Tail
+  hoverEffect?: HoverEffect
 }
 
 export { CursorWithOptions };

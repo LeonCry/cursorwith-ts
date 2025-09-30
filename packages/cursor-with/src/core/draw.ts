@@ -1,4 +1,4 @@
-import type { CursorWithOptions, Point } from '../types';
+import type { CursorWithOptions, Point, TargetBound } from '../types';
 /**
  * 绘制内圆
  * @param ctx ctx实例
@@ -136,4 +136,51 @@ function tailDrawer(
   ctx.restore();
 }
 
-export { imageDrawer, innerCircleDrawer, outerCircleDrawer, tailDrawer };
+// 以下为hoverEffect相关绘制
+
+function outerRectDrawer(
+  ctx: CanvasRenderingContext2D,
+  point: Point,
+  style: CursorWithOptions['style'],
+  targetStyle: TargetBound,
+  padding: number = 0,
+) {
+  const { borderWidth = 0, borderColor = 'transparent' } = style;
+  const { width, height, left, top } = targetStyle;
+
+  ctx.save();
+  ctx.strokeStyle = borderColor;
+  ctx.lineWidth = borderWidth;
+  ctx.beginPath();
+  ctx.rect(left - padding, top - padding, width + padding * 2, height + padding * 2);
+  ctx.stroke();
+  ctx.closePath();
+  ctx.restore();
+}
+
+function innerRectDrawer(
+  ctx: CanvasRenderingContext2D,
+  point: Point,
+  style: CursorWithOptions['style'],
+  targetStyle: TargetBound,
+  padding: number = 0,
+) {
+  const { color } = style;
+  const { width, height, left, top } = targetStyle;
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.rect(left - padding, top - padding, width + padding * 2, height + padding * 2);
+  ctx.fill();
+  ctx.closePath();
+  ctx.restore();
+}
+
+export {
+  imageDrawer,
+  innerCircleDrawer,
+  innerRectDrawer,
+  outerCircleDrawer,
+  outerRectDrawer,
+  tailDrawer,
+};
