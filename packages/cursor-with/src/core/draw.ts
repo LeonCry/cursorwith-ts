@@ -84,22 +84,40 @@ function tailDrawer(
   const { x: tx, y: ty } = targetPoint;
   const { x: cx, y: cy } = currentPoint;
   const { length, color } = style;
-  if (tx !== cx || ty !== cy) {
-    tailPoints.push(currentPoint);
+  if (tx !== cx || ty !== cy) tailPoints.push({ ...currentPoint });
+  else tailPoints.shift();
+  while (tailPoints.length > length) tailPoints.shift();
+  if (tailPoints.length < 2) return;
+  const pts = tailPoints;
+  const total = pts.length;
+  const maxWidth = radius * 2;
+  const minWidth = radius * 0.25;
+  const minAlpha = 0;
+  const maxAlpha = 1.0;
+
+  function midpoint(a: Point, b: Point) {
+    return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
   }
-  else {
-    tailPoints.shift();
-  }
-  if (tailPoints.length > length) {
-    tailPoints.shift();
-  }
-  tailPoints.forEach((point, index) => {
+  ctx.save();
+  ctx.strokeStyle = color;
+  for (let i = 1; i < total - 1; i++) {
+    const prev = pts[i - 1];
+    const curr = pts[i];
+    const next = pts[i + 1];
+    const start = midpoint(prev, curr);
+    const end = midpoint(curr, next);
+    const t = i / (total - 1);
+    const width = minWidth + (maxWidth - minWidth) * t;
+    const alpha = minAlpha + (maxAlpha - minAlpha) * t;
+    ctx.globalAlpha = alpha;
+    ctx.lineWidth = width;
     ctx.beginPath();
-    ctx.fillStyle = color;
-    ctx.arc(point.x, point.y, radius * (index / tailPoints.length), 0, Math.PI * 2);
-    ctx.fill();
+    ctx.moveTo(start.x, start.y);
+    ctx.quadraticCurveTo(curr.x, curr.y, end.x, end.y);
+    ctx.stroke();
     ctx.closePath();
-  });
+  }
+  ctx.restore();
 }
 
 export { imageDrawer, innerCircleDrawer, outerCircleDrawer, tailDrawer };

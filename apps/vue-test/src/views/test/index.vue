@@ -8,7 +8,7 @@ onMounted(() => {
     follow: { type: 'time', timeRatio: 0.15 },
     tail: {
       show: true,
-      length: 100,
+      length: 20,
       color: 'rgba(0,0,0,0.1)',
     },
   });
