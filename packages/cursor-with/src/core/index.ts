@@ -1,13 +1,14 @@
 import type { CursorWithOptions, Point, TargetBound, TrackPoint } from '../types';
 import { debounce, throttle } from 'radash';
-import { listenerUnWrapper, listenerWrapper, notNone } from '../utils';
+import { getFPS, listenerUnWrapper, listenerWrapper, notNone } from '../utils';
 import { canvasCreator } from './creator';
 import {
+  circleToRect,
   imageDrawer,
   innerCircleDrawer,
-  innerRectDrawer,
+  // innerRectDrawer,
   outerCircleDrawer,
-  outerRectDrawer,
+  // outerRectDrawer,
   tailDrawer,
 } from './draw';
 import { getActiveTarget } from './hover-effect';
@@ -27,6 +28,7 @@ class CreateCursorWith {
   private loopId: number | null;
   private targetElement: HTMLElement | null;
   private targetStyle: TargetBound | null;
+  private FPS: number;
   constructor(options: CursorWithOptions) {
     handleDealDefault(options);
     handleDealError(options);
@@ -38,6 +40,7 @@ class CreateCursorWith {
     this.loopId = null;
     this.targetElement = null;
     this.targetStyle = null;
+    this.FPS = 0;
     this.options = options;
     this.canvas = this.create();
     this.ctx = this.canvas.getContext('2d')!;
@@ -86,11 +89,21 @@ class CreateCursorWith {
   }
 
   private drawRect(point: Point) {
-    outerRectDrawer(this.ctx, point, this.options.style, this.targetStyle!, this.options.hoverEffect!.padding);
-    innerRectDrawer(this.ctx, point, this.options.style, this.targetStyle!, this.options.hoverEffect!.padding);
+    circleToRect(
+      this.ctx,
+      this.FPS,
+      this.options.style,
+      this.targetStyle!,
+      point,
+      this.options.hoverEffect!.padding!,
+      this.options.hoverEffect!.duration!,
+    );
+    // outerRectDrawer(this.ctx, point, this.options.style, this.targetStyle!, this.options.hoverEffect!.padding);
+    // innerRectDrawer(this.ctx, point, this.options.style, this.targetStyle!, this.options.hoverEffect!.padding);
   }
 
   private loop = (t: number) => {
+    this.FPS = getFPS(t);
     this.ctx.clearRect(0, 0, this.clientWidth, this.clientHeight);
     const follow = this.options.follow!;
     const type = follow.type;

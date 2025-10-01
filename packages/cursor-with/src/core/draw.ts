@@ -136,6 +136,38 @@ function tailDrawer(
 
 // 以下为hoverEffect相关绘制
 
+/**
+ * 由circle转化为rect效果
+ */
+
+function circleToRect(ctx: CanvasRenderingContext2D, FPS: number, circleStyle: CursorWithOptions['style'], targetStyle: TargetBound, currentPoint: Point, padding: number, duration: number) {
+  const { borderWidth, borderColor, color, radius } = circleStyle as Required<CursorWithOptions['style']>;
+  const { width, height, left, top, borderRadius } = targetStyle;
+  return {
+    borderWidth,
+    borderColor,
+    color,
+    radius,
+    width,
+    height,
+    left,
+    top,
+    borderRadius,
+    padding,
+    duration,
+    FPS,
+    currentPoint,
+  };
+}
+
+/**
+ * 绘制hover-border效果
+ * @param ctx ctx实例
+ * @param point 中心点
+ * @param style hover样式
+ * @param targetStyle 目标元素样式
+ * @param padding 内边距
+ */
 function outerRectDrawer(
   ctx: CanvasRenderingContext2D,
   point: Point,
@@ -155,6 +187,14 @@ function outerRectDrawer(
   ctx.restore();
 }
 
+/**
+ * 绘制hover-内部rect效果
+ * @param ctx ctx实例
+ * @param point 中心点
+ * @param style hover样式
+ * @param targetStyle 目标元素样式
+ * @param padding 内边距
+ */
 function innerRectDrawer(
   ctx: CanvasRenderingContext2D,
   point: Point,
@@ -174,6 +214,7 @@ function innerRectDrawer(
 }
 
 export {
+  circleToRect,
   imageDrawer,
   innerCircleDrawer,
   innerRectDrawer,

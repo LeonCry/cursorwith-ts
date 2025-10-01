@@ -10,7 +10,7 @@ onMounted(() => {
       borderWidth: 1,
       borderColor: 'rgba(0,0,0,1)',
     },
-    follow: { type: 'time', timeRatio: 0.15 },
+    follow: { type: 'time', timeRatio: 0.05 },
     hoverEffect: { active: true, scope: { dataset: ['test'] }, padding: 20 },
   });
 });

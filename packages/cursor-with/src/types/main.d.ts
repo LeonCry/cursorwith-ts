@@ -40,6 +40,7 @@ interface HoverEffect {
     class?: string[]
   }
   padding?: number
+  duration?: number
 }
 
 interface CursorWithOptions {

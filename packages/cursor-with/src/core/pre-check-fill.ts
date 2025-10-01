@@ -6,6 +6,7 @@ function handleDealDefault(options: CursorWithOptions) {
   if (!options.follow) options.follow = { type: 'time', timeRatio: 0.01 };
   if (!notNone(options.style.borderWidth)) options.style.borderWidth = 0;
   if (!notNone(options.style.borderColor)) options.style.borderColor = 'transparent';
+  if (options.hoverEffect && !notNone(options.hoverEffect.duration)) options.hoverEffect.duration = 1000;
   if (options.follow.type === 'time' && !options.follow.timeRatio) options.follow.timeRatio = 0.01;
   if (options.follow.type === 'gap' && !options.follow.distance) options.follow.distance = 5;
   if (options.follow.type === 'track' && !notNone(options.follow.delay)) options.follow.delay = 500;
@@ -19,6 +20,7 @@ function handleDealError(options: CursorWithOptions) {
   const { style, follow } = options as Required<CursorWithOptions>;
   const errorList: [() => boolean, string][] = [
     [() => style.radius <= 0, 'Radius must be a positive number.'],
+    [() => notNone(options?.hoverEffect?.duration) && options.hoverEffect.duration <= 0, 'Duration must be a positive number.'],
     [() => typeof style.borderWidth === 'number' && style.borderWidth <= 0, 'BorderWidth must be a positive number.'],
     [() => follow.type === 'time' && notNone(follow.timeRatio) && follow.timeRatio <= 0, 'TimeRatio must be a positive number.'],
     [() => follow.type === 'gap' && notNone(follow.distance) && follow.distance <= 0, 'Distance must be a positive number.'],
