@@ -7,6 +7,7 @@ interface StyleOptions {
   shadowBlur?: number
   shadowColor?: string
   shadowOffset?: [number, number]
+  needDeform?: boolean
 }
 interface TimeFollow {
   type: 'time'
