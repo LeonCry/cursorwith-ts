@@ -1,21 +1,47 @@
 import type { CursorWithOptions, Point, TargetBound } from '../types';
+
+/**
+ * 控制绘制圆还是椭圆(是否变形)
+ * @param ctx ctx实例
+ * @param point 中心点
+ * @param targetPoint 目标点
+ * @param radius 半径
+ * @param deform 变形配置
+ */
+function arcOrEllipseDrawer(
+  ctx: CanvasRenderingContext2D,
+  point: Point,
+  targetPoint: Point,
+  radius: number,
+  deform?: CursorWithOptions['deform'],
+) {
+  const { x, y } = point;
+  const { x: tx, y: ty } = targetPoint;
+  if (!deform || !deform.active) return ctx.arc(x, y, radius, 0, Math.PI * 2);
+  const distance = Math.sqrt((tx - x) ** 2 + (ty - y) ** 2);
+  const angle = Math.atan2(ty - y, tx - x);
+  const d = Math.max(radius, distance / deform.strength!);
+  ctx.ellipse(x, y, radius, d, angle - Math.PI / 2, 0, Math.PI * 2);
+}
 /**
  * 绘制内圆
  * @param ctx ctx实例
  * @param point 中心点
+ * @param targetPoint 目标点
  * @param style 内圆样式
  */
 function innerCircleDrawer(
   ctx: CanvasRenderingContext2D,
   point: Point,
+  targetPoint: Point,
   style: CursorWithOptions['style'],
+  deform?: CursorWithOptions['deform'],
 ) {
-  const { x, y } = point;
   const { radius, color } = style;
   ctx.save();
   ctx.fillStyle = color;
   ctx.beginPath();
-  ctx.arc(x, y, radius, 0, Math.PI * 2);
+  arcOrEllipseDrawer(ctx, point, targetPoint, radius, deform);
   ctx.fill();
   ctx.closePath();
   ctx.restore();
@@ -25,14 +51,16 @@ function innerCircleDrawer(
  * 绘制外圆
  * @param ctx ctx实例
  * @param point 中心点
+ * @param targetPoint 目标点
  * @param style 外圆样式
  */
 function outerCircleDrawer(
   ctx: CanvasRenderingContext2D,
   point: Point,
+  targetPoint: Point,
   style: CursorWithOptions['style'],
+  deform?: CursorWithOptions['deform'],
 ) {
-  const { x, y } = point;
   const {
     radius,
     shadowBlur,
@@ -50,7 +78,7 @@ function outerCircleDrawer(
   ctx.strokeStyle = borderColor;
   ctx.lineWidth = borderWidth;
   ctx.beginPath();
-  ctx.arc(x, y, radius + borderWidth / 2, 0, Math.PI * 2);
+  arcOrEllipseDrawer(ctx, point, targetPoint, radius, deform);
   ctx.stroke();
   ctx.closePath();
   ctx.restore();
@@ -139,7 +167,6 @@ function tailDrawer(
 /**
  * 由circle转化为rect效果
  */
-
 function circleToRect(ctx: CanvasRenderingContext2D, FPS: number, circleStyle: CursorWithOptions['style'], targetStyle: TargetBound, currentPoint: Point, padding: number, duration: number) {
   const { borderWidth, borderColor, color, radius } = circleStyle as Required<CursorWithOptions['style']>;
   const { width, height, left, top, borderRadius } = targetStyle;

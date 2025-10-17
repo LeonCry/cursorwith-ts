@@ -7,7 +7,6 @@ interface StyleOptions {
   shadowBlur?: number
   shadowColor?: string
   shadowOffset?: [number, number]
-  needDeform?: boolean
 }
 interface TimeFollow {
   type: 'time'
@@ -44,11 +43,17 @@ interface HoverEffect {
   duration?: number
 }
 
+interface Deform {
+  active: boolean
+  strength?: number
+}
+
 interface CursorWithOptions {
   style: StyleOptions
   follow?: Follow
   tail?: Tail
   hoverEffect?: HoverEffect
+  deform?: Deform
 }
 
 export { CursorWithOptions };

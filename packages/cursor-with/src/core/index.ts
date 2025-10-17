@@ -80,9 +80,9 @@ class CreateCursorWith {
 
   private drawCircle(point: Point) {
     if (this.options.style.borderWidth) {
-      outerCircleDrawer(this.ctx, point, this.options.style);
+      outerCircleDrawer(this.ctx, point, this.targetPoint, this.options.style, this.options.deform);
     }
-    innerCircleDrawer(this.ctx, point, this.options.style);
+    innerCircleDrawer(this.ctx, point, this.targetPoint, this.options.style, this.options.deform);
     if (this.options.style.img) {
       imageDrawer(this.ctx, point, this.options.style);
     }

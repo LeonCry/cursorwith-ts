@@ -12,21 +12,23 @@ function handleDealDefault(options: CursorWithOptions) {
   if (options.follow.type === 'track' && !notNone(options.follow.delay)) options.follow.delay = 500;
   if (options.follow.type === 'spring' && !notNone(options.follow.stiffness)) options.follow.stiffness = 0.05;
   if (options.follow.type === 'spring' && !notNone(options.follow.damping)) options.follow.damping = 0.25;
+  if (options.deform && !notNone(options.deform.strength)) options.deform.strength = 6;
 }
 
 function handleDealError(options: CursorWithOptions) {
   if (!window) throwError('This library only works in browser environments.');
   if (!window?.requestAnimationFrame) throwError('RequestAnimationFrame is not supported in this environment.');
-  const { style, follow } = options as Required<CursorWithOptions>;
+  const { style, follow, deform } = options as Required<CursorWithOptions>;
   const errorList: [() => boolean, string][] = [
     [() => style.radius <= 0, 'Radius must be a positive number.'],
     [() => notNone(options?.hoverEffect?.duration) && options.hoverEffect.duration <= 0, 'Duration must be a positive number.'],
-    [() => typeof style.borderWidth === 'number' && style.borderWidth <= 0, 'BorderWidth must be a positive number.'],
+    [() => typeof style.borderWidth === 'number' && style.borderWidth < 0, 'BorderWidth must be a positive number.'],
     [() => follow.type === 'time' && notNone(follow.timeRatio) && follow.timeRatio <= 0, 'TimeRatio must be a positive number.'],
     [() => follow.type === 'gap' && notNone(follow.distance) && follow.distance <= 0, 'Distance must be a positive number.'],
     [() => follow.type === 'track' && notNone(follow.delay) && follow.delay <= 0, 'Delay must be a positive number.'],
     [() => follow.type === 'spring' && notNone(follow.stiffness) && follow.stiffness <= 0, 'Stiffness must be a positive number.'],
     [() => follow.type === 'spring' && notNone(follow.damping) && follow.damping <= 0, 'Damping must be a positive number.'],
+    [() => notNone(deform?.strength) && deform.strength < 0, 'DeformStrength must be a positive number.'],
   ];
   errorList.forEach(([condition, msg]) => {
     if (condition()) throwError(msg);
