@@ -125,7 +125,7 @@ function tailDrawer(
   if (!style) return;
   const { x: tx, y: ty } = targetPoint;
   const { x: cx, y: cy } = currentPoint;
-  const { length, color } = style;
+  const { length, color, dockGap = 1, firstDockGap = 1 } = style;
   if (tx !== cx || ty !== cy) tailPoints.push({ ...currentPoint });
   else tailPoints.shift();
   while (tailPoints.length > length) tailPoints.shift();
@@ -142,7 +142,7 @@ function tailDrawer(
   }
   ctx.save();
   ctx.strokeStyle = color;
-  for (let i = 1; i < total - 1; i++) {
+  for (let i = 1; i < total - firstDockGap; i += dockGap) {
     const prev = pts[i - 1];
     const curr = pts[i];
     const next = pts[i + 1];

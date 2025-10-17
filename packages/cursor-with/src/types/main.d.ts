@@ -31,6 +31,8 @@ interface Tail {
   show: boolean
   length: number
   color: string
+  firstDockGap?: number
+  dockGap?: number
 }
 
 interface HoverEffect {
