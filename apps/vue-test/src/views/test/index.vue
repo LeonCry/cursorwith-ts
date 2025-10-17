@@ -10,7 +10,7 @@ onMounted(() => {
       borderWidth: 1,
       borderColor: 'rgba(0,0,0,1)',
     },
-    deform: { active: false, strength: 6 },
+    deform: { active: true, strength: 6 },
     tail: { show: true, length: 10, color: 'rgba(0,0,0,0.2)' },
     follow: { type: 'time', timeRatio: 0.1 },
     hoverEffect: { active: true, scope: { dataset: ['test'] }, padding: 20 },

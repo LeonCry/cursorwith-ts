@@ -133,14 +133,19 @@ function tailDrawer(
   const pts = tailPoints;
   const total = pts.length;
   const maxWidth = radius * 2;
-  const minWidth = radius * 0.25;
+  const minWidth = radius;
   const minAlpha = 0;
-  const maxAlpha = 1.0;
+  const maxAlpha = 1;
 
   function midpoint(a: Point, b: Point) {
     return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
   }
   ctx.save();
+  // 去除圆球内部多余的拖尾
+  ctx.beginPath();
+  ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.clip('evenodd');
   ctx.strokeStyle = color;
   for (let i = 1; i < total - firstDockGap; i += dockGap) {
     const prev = pts[i - 1];
