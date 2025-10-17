@@ -20,7 +20,7 @@ function arcOrEllipseDrawer(
   if (!deform || !deform.active) return ctx.arc(x, y, radius, 0, Math.PI * 2);
   const distance = Math.sqrt((tx - x) ** 2 + (ty - y) ** 2);
   const angle = Math.atan2(ty - y, tx - x);
-  const d = Math.max(radius, distance / deform.strength!);
+  const d = Math.max(radius, distance / deform.decay!);
   ctx.ellipse(x, y, radius, d, angle - Math.PI / 2, 0, Math.PI * 2);
 }
 /**
@@ -141,10 +141,10 @@ function tailDrawer(
     return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
   }
   ctx.save();
-  // 去除圆球内部多余的拖尾
+  // 镂空,去除圆球内部多余的拖尾
   ctx.beginPath();
   ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
-  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  arcOrEllipseDrawer(ctx, currentPoint, targetPoint, radius, options.deform);
   ctx.clip('evenodd');
   ctx.strokeStyle = color;
   for (let i = 1; i < total - firstDockGap; i += dockGap) {

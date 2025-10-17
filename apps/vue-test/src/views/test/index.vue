@@ -10,7 +10,7 @@ onMounted(() => {
       borderWidth: 1,
       borderColor: 'rgba(0,0,0,1)',
     },
-    deform: { active: true, strength: 6 },
+    deform: { active: true, decay: 10 },
     tail: { show: true, length: 10, color: 'rgba(0,0,0,0.2)' },
     follow: { type: 'time', timeRatio: 0.1 },
     hoverEffect: { active: true, scope: { dataset: ['test'] }, padding: 20 },
@@ -58,7 +58,7 @@ window.addEventListener('keydown', (e) => {
       销毁
     </ElButton>
 
-    <button data-test class="absolute top-80 left-1/2 border p-4">
+    <button data-test class="absolute bottom-25 left-1/2 border p-4 z-10">
       外元素
       <p class="px-4 border border-blue-100">
         内元素

@@ -47,7 +47,7 @@ interface HoverEffect {
 
 interface Deform {
   active: boolean
-  strength?: number
+  decay?: number
 }
 
 interface CursorWithOptions {
