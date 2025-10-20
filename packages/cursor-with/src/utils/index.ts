@@ -1,3 +1,4 @@
+export { mixColorString } from './color-clamp';
 export { resolveEasing } from './easing';
 export { getFPS } from './fps-getter';
 export { throwError } from './global-error';

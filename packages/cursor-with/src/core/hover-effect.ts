@@ -1,5 +1,6 @@
 import type { CursorWithOptions, Point, TargetBound } from '../types';
 import { resolveEasing } from '../utils';
+import { mixColorString } from '../utils/color-clamp';
 
 let cacheTarget: HTMLElement | null = null;
 let cacheTargetStyle: TargetBound | null = null;
@@ -74,17 +75,20 @@ function circleToRect(
     = options.hoverEffect! as NonNullable<Required<CursorWithOptions['hoverEffect']>>;
   const { left, top, width, height, borderRadius } = targetStyle;
   const { x: cx, y: cy } = currentPoint;
+  const bw = hs?.borderWidth || borderWidth;
   const from = {
     left: cx - radius,
     top: cy - radius,
     width: radius * 2,
     height: radius * 2,
+    borderWidth,
   };
   const to = {
     left: left - padding,
     top: top - padding,
     width: width + padding * 2,
     height: height + padding * 2,
+    borderWidth: bw,
   };
   const now = performance.now();
   if (rectStartTime == null) {
@@ -103,6 +107,7 @@ function circleToRect(
   const T = from.top + (to.top - from.top) * pe;
   const W = from.width + (to.width - from.width) * pe;
   const H = from.height + (to.height - from.height) * pe;
+  const B = from.borderWidth + (to.borderWidth - from.borderWidth) * pe;
 
   const centerX = to.left + to.width / 2;
   const centerY = to.top + to.height / 2;
@@ -144,9 +149,9 @@ function circleToRect(
   const dr = drFrom.map((v, i) => v + (borderRadiusList[i] - v) * pe);
 
   ctx.save();
-  ctx.fillStyle = hs?.color || color;
-  ctx.strokeStyle = hs?.borderColor || borderColor;
-  ctx.lineWidth = hs?.borderWidth || borderWidth;
+  ctx.fillStyle = mixColorString(color, hs?.color || color, pe);
+  ctx.strokeStyle = mixColorString(borderColor, hs?.borderColor || borderColor, pe);
+  ctx.lineWidth = B;
   ctx.beginPath();
   ctx.roundRect(L2, T2, W, H, dr);
   ctx.fill();
@@ -162,6 +167,7 @@ function circleToRect(
  * @param targetStyle 目标样式
  * @param targetElement 目标元素
  * @param currentPoint 当前点
+ * @param onComplete 完成回调
  */
 function rectToCircle(
   ctx: CanvasRenderingContext2D,
@@ -169,6 +175,7 @@ function rectToCircle(
   targetStyle: TargetBound,
   targetElement: HTMLElement,
   currentPoint: Point,
+  onComplete: () => void,
 ) {
   const {
     borderWidth,
@@ -180,17 +187,20 @@ function rectToCircle(
     = options.hoverEffect! as NonNullable<Required<CursorWithOptions['hoverEffect']>>;
   const { left, top, width, height, borderRadius } = targetStyle;
   const { x: cx, y: cy } = currentPoint;
+  const bw = hs?.borderWidth || borderWidth;
   const from = {
     left: left - padding,
     top: top - padding,
     width: width + padding * 2,
     height: height + padding * 2,
+    borderWidth: bw,
   };
   const to = {
     left: cx - radius,
     top: cy - radius,
     width: radius * 2,
     height: radius * 2,
+    borderWidth,
   };
 
   const now = performance.now();
@@ -201,7 +211,7 @@ function rectToCircle(
 
   const elapsed = now - circleBackStartTime;
   const rectProgress = elapsed / duration;
-
+  if (rectProgress > 1) return onComplete();
   const easingFn = resolveEasing(easing);
   const pe = Math.min(1, Math.max(0, easingFn(rectProgress)));
 
@@ -209,6 +219,7 @@ function rectToCircle(
   const T = from.top + (to.top - from.top) * pe;
   const W = from.width + (to.width - from.width) * pe;
   const H = from.height + (to.height - from.height) * pe;
+  const B = from.borderWidth + (to.borderWidth - from.borderWidth) * pe;
 
   const centerX = from.left + from.width / 2;
   const centerY = from.top + from.height / 2;
@@ -243,9 +254,9 @@ function rectToCircle(
   const dr = borderRadiusList.map(v => v + (radius * 2 - v) * pe);
 
   ctx.save();
-  ctx.fillStyle = hs?.color || color;
-  ctx.strokeStyle = hs?.borderColor || borderColor;
-  ctx.lineWidth = hs?.borderWidth || borderWidth;
+  ctx.fillStyle = mixColorString(hs?.color || color, color, pe);
+  ctx.strokeStyle = mixColorString(hs?.borderColor || borderColor, borderColor, pe);
+  ctx.lineWidth = B;
   ctx.beginPath();
   ctx.roundRect(L2, T2, W, H, dr);
   ctx.fill();

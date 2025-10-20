@@ -120,6 +120,7 @@ class CreateCursorWith {
       this.oldTargetStyle!,
       this.oldTargetElement!,
       this.currentPoint,
+      () => this.oldTargetElement = null,
     );
   }
 
