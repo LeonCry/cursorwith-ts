@@ -5,13 +5,14 @@ const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
 onMounted(() => {
   cursorWith.value = new CreateCursorWith({
     style: {
-      radius: 10,
-      color: 'rgba(0,0,0,0.2)',
-      borderWidth: 1,
+      radius: 20,
+      color: 'white',
+      borderWidth: 4,
       borderColor: 'rgba(0,0,0,1)',
     },
+    inverse: true,
     deform: { active: true, decay: 10 },
-    tail: { show: true, length: 10, color: 'rgba(0,0,0,0.2)' },
+    tail: { show: true, length: 10, color: 'rgba(255,255,255,0.2)' },
     follow: { type: 'time', timeRatio: 0.1 },
     hoverEffect: {
       active: true,
@@ -20,12 +21,12 @@ onMounted(() => {
       duration: 1000,
       easing: 'bounce-out',
       style: {
-        color: 'rgba(255,0,0,0.2)',
-        borderColor: 'rgba(255,0,0,1)',
+        color: 'rgba(255,255,255,1)',
+        borderColor: 'rgba(255,255,255,1)',
         borderWidth: 2,
       },
     },
-    nativeCursor: { show: true, radius: 2, color: 'seagreen' },
+    nativeCursor: { show: true, radius: 5, color: 'white' },
   });
 });
 
@@ -53,7 +54,7 @@ window.addEventListener('keydown', (e) => {
 </script>
 
 <template>
-  <section class="w-full h-full p-2 cursor-none">
+  <section class="w-full h-full p-2 cursor-none bg-white">
     <ElButton @click="handlePause">
       暂停 (Space)
     </ElButton>

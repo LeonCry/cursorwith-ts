@@ -37,38 +37,8 @@ function innerCircleDrawer(
   options: CursorWithOptions,
 ) {
   const { style, deform } = options;
-  const { radius, color } = style;
-  ctx.save();
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  arcOrEllipseDrawer(ctx, currentPoint, targetPoint, radius, deform);
-  ctx.fill();
-  ctx.closePath();
-  ctx.restore();
-}
-
-/**
- * 绘制外圆
- * @param ctx ctx实例
- * @param currentPoint 当前点
- * @param targetPoint 目标点
- * @param options 配置
- */
-function outerCircleDrawer(
-  ctx: CanvasRenderingContext2D,
-  currentPoint: Point,
-  targetPoint: Point,
-  options: CursorWithOptions,
-) {
-  const { style, deform } = options;
-  const {
-    radius,
-    shadowBlur,
-    shadowColor,
-    shadowOffset,
-  } = style;
+  const { radius, color, shadowBlur, shadowColor, shadowOffset } = style;
   const { borderWidth, borderColor } = style as Required<CursorWithOptions['style']>;
-  ctx.save();
   if (shadowBlur && shadowColor) {
     ctx.shadowOffsetX = shadowOffset?.[0] || 0;
     ctx.shadowOffsetY = shadowOffset?.[1] || 0;
@@ -77,8 +47,11 @@ function outerCircleDrawer(
   }
   ctx.strokeStyle = borderColor;
   ctx.lineWidth = borderWidth;
+  ctx.save();
+  ctx.fillStyle = color;
   ctx.beginPath();
   arcOrEllipseDrawer(ctx, currentPoint, targetPoint, radius, deform);
+  ctx.fill();
   ctx.stroke();
   ctx.closePath();
   ctx.restore();
@@ -188,6 +161,5 @@ export {
   imageDrawer,
   innerCircleDrawer,
   nativeCursorDrawer,
-  outerCircleDrawer,
   tailDrawer,
 };

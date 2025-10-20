@@ -6,7 +6,6 @@ import {
   imageDrawer,
   innerCircleDrawer,
   nativeCursorDrawer,
-  outerCircleDrawer,
   tailDrawer,
 } from './draw';
 import { circleToRect, getActiveTarget, rectToCircle } from './hover-effect';
@@ -52,6 +51,14 @@ class CreateCursorWith {
     return canvasCreator(this.clientWidth, this.clientHeight);
   }
 
+  // 更新滤镜
+  private setCanvasMixBlendMode(inverse: boolean | undefined) {
+    if (this.ctx) this.ctx.globalCompositeOperation = inverse ? 'difference' : 'source-over';
+    const mode = this.canvas.style.getPropertyValue('mix-blend-mode');
+    if (mode === 'difference' && !inverse) return this.canvas.style.setProperty('mix-blend-mode', 'normal', 'important');
+    if (mode === 'normal' && inverse) return this.canvas.style.setProperty('mix-blend-mode', 'difference', 'important');
+  }
+
   // 初始化
   private init() {
     window.addEventListener('mousemove', listenerWrapper(throttle(
@@ -82,11 +89,8 @@ class CreateCursorWith {
 
   // 绘制cursor主要圆
   private drawCircle() {
-    const { borderWidth, img } = this.options.style;
+    const { img } = this.options.style;
     innerCircleDrawer(this.ctx, this.currentPoint, this.targetPoint, this.options);
-    if (borderWidth) {
-      outerCircleDrawer(this.ctx, this.currentPoint, this.targetPoint, this.options);
-    }
     if (img) {
       imageDrawer(this.ctx, this.currentPoint, this.options);
     }
@@ -143,8 +147,9 @@ class CreateCursorWith {
 
   // 主循环
   private loop = (t: number) => {
+    const { tail, nativeCursor, inverse } = this.options;
     this.ctx.clearRect(0, 0, this.clientWidth, this.clientHeight);
-    const { tail, nativeCursor } = this.options;
+    this.setCanvasMixBlendMode(inverse);
     if (nativeCursor?.show) this.drawNativeCursor();
     const { x: tx, y: ty } = this.targetPoint;
     const { x: cx, y: cy } = this.currentPoint;
