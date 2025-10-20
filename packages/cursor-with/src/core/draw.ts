@@ -1,4 +1,4 @@
-import type { CursorWithOptions, Point, TargetBound } from '../types';
+import type { CursorWithOptions, Point } from '../types';
 
 /**
  * 控制绘制圆还是椭圆(是否变形)
@@ -167,90 +167,9 @@ function tailDrawer(
   ctx.restore();
 }
 
-// 以下为hoverEffect相关绘制
-
-/**
- * 由circle转化为rect效果
- */
-function circleToRect(ctx: CanvasRenderingContext2D, FPS: number, circleStyle: CursorWithOptions['style'], targetStyle: TargetBound, currentPoint: Point, targetPoint: Point, padding: number, duration: number) {
-  const { borderWidth, borderColor, color, radius } = circleStyle as Required<CursorWithOptions['style']>;
-  const { width, height, left, top, borderRadius } = targetStyle;
-  return {
-    borderWidth,
-    borderColor,
-    color,
-    radius,
-    width,
-    height,
-    left,
-    top,
-    borderRadius,
-    padding,
-    duration,
-    FPS,
-    currentPoint,
-  };
-}
-
-/**
- * 绘制hover-border效果
- * @param ctx ctx实例
- * @param point 中心点
- * @param style hover样式
- * @param targetStyle 目标元素样式
- * @param padding 内边距
- */
-function outerRectDrawer(
-  ctx: CanvasRenderingContext2D,
-  point: Point,
-  style: CursorWithOptions['style'],
-  targetStyle: TargetBound,
-  padding: number = 0,
-) {
-  const { borderWidth, borderColor } = style as Required<CursorWithOptions['style']>;
-  const { width, height, left, top } = targetStyle;
-  ctx.save();
-  ctx.strokeStyle = borderColor;
-  ctx.lineWidth = borderWidth;
-  ctx.beginPath();
-  ctx.rect(left - padding, top - padding, width + padding * 2, height + padding * 2);
-  ctx.stroke();
-  ctx.closePath();
-  ctx.restore();
-}
-
-/**
- * 绘制hover-内部rect效果
- * @param ctx ctx实例
- * @param point 中心点
- * @param style hover样式
- * @param targetStyle 目标元素样式
- * @param padding 内边距
- */
-function innerRectDrawer(
-  ctx: CanvasRenderingContext2D,
-  point: Point,
-  style: CursorWithOptions['style'],
-  targetStyle: TargetBound,
-  padding: number = 0,
-) {
-  const { color } = style;
-  const { width, height, left, top } = targetStyle;
-  ctx.save();
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.rect(left - padding, top - padding, width + padding * 2, height + padding * 2);
-  ctx.fill();
-  ctx.closePath();
-  ctx.restore();
-}
-
 export {
-  circleToRect,
   imageDrawer,
   innerCircleDrawer,
-  innerRectDrawer,
   outerCircleDrawer,
-  outerRectDrawer,
   tailDrawer,
 };

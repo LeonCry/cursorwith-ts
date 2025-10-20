@@ -1,17 +1,14 @@
 import type { CursorWithOptions, Point, TargetBound, TrackPoint } from '../types';
 import { debounce, throttle } from 'radash';
-import { getFPS, listenerUnWrapper, listenerWrapper, notNone } from '../utils';
+import { listenerUnWrapper, listenerWrapper, notNone } from '../utils';
 import { canvasCreator } from './creator';
 import {
-  circleToRect,
   imageDrawer,
   innerCircleDrawer,
-  // innerRectDrawer,
   outerCircleDrawer,
-  // outerRectDrawer,
   tailDrawer,
 } from './draw';
-import { getActiveTarget } from './hover-effect';
+import { circleToRect, getActiveTarget, rectToCircle } from './hover-effect';
 import { gapLoop, springLoop, timeLoop, trackLoop } from './loops';
 import { handleDealDefault, handleDealError } from './pre-check-fill';
 
@@ -27,8 +24,9 @@ class CreateCursorWith {
   private trackPoints: TrackPoint[];
   private loopId: number | null;
   private targetElement: HTMLElement | null;
+  private oldTargetElement: HTMLElement | null;
   private targetStyle: TargetBound | null;
-  private FPS: number;
+  private oldTargetStyle: TargetBound | null;
   constructor(options: CursorWithOptions) {
     handleDealDefault(options);
     handleDealError(options);
@@ -39,8 +37,9 @@ class CreateCursorWith {
     this.trackPoints = [];
     this.loopId = null;
     this.targetElement = null;
+    this.oldTargetElement = null;
     this.targetStyle = null;
-    this.FPS = 0;
+    this.oldTargetStyle = null;
     this.options = options;
     this.canvas = this.create();
     this.ctx = this.canvas.getContext('2d')!;
@@ -97,20 +96,25 @@ class CreateCursorWith {
     tailDrawer(this.ctx, this.currentPoint, this.targetPoint, this.options);
   }
 
-  // 绘制hoverTarget矩形样式
-  private drawRect() {
+  // 绘制circle到rect
+  private drawCircleToRect() {
     circleToRect(
       this.ctx,
-      this.FPS,
-      this.options.style,
+      this.options,
       this.targetStyle!,
+      this.targetElement!,
       this.currentPoint,
-      this.targetPoint,
-      this.options.hoverEffect!.padding!,
-      this.options.hoverEffect!.duration!,
     );
-    // outerRectDrawer(this.ctx, point, this.options.style, this.targetStyle!, this.options.hoverEffect!.padding);
-    // innerRectDrawer(this.ctx, point, this.options.style, this.targetStyle!, this.options.hoverEffect!.padding);
+  }
+
+  private drawRectToCircle() {
+    rectToCircle(
+      this.ctx,
+      this.options,
+      this.oldTargetStyle!,
+      this.oldTargetElement!,
+      this.currentPoint,
+    );
   }
 
   // 计算cursor主要圆当前位置
@@ -132,7 +136,6 @@ class CreateCursorWith {
 
   // 主循环
   private loop = (t: number) => {
-    this.FPS = getFPS(t);
     this.ctx.clearRect(0, 0, this.clientWidth, this.clientHeight);
     const { tail } = this.options;
     const { x: tx, y: ty } = this.targetPoint;
@@ -141,12 +144,17 @@ class CreateCursorWith {
       this.currentPoint = this.computeCurrentPoint(t);
     }
     if (this.targetElement && this.targetStyle) {
-      this.drawRect();
+      this.oldTargetElement = this.targetElement;
+      this.oldTargetStyle = this.targetStyle;
+      this.drawCircleToRect();
+    }
+    else if (!this.targetElement && this.oldTargetElement) {
+      this.drawRectToCircle();
     }
     else {
       this.drawCircle();
     }
-    if (tail?.show) {
+    if (tail?.show && !this.targetElement) {
       this.drawTail();
     }
     this.loopId = requestAnimationFrame(this.loop);

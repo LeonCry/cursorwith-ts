@@ -1,3 +1,5 @@
+import type { EasingInput } from '../utils/easing';
+
 interface StyleOptions {
   radius: number
   color: string
@@ -38,11 +40,18 @@ interface Tail {
 interface HoverEffect {
   active: boolean
   scope: {
-    dataset?: string[]
+    dataset: string[]
     class?: string[]
   }
   padding?: number
+  offset?: number
   duration?: number
+  easing?: EasingInput
+  style?: {
+    borderWidth?: number
+    borderColor?: string
+    color?: string
+  }
 }
 
 interface Deform {

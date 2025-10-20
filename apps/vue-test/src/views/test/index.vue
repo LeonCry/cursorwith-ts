@@ -13,7 +13,7 @@ onMounted(() => {
     deform: { active: true, decay: 10 },
     tail: { show: true, length: 10, color: 'rgba(0,0,0,0.2)' },
     follow: { type: 'time', timeRatio: 0.1 },
-    hoverEffect: { active: true, scope: { dataset: ['test'] }, padding: 20 },
+    hoverEffect: { active: true, scope: { dataset: ['test'] }, padding: 5, duration: 1000, easing: 'bounce-out' },
   });
 });
 
@@ -58,13 +58,26 @@ window.addEventListener('keydown', (e) => {
       销毁
     </ElButton>
 
-    <button data-test class="absolute bottom-25 left-1/2 border p-4 z-10">
+    <button data-test class="absolute bottom-25 left-1/2 border p-4 z-10 text-rounded">
       外元素
       <p class="px-4 border border-blue-100">
         内元素
       </p>
     </button>
 
+    <button data-test class="absolute bottom-25 left-1/4 border p-4 z-10 text-rounded">
+      外元素2
+      <p class="px-4 border border-blue-100">
+        内元素2
+      </p>
+    </button>
+
     <TestTable class=" absolute top-1/2 -translate-y-1/2" />
   </section>
 </template>
+
+<style scoped>
+.text-rounded {
+  border-radius: 10px 8px 6px 4px;
+}
+</style>
