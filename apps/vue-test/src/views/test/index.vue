@@ -7,7 +7,7 @@ onMounted(() => {
     style: {
       radius: 20,
       color: 'white',
-      borderWidth: 4,
+      borderWidth: 10,
       borderColor: 'rgba(0,0,0,1)',
     },
     inverse: true,
@@ -21,9 +21,9 @@ onMounted(() => {
       duration: 1000,
       easing: 'bounce-out',
       style: {
-        color: 'rgba(255,255,255,1)',
-        borderColor: 'rgba(255,255,255,1)',
-        borderWidth: 2,
+        color: 'rgba(0,0,0,1)',
+        borderColor: 'rgba(0,0,0,1)',
+        borderWidth: 10,
       },
     },
     nativeCursor: { show: true, radius: 5, color: 'white' },

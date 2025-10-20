@@ -64,6 +64,7 @@ function circleToRect(
   targetElement: HTMLElement,
   currentPoint: Point,
 ) {
+  const { inverse } = options;
   const {
     borderWidth,
     borderColor,
@@ -149,7 +150,7 @@ function circleToRect(
   const dr = drFrom.map((v, i) => v + (borderRadiusList[i] - v) * pe);
 
   ctx.save();
-  ctx.fillStyle = mixColorString(color, hs?.color || color, pe);
+  ctx.fillStyle = mixColorString(color, hs?.color || color, pe, !!inverse);
   ctx.strokeStyle = mixColorString(borderColor, hs?.borderColor || borderColor, pe);
   ctx.lineWidth = B;
   ctx.beginPath();
@@ -177,6 +178,7 @@ function rectToCircle(
   currentPoint: Point,
   onComplete: () => void,
 ) {
+  const { inverse } = options;
   const {
     borderWidth,
     borderColor,
@@ -254,7 +256,7 @@ function rectToCircle(
   const dr = borderRadiusList.map(v => v + (radius * 2 - v) * pe);
 
   ctx.save();
-  ctx.fillStyle = mixColorString(hs?.color || color, color, pe);
+  ctx.fillStyle = mixColorString(hs?.color || color, color, pe, !!inverse);
   ctx.strokeStyle = mixColorString(hs?.borderColor || borderColor, borderColor, pe);
   ctx.lineWidth = B;
   ctx.beginPath();
