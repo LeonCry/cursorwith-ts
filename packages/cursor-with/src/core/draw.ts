@@ -20,7 +20,7 @@ function arcOrEllipseDrawer(
   if (!deform || !deform.active) return ctx.arc(x, y, radius, 0, Math.PI * 2);
   const distance = Math.sqrt((tx - x) ** 2 + (ty - y) ** 2);
   const angle = Math.atan2(ty - y, tx - x);
-  const d = Math.max(radius, distance / deform.decay!);
+  const d = Math.max(radius, Math.min(distance / deform.decay!, 2 * radius));
   ctx.ellipse(x, y, radius, d, angle - Math.PI / 2, 0, Math.PI * 2);
 }
 /**

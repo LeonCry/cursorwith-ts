@@ -45,6 +45,20 @@ function getActiveTarget(target: HTMLElement, hoverEffect: CursorWithOptions['ho
   return getActiveTarget(target.parentElement as HTMLElement, hoverEffect);
 }
 
+// 获取闪烁效果时的透明度
+function getFlashAlpha(flash: NonNullable<CursorWithOptions['hoverEffect']>['flash'], now: number) {
+  if (!flash) return 1;
+  const { active, duration, easing } = flash!;
+  if (!active) return 1;
+  const halfFlashC = duration! / 2;
+  const spendC = now % duration!;
+  const flashRaw = spendC <= halfFlashC
+    ? spendC / halfFlashC
+    : (spendC - halfFlashC) / halfFlashC;
+  const flashEase = Math.min(1, Math.max(0, resolveEasing(easing)(flashRaw)));
+  return Math.max(0.2, spendC <= halfFlashC ? flashEase : 1 - flashEase);
+}
+
 // 保存元素原始transform
 const elementOriginalTransform = new WeakMap<HTMLElement, string>();
 let rectStartTime: number | null = null;
@@ -72,7 +86,14 @@ function circleToRect(
     radius,
   }
     = options.style as Required<CursorWithOptions['style']>;
-  const { style: hs, padding, duration, easing, offset }
+  const {
+    style: hs,
+    padding,
+    duration,
+    easing,
+    offset,
+    flash,
+  }
     = options.hoverEffect! as NonNullable<Required<CursorWithOptions['hoverEffect']>>;
   const { left, top, width, height, borderRadius } = targetStyle;
   const { x: cx, y: cy } = currentPoint;
@@ -110,6 +131,7 @@ function circleToRect(
   const H = from.height + (to.height - from.height) * pe;
   const B = from.borderWidth + (to.borderWidth - from.borderWidth) * pe;
 
+  // rect-鼠标跟随
   const centerX = to.left + to.width / 2;
   const centerY = to.top + to.height / 2;
   const dx = cx - centerX;
@@ -148,10 +170,10 @@ function circleToRect(
   const borderRadiusList = borderRadius.split(' ').map(item => Number.parseInt(item));
   const drFrom = borderRadiusList.map(() => radius * 2);
   const dr = drFrom.map((v, i) => v + (borderRadiusList[i] - v) * pe);
-
+  const alpha = getFlashAlpha(flash, now);
   ctx.save();
-  ctx.fillStyle = mixColorString(color, hs?.color || color, pe, !!inverse);
-  ctx.strokeStyle = mixColorString(borderColor, hs?.borderColor || borderColor, pe);
+  ctx.fillStyle = mixColorString(color, hs?.color || color, pe, alpha, !!inverse);
+  ctx.strokeStyle = mixColorString(borderColor, hs?.borderColor || borderColor, pe, alpha, !!inverse);
   ctx.lineWidth = B;
   ctx.beginPath();
   ctx.roundRect(L2, T2, W, H, dr);
@@ -229,17 +251,6 @@ function rectToCircle(
   const dy = cy - centerY;
   const dist = Math.hypot(dx, dy);
   const influenceR = Math.max(1, Math.hypot(from.width / 2, from.height / 2));
-  let ox = 0;
-  let oy = 0;
-  if (dist > 0) {
-    const norm = Math.min(1, dist / influenceR);
-    const mag = offset * norm;
-    ox = (dx / dist) * mag;
-    oy = (dy / dist) * mag;
-  }
-  const L2 = L + ox * (1 - pe);
-  const T2 = T + oy * (1 - pe);
-
   const baseTransformOut = elementOriginalTransform.get(targetElement) || '';
   const maxElementOffset = offset / 2;
   let eoxOut = 0;
@@ -254,13 +265,13 @@ function rectToCircle(
   targetElement.style.willChange = 'transform';
   const borderRadiusList = borderRadius.split(' ').map(item => Number.parseInt(item));
   const dr = borderRadiusList.map(v => v + (radius * 2 - v) * pe);
-
+  const alpha = 1;
   ctx.save();
-  ctx.fillStyle = mixColorString(hs?.color || color, color, pe, !!inverse);
-  ctx.strokeStyle = mixColorString(hs?.borderColor || borderColor, borderColor, pe);
+  ctx.fillStyle = mixColorString(hs?.color || color, color, pe, alpha, !!inverse);
+  ctx.strokeStyle = mixColorString(hs?.borderColor || borderColor, borderColor, pe, alpha, !!inverse);
   ctx.lineWidth = B;
   ctx.beginPath();
-  ctx.roundRect(L2, T2, W, H, dr);
+  ctx.roundRect(L, T, W, H, dr);
   ctx.fill();
   ctx.stroke();
   ctx.closePath();

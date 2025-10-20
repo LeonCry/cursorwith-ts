@@ -50,14 +50,14 @@ function parseColorToRgba(input: string): [number, number, number, number] {
 function rgbaToString([r, g, b, a]: [number, number, number, number]): string {
   return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${a.toFixed(3)})`;
 }
-function mixColorString(c1: string, c2: string, t: number, inverse?: boolean): string {
+function mixColorString(c1: string, c2: string, t: number, alpha: number, inverse?: boolean): string {
   const [r1, g1, b1, a1] = parseColorToRgba(c1);
   const [r2, g2, b2, a2] = parseColorToRgba(c2);
   const lerp = (x: number, y: number, p: number) => x + (y - x) * p;
   const r = lerp(r1, r2, t);
   const g = lerp(g1, g2, t);
   const b = lerp(b1, b2, t);
-  const a = lerp(a1, a2, t);
+  const a = lerp(a1, a2, t) * alpha;
   if (inverse) {
     return rgbaToString([255 - r, 255 - g, 255 - b, a]);
   }

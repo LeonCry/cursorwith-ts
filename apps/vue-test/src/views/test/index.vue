@@ -5,25 +5,30 @@ const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
 onMounted(() => {
   cursorWith.value = new CreateCursorWith({
     style: {
-      radius: 20,
+      radius: 10,
       color: 'white',
-      borderWidth: 10,
+      borderWidth: 2,
       borderColor: 'rgba(0,0,0,1)',
     },
-    inverse: true,
-    deform: { active: true, decay: 10 },
-    tail: { show: true, length: 10, color: 'rgba(255,255,255,0.2)' },
+    inverse: false,
+    deform: { active: true, decay: 15 },
+    tail: { show: true, length: 10, color: 'rgba(0,0,0,0.2)' },
     follow: { type: 'time', timeRatio: 0.1 },
     hoverEffect: {
       active: true,
+      flash: {
+        active: true,
+        duration: 1000,
+        easing: 'linear',
+      },
       scope: { dataset: ['test'] },
       padding: 5,
       duration: 1000,
       easing: 'bounce-out',
       style: {
-        color: 'rgba(0,0,0,1)',
-        borderColor: 'rgba(0,0,0,1)',
-        borderWidth: 10,
+        color: 'rgba(255,0,0,0.5)',
+        borderColor: 'rgba(255,0,0,0.5)',
+        borderWidth: 1,
       },
     },
     nativeCursor: { show: true, radius: 5, color: 'white' },

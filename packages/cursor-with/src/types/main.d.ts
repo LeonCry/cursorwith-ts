@@ -56,6 +56,11 @@ interface HoverEffect {
   offset?: number
   duration?: number
   easing?: EasingInput
+  flash?: {
+    active: boolean
+    duration?: number
+    easing?: EasingInput
+  }
   style?: {
     borderWidth?: number
     borderColor?: string

@@ -31,7 +31,11 @@ function handleDealDefault(options: CursorWithOptions) {
     hoverEffect.duration ??= 1000;
     hoverEffect.padding ??= 10;
     hoverEffect.offset ??= 10;
-    hoverEffect.easing ??= 'ease-out';
+    hoverEffect.easing ??= 'bounce-out';
+    if (notNone(hoverEffect.flash)) {
+      hoverEffect.flash.duration ??= 1000;
+      hoverEffect.flash.easing ??= 'linear';
+    }
   }
 }
 
@@ -45,6 +49,7 @@ function handleDealError(options: CursorWithOptions) {
     [() => notNone(hoverEffect?.duration) && hoverEffect.duration < 0, 'Duration must be a positive number.'],
     [() => notNone(hoverEffect?.padding) && hoverEffect.padding < 0, 'Padding must be a positive number.'],
     [() => notNone(hoverEffect?.offset) && hoverEffect.offset < 0, 'Offset must be a positive number.'],
+    [() => notNone(hoverEffect?.flash?.duration) && hoverEffect.flash.duration < 0, 'Flash must be a positive number.'],
     [() => typeof style.borderWidth === 'number' && style.borderWidth < 0, 'BorderWidth must be a positive number.'],
     [() => follow.type === 'time' && notNone(follow.timeRatio) && follow.timeRatio <= 0, 'TimeRatio must be a positive number.'],
     [() => follow.type === 'gap' && notNone(follow.distance) && follow.distance <= 0, 'Distance must be a positive number.'],
