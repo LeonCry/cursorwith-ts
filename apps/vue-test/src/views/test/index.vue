@@ -13,7 +13,19 @@ onMounted(() => {
     deform: { active: true, decay: 10 },
     tail: { show: true, length: 10, color: 'rgba(0,0,0,0.2)' },
     follow: { type: 'time', timeRatio: 0.1 },
-    hoverEffect: { active: true, scope: { dataset: ['test'] }, padding: 5, duration: 1000, easing: 'bounce-out' },
+    hoverEffect: {
+      active: true,
+      scope: { dataset: ['test'] },
+      padding: 5,
+      duration: 1000,
+      easing: 'bounce-out',
+      style: {
+        color: 'rgba(255,0,0,0.2)',
+        borderColor: 'rgba(255,0,0,1)',
+        borderWidth: 2,
+      },
+    },
+    nativeCursor: { show: true, radius: 2, color: 'seagreen' },
   });
 });
 
@@ -41,7 +53,7 @@ window.addEventListener('keydown', (e) => {
 </script>
 
 <template>
-  <section class="w-full h-full p-2">
+  <section class="w-full h-full p-2 cursor-none">
     <ElButton @click="handlePause">
       暂停 (Space)
     </ElButton>

@@ -167,9 +167,27 @@ function tailDrawer(
   ctx.restore();
 }
 
+function nativeCursorDrawer(
+  ctx: CanvasRenderingContext2D,
+  currentPoint: Point,
+  options: CursorWithOptions,
+) {
+  const { radius, color, borderWidth, borderColor } = options.nativeCursor as NonNullable<Required<CursorWithOptions['nativeCursor']>>;
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.strokeStyle = borderColor;
+  ctx.lineWidth = borderWidth;
+  ctx.beginPath();
+  ctx.arc(currentPoint.x, currentPoint.y, radius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.closePath();
+  ctx.restore();
+}
 export {
   imageDrawer,
   innerCircleDrawer,
+  nativeCursorDrawer,
   outerCircleDrawer,
   tailDrawer,
 };

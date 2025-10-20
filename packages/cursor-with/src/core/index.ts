@@ -5,6 +5,7 @@ import { canvasCreator } from './creator';
 import {
   imageDrawer,
   innerCircleDrawer,
+  nativeCursorDrawer,
   outerCircleDrawer,
   tailDrawer,
 } from './draw';
@@ -91,6 +92,11 @@ class CreateCursorWith {
     }
   }
 
+  // 绘制原生cursor替代圆
+  private drawNativeCursor() {
+    nativeCursorDrawer(this.ctx, this.targetPoint, this.options);
+  }
+
   // 绘制拖尾
   private drawTail() {
     tailDrawer(this.ctx, this.currentPoint, this.targetPoint, this.options);
@@ -137,7 +143,8 @@ class CreateCursorWith {
   // 主循环
   private loop = (t: number) => {
     this.ctx.clearRect(0, 0, this.clientWidth, this.clientHeight);
-    const { tail } = this.options;
+    const { tail, nativeCursor } = this.options;
+    if (nativeCursor?.show) this.drawNativeCursor();
     const { x: tx, y: ty } = this.targetPoint;
     const { x: cx, y: cy } = this.currentPoint;
     if (tx !== cx || ty !== cy) {

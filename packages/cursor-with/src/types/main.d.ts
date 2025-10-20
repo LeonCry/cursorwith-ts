@@ -10,6 +10,15 @@ interface StyleOptions {
   shadowColor?: string
   shadowOffset?: [number, number]
 }
+
+interface NativeCursorOptions {
+  show: boolean
+  radius: number
+  color: string
+  borderWidth?: number
+  borderColor?: string
+}
+
 interface TimeFollow {
   type: 'time'
   timeRatio?: number
@@ -65,6 +74,8 @@ interface CursorWithOptions {
   tail?: Tail
   hoverEffect?: HoverEffect
   deform?: Deform
+  nativeCursor?: NativeCursorOptions
+
 }
 
 export { CursorWithOptions };
