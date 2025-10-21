@@ -72,13 +72,24 @@ function springLoop([currentPoint, targetPoint]: [Point, Point], stiffness: numb
  * 轨迹跟随模式
  */
 function trackLoop(trackPoints: TrackPoint[], currentPoint: Point, time: number, delay: number) {
-  let cur = { ...currentPoint };
+  const targetTime = time - delay;
+  const cur = { ...currentPoint };
   if (trackPoints.length === 0) return cur;
-  const { x, y, t } = trackPoints[0];
-  if (t <= time - delay) {
-    cur = { x, y };
+  while (trackPoints.length >= 2 && trackPoints[1].t <= targetTime) {
     trackPoints.shift();
   }
+  const p0 = trackPoints[0];
+  if (p0.t > targetTime) {
+    return cur;
+  }
+  if (trackPoints.length === 1) {
+    return { x: p0.x, y: p0.y };
+  }
+  const p1 = trackPoints[1];
+  const duration = Math.max(0, p1.t - p0.t);
+  const ratio = duration > 0 ? Math.min(1, Math.max(0, (targetTime - p0.t) / duration)) : 1;
+  cur.x = p0.x + (p1.x - p0.x) * ratio;
+  cur.y = p0.y + (p1.y - p0.y) * ratio;
   return cur;
 }
 

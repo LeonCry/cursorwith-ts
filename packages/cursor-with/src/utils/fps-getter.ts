@@ -2,9 +2,10 @@ let tig = false;
 let lt = 0;
 let f = 0;
 let fps = 0;
-function getFPS(t: number) {
+function getFPS() {
+  const t = performance.now();
   if (!tig) {
-    lt = performance.now();
+    lt = t;
     tig = true;
   }
   f++;

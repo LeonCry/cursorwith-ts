@@ -1,6 +1,6 @@
 import type { CursorWithOptions, Point, TargetBound, TrackPoint } from '../types';
 import { debounce, throttle } from 'radash';
-import { listenerUnWrapper, listenerWrapper, notNone } from '../utils';
+import { getFPS, listenerUnWrapper, listenerWrapper, notNone } from '../utils';
 import { clickEffectRestoreCollector, clickEffectTriggerCollector } from './click-effect';
 import { canvasCreator } from './creator';
 import {
@@ -13,9 +13,11 @@ import { circleToRect, getActiveTarget, rectToCircle } from './hover-effect';
 import { gapLoop, springLoop, timeLoop, trackLoop } from './loops';
 import { handleDealDefault, handleDealError } from './pre-check-fill';
 
+const BASE_FRAME_RATE = 60;
+const TRACK_DELAY = 0;
 class CreateCursorWith {
-  options: CursorWithOptions;
-  private TRACK_DELAY = 0;
+  private FPS: number;
+  private options: CursorWithOptions;
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private clientWidth: number;
@@ -24,6 +26,7 @@ class CreateCursorWith {
   private targetPoint: Point;
   private trackPoints: TrackPoint[];
   private loopId: number | null;
+  private subLoopId: number | null;
   private targetElement: HTMLElement | null;
   private oldTargetElement: HTMLElement | null;
   private targetStyle: TargetBound | null;
@@ -33,12 +36,14 @@ class CreateCursorWith {
   constructor(options: CursorWithOptions) {
     handleDealDefault(options);
     handleDealError(options);
+    this.FPS = 0;
     this.clientWidth = document.documentElement.clientWidth;
     this.clientHeight = document.documentElement.clientHeight;
     this.currentPoint = { x: this.clientWidth / 2, y: this.clientHeight / 2 };
     this.targetPoint = { x: this.clientWidth / 2, y: this.clientHeight / 2 };
     this.trackPoints = [];
     this.loopId = null;
+    this.subLoopId = null;
     this.targetElement = null;
     this.oldTargetElement = null;
     this.targetStyle = null;
@@ -67,7 +72,7 @@ class CreateCursorWith {
   // 初始化
   private init() {
     window.addEventListener('mousemove', listenerWrapper(throttle(
-      { interval: this.TRACK_DELAY },
+      { interval: TRACK_DELAY },
       (e: MouseEvent) => {
         const { clientX, clientY } = e;
         this.targetPoint = { x: clientX, y: clientY };
@@ -100,6 +105,7 @@ class CreateCursorWith {
       this.clickEffectTrigger = null;
     }, 'mouseup'));
     this.loopId = requestAnimationFrame(this.loop);
+    this.subLoopId = requestAnimationFrame(this.subLoop);
   }
 
   // 绘制cursor主要圆
@@ -146,14 +152,15 @@ class CreateCursorWith {
   // 计算cursor主要圆当前位置
   private computeCurrentPoint(t: number) {
     const { follow } = this.options as Required<CursorWithOptions>;
+    const r = (this.FPS / BASE_FRAME_RATE) || 1;
     const type = follow.type;
-    if (type === 'gap') return gapLoop([this.currentPoint, this.targetPoint], follow.distance!);
-    if (type === 'time') return timeLoop([this.currentPoint, this.targetPoint], follow.timeRatio!);
+    if (type === 'gap') return gapLoop([this.currentPoint, this.targetPoint], follow.distance! / r);
+    if (type === 'time') return timeLoop([this.currentPoint, this.targetPoint], follow.timeRatio! / r);
     if (type === 'track') return trackLoop(this.trackPoints, this.currentPoint, t, follow.delay!);
     if (type === 'spring') {
       return springLoop(
         [this.currentPoint, this.targetPoint],
-        follow.stiffness!,
+        follow.stiffness! / r,
         follow.damping!,
       );
     }
@@ -190,6 +197,18 @@ class CreateCursorWith {
     this.loopId = requestAnimationFrame(this.loop);
   };
 
+  // 副循环
+  private subLoop = () => {
+    this.FPS = getFPS();
+    this.subLoopId = requestAnimationFrame(this.subLoop);
+  };
+
+  private subLoopStop() {
+    if (!notNone(this.subLoopId)) return;
+    cancelAnimationFrame(this.subLoopId);
+    this.subLoopId = null;
+  }
+
   // 暂停绘制
   public pause() {
     if (!notNone(this.loopId)) return;
@@ -221,6 +240,7 @@ class CreateCursorWith {
   // 销毁实例
   public destroy() {
     this.pause();
+    this.subLoopStop();
     if (this.canvas) {
       window.removeEventListener('resize', listenerUnWrapper('resize'));
       window.removeEventListener('mousemove', listenerUnWrapper('mousemove'));
