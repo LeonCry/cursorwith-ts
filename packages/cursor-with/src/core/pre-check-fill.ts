@@ -9,7 +9,7 @@ function handleDealDefault(options: CursorWithOptions) {
     nativeCursor.borderWidth ??= 0;
     nativeCursor.borderColor ??= 'transparent';
   }
-  options.follow ??= { type: 'time', timeRatio: 0.01 };
+  options.follow ??= { type: 'time', timeRatio: 0.1 };
   switch (follow?.type) {
     case 'time':
       follow.timeRatio ??= 0.01;

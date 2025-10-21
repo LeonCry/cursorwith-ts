@@ -39,6 +39,8 @@ function innerCircleDrawer(
   const { style, deform } = options;
   const { radius, color, shadowBlur, shadowColor, shadowOffset } = style;
   const { borderWidth, borderColor } = style as Required<CursorWithOptions['style']>;
+  ctx.save();
+  ctx.fillStyle = color;
   if (shadowBlur && shadowColor) {
     ctx.shadowOffsetX = shadowOffset?.[0] || 0;
     ctx.shadowOffsetY = shadowOffset?.[1] || 0;
@@ -47,12 +49,10 @@ function innerCircleDrawer(
   }
   ctx.strokeStyle = borderColor;
   ctx.lineWidth = borderWidth;
-  ctx.save();
-  ctx.fillStyle = color;
   ctx.beginPath();
   arcOrEllipseDrawer(ctx, currentPoint, targetPoint, radius, deform);
-  ctx.fill();
   ctx.stroke();
+  ctx.fill();
   ctx.closePath();
   ctx.restore();
 }
@@ -74,8 +74,8 @@ function imageDrawer(
   const image = new Image();
   image.crossOrigin = 'anonymous';
   image.src = img;
-  ctx.beginPath();
   ctx.save();
+  ctx.beginPath();
   ctx.drawImage(image, x - radius, y - radius, radius * 2, radius * 2);
   ctx.restore();
   ctx.closePath();
@@ -145,11 +145,25 @@ function nativeCursorDrawer(
   currentPoint: Point,
   options: CursorWithOptions,
 ) {
-  const { radius, color, borderWidth, borderColor } = options.nativeCursor as NonNullable<Required<CursorWithOptions['nativeCursor']>>;
+  const {
+    radius,
+    color,
+    borderWidth,
+    borderColor,
+    shadowBlur,
+    shadowColor,
+    shadowOffset,
+  } = options.nativeCursor as NonNullable<Required<CursorWithOptions['nativeCursor']>>;
   ctx.save();
   ctx.fillStyle = color;
   ctx.strokeStyle = borderColor;
   ctx.lineWidth = borderWidth;
+  if (shadowBlur && shadowColor) {
+    ctx.shadowOffsetX = shadowOffset?.[0] || 0;
+    ctx.shadowOffsetY = shadowOffset?.[1] || 0;
+    ctx.shadowColor = shadowColor;
+    ctx.shadowBlur = shadowBlur;
+  }
   ctx.beginPath();
   ctx.arc(currentPoint.x, currentPoint.y, radius, 0, Math.PI * 2);
   ctx.fill();

@@ -1,9 +1,7 @@
 import type { EasingInput } from '../utils/easing';
 
-interface StyleOptions {
-  radius: number
+interface CommonStyle {
   color: string
-  img?: string
   borderWidth?: number
   borderColor?: string
   shadowBlur?: number
@@ -11,12 +9,14 @@ interface StyleOptions {
   shadowOffset?: [number, number]
 }
 
-interface NativeCursorOptions {
+interface StyleOptions extends CommonStyle {
+  radius: number
+  img?: string
+}
+
+interface NativeCursorOptions extends CommonStyle {
   show: boolean
   radius: number
-  color: string
-  borderWidth?: number
-  borderColor?: string
 }
 
 interface TimeFollow {
@@ -48,25 +48,21 @@ interface Tail {
 
 interface HoverEffect {
   active: boolean
-  scope: {
-    dataset: string[]
-    class?: string[]
-  }
   padding?: number
   offset?: number
   duration?: number
   easing?: EasingInput
+  scope: {
+    dataset: string[]
+    class?: string[]
+  }
   flash?: {
     active: boolean
     duration?: number
     easing?: EasingInput
   }
-  style?: {
-    borderWidth?: number
-    borderColor?: string
-    color?: string
-  }
-}
+  style: CommonStyle
+};
 
 interface Deform {
   active: boolean

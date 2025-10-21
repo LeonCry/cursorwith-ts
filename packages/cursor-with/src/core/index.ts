@@ -63,10 +63,7 @@ class CreateCursorWith {
 
   // 更新滤镜-反色
   private setCanvasMixBlendMode(inverse: boolean | undefined) {
-    if (this.ctx) this.ctx.globalCompositeOperation = inverse ? 'difference' : 'source-over';
-    const mode = this.canvas.style.getPropertyValue('mix-blend-mode');
-    if (mode === 'difference' && !inverse) return this.canvas.style.setProperty('mix-blend-mode', 'normal', 'important');
-    if (mode === 'normal' && inverse) return this.canvas.style.setProperty('mix-blend-mode', 'difference', 'important');
+    this.canvas.style.setProperty('mix-blend-mode', inverse ? 'difference' : 'normal', 'important');
   }
 
   // 初始化

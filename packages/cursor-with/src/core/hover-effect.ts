@@ -78,12 +78,14 @@ function circleToRect(
   targetElement: HTMLElement,
   currentPoint: Point,
 ) {
-  const { inverse } = options;
   const {
     borderWidth,
     borderColor,
     color,
     radius,
+    shadowBlur,
+    shadowColor,
+    shadowOffset,
   }
     = options.style as Required<CursorWithOptions['style']>;
   const {
@@ -97,20 +99,29 @@ function circleToRect(
     = options.hoverEffect! as NonNullable<Required<CursorWithOptions['hoverEffect']>>;
   const { left, top, width, height, borderRadius } = targetStyle;
   const { x: cx, y: cy } = currentPoint;
-  const bw = hs?.borderWidth || borderWidth;
   const from = {
     left: cx - radius,
     top: cy - radius,
     width: radius * 2,
     height: radius * 2,
-    borderWidth,
+    color,
+    borderColor: borderColor || 'transparent',
+    borderWidth: borderWidth || 0,
+    shadowBlur: shadowBlur || 0,
+    shadowColor: shadowColor || 'transparent',
+    shadowOffset: shadowOffset || [0, 0],
   };
   const to = {
     left: left - padding,
     top: top - padding,
     width: width + padding * 2,
     height: height + padding * 2,
-    borderWidth: bw,
+    color: hs?.color || 'transparent',
+    borderColor: hs?.borderColor || 'transparent',
+    borderWidth: hs?.borderWidth || 0,
+    shadowBlur: hs?.shadowBlur || 0,
+    shadowColor: hs?.shadowColor || 'transparent',
+    shadowOffset: hs?.shadowOffset || [0, 0],
   };
   const now = performance.now();
   if (rectStartTime == null) {
@@ -130,6 +141,12 @@ function circleToRect(
   const W = from.width + (to.width - from.width) * pe;
   const H = from.height + (to.height - from.height) * pe;
   const B = from.borderWidth + (to.borderWidth - from.borderWidth) * pe;
+  const SB = from.shadowBlur + (to.shadowBlur - from.shadowBlur) * pe;
+  const SO = [
+    (from.shadowOffset[0] + (to.shadowOffset[0] - from.shadowOffset[0]) * pe), (
+      from.shadowOffset[1] + (to.shadowOffset[1] - from.shadowOffset[1]) * pe
+    ),
+  ];
 
   // rect-鼠标跟随
   const centerX = to.left + to.width / 2;
@@ -172,9 +189,13 @@ function circleToRect(
   const dr = drFrom.map((v, i) => v + (borderRadiusList[i] - v) * pe);
   const alpha = getFlashAlpha(flash, now);
   ctx.save();
-  ctx.fillStyle = mixColorString(color, hs?.color || color, pe, alpha, !!inverse);
-  ctx.strokeStyle = mixColorString(borderColor, hs?.borderColor || borderColor, pe, alpha, !!inverse);
+  ctx.fillStyle = mixColorString(from.color, to.color, pe, alpha);
+  ctx.strokeStyle = mixColorString(from.borderColor, to.borderColor, pe, alpha);
   ctx.lineWidth = B;
+  ctx.shadowBlur = SB;
+  ctx.shadowColor = mixColorString(from.shadowColor, to.shadowColor, pe, alpha);
+  ctx.shadowOffsetX = SO[0];
+  ctx.shadowOffsetY = SO[1];
   ctx.beginPath();
   ctx.roundRect(L2, T2, W, H, dr);
   ctx.fill();
@@ -200,31 +221,42 @@ function rectToCircle(
   currentPoint: Point,
   onComplete: () => void,
 ) {
-  const { inverse } = options;
   const {
     borderWidth,
     borderColor,
     color,
     radius,
+    shadowBlur,
+    shadowColor,
+    shadowOffset,
   } = options.style as Required<CursorWithOptions['style']>;
   const { style: hs, padding, duration, easing, offset }
     = options.hoverEffect! as NonNullable<Required<CursorWithOptions['hoverEffect']>>;
   const { left, top, width, height, borderRadius } = targetStyle;
   const { x: cx, y: cy } = currentPoint;
-  const bw = hs?.borderWidth || borderWidth;
   const from = {
     left: left - padding,
     top: top - padding,
     width: width + padding * 2,
     height: height + padding * 2,
-    borderWidth: bw,
+    color: hs?.color || 'transparent',
+    borderColor: hs?.borderColor || 'transparent',
+    borderWidth: hs?.borderWidth || 0,
+    shadowBlur: hs?.shadowBlur || 0,
+    shadowColor: hs?.shadowColor || 'transparent',
+    shadowOffset: hs?.shadowOffset || [0, 0],
   };
   const to = {
     left: cx - radius,
     top: cy - radius,
     width: radius * 2,
     height: radius * 2,
-    borderWidth,
+    color,
+    borderColor: borderColor || 'transparent',
+    borderWidth: borderWidth || 0,
+    shadowBlur: shadowBlur || 0,
+    shadowColor: shadowColor || 'transparent',
+    shadowOffset: shadowOffset || [0, 0],
   };
 
   const now = performance.now();
@@ -244,6 +276,11 @@ function rectToCircle(
   const W = from.width + (to.width - from.width) * pe;
   const H = from.height + (to.height - from.height) * pe;
   const B = from.borderWidth + (to.borderWidth - from.borderWidth) * pe;
+  const SB = from.shadowBlur + (to.shadowBlur - from.shadowBlur) * pe;
+  const SO = [
+    from.shadowOffset[0] + (to.shadowOffset[0] - from.shadowOffset[0]) * pe,
+    from.shadowOffset[1] + (to.shadowOffset[1] - from.shadowOffset[1]) * pe,
+  ];
 
   const centerX = from.left + from.width / 2;
   const centerY = from.top + from.height / 2;
@@ -267,9 +304,13 @@ function rectToCircle(
   const dr = borderRadiusList.map(v => v + (radius * 2 - v) * pe);
   const alpha = 1;
   ctx.save();
-  ctx.fillStyle = mixColorString(hs?.color || color, color, pe, alpha, !!inverse);
-  ctx.strokeStyle = mixColorString(hs?.borderColor || borderColor, borderColor, pe, alpha, !!inverse);
+  ctx.fillStyle = mixColorString(from.color, to.color, pe, alpha);
+  ctx.strokeStyle = mixColorString(from.borderColor, to.borderColor, pe, alpha);
   ctx.lineWidth = B;
+  ctx.shadowBlur = SB;
+  ctx.shadowColor = mixColorString(from.shadowColor, to.shadowColor, pe, alpha);
+  ctx.shadowOffsetX = SO[0];
+  ctx.shadowOffsetY = SO[1];
   ctx.beginPath();
   ctx.roundRect(L, T, W, H, dr);
   ctx.fill();
