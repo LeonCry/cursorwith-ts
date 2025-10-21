@@ -101,6 +101,12 @@ class CreateCursorWith {
       this.clickEffectRestore = clickEffect ? clickEffectRestoreCollector(this.options) : null;
       this.clickEffectTrigger = null;
     }, 'mouseup'));
+    window.addEventListener('wheel', listenerWrapper((e) => {
+      const { hoverEffect } = this.options;
+      if (hoverEffect?.active) {
+        [this.targetElement, this.targetStyle] = getActiveTarget(e.target as HTMLElement, hoverEffect);
+      }
+    }, 'wheel'));
     this.loopId = requestAnimationFrame(this.loop);
     this.subLoopId = requestAnimationFrame(this.subLoop);
   }
@@ -246,6 +252,7 @@ class CreateCursorWith {
       window.removeEventListener('mousemove', listenerUnWrapper('mousemove'));
       window.removeEventListener('mousedown', listenerUnWrapper('mousedown'));
       window.removeEventListener('mouseup', listenerUnWrapper('mouseup'));
+      window.removeEventListener('wheel', listenerUnWrapper('wheel'));
     }
     if (this.canvas.parentNode) {
       this.canvas.parentNode.removeChild(this.canvas);

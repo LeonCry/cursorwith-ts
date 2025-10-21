@@ -75,7 +75,7 @@ window.addEventListener('keydown', (e) => {
 </script>
 
 <template>
-  <section class="w-full h-full p-2 cursor-none bg-white">
+  <section class="w-full h-full p-2 cursor-none bg-white overflow-auto">
     <ElButton @click="handlePause">
       暂停 (Space)
     </ElButton>
@@ -99,7 +99,7 @@ window.addEventListener('keydown', (e) => {
       </p>
     </button>
 
-    <button data-test class="absolute bottom-25 left-1/4 border p-4 z-10 text-rounded">
+    <button data-test class=" bottom-25 left-1/4 border p-4 z-10 text-rounded">
       外元素2
       <p class="px-4 border border-blue-100">
         内元素2
@@ -107,6 +107,7 @@ window.addEventListener('keydown', (e) => {
     </button>
 
     <TestTable class=" absolute top-1/2 -translate-y-1/2" />
+    <div class="h-[5000px] w-[5000px]" />
   </section>
 </template>
 
