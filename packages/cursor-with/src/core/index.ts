@@ -59,11 +59,6 @@ class CreateCursorWith {
     return canvasCreator(this.clientWidth, this.clientHeight);
   }
 
-  // 更新滤镜-反色
-  private setCanvasMixBlendMode(inverse: boolean | undefined) {
-    this.canvas.style.setProperty('mix-blend-mode', inverse ? 'difference' : 'normal', 'important');
-  }
-
   // 初始化
   private init() {
     window.addEventListener('mousemove', listenerWrapper((e: MouseEvent) => {
@@ -170,9 +165,8 @@ class CreateCursorWith {
 
   // 主循环
   private loop = (t: number) => {
-    const { tail, nativeCursor, inverse } = this.options;
+    const { tail, nativeCursor } = this.options;
     this.ctx.clearRect(0, 0, this.clientWidth, this.clientHeight);
-    this.setCanvasMixBlendMode(inverse);
     const { x: tx, y: ty } = this.targetPoint;
     const { x: cx, y: cy } = this.currentPoint;
     if (tx !== cx || ty !== cy) {
