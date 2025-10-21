@@ -1,6 +1,7 @@
 import type { CursorWithOptions, Point, TargetBound, TrackPoint } from '../types';
 import { debounce, throttle } from 'radash';
 import { listenerUnWrapper, listenerWrapper, notNone } from '../utils';
+import { clickEffectRestoreCollector, clickEffectTriggerCollector } from './click-effect';
 import { canvasCreator } from './creator';
 import {
   imageDrawer,
@@ -27,6 +28,8 @@ class CreateCursorWith {
   private oldTargetElement: HTMLElement | null;
   private targetStyle: TargetBound | null;
   private oldTargetStyle: TargetBound | null;
+  private clickEffectTrigger: (() => void) | null;
+  private clickEffectRestore: (() => void) | null;
   constructor(options: CursorWithOptions) {
     handleDealDefault(options);
     handleDealError(options);
@@ -40,6 +43,8 @@ class CreateCursorWith {
     this.oldTargetElement = null;
     this.targetStyle = null;
     this.oldTargetStyle = null;
+    this.clickEffectTrigger = null;
+    this.clickEffectRestore = null;
     this.options = options;
     this.canvas = this.create();
     this.ctx = this.canvas.getContext('2d')!;
@@ -84,6 +89,16 @@ class CreateCursorWith {
         this.canvas.height = this.clientHeight;
       },
     ), 'resize'));
+    window.addEventListener('mousedown', listenerWrapper(() => {
+      const { clickEffect } = this.options;
+      this.clickEffectTrigger = clickEffect ? clickEffectTriggerCollector(this.options) : null;
+      this.clickEffectRestore = null;
+    }, 'mousedown'));
+    window.addEventListener('mouseup', listenerWrapper(() => {
+      const { clickEffect } = this.options;
+      this.clickEffectRestore = clickEffect ? clickEffectRestoreCollector(this.options) : null;
+      this.clickEffectTrigger = null;
+    }, 'mouseup'));
     this.loopId = requestAnimationFrame(this.loop);
   }
 
@@ -150,7 +165,6 @@ class CreateCursorWith {
     const { tail, nativeCursor, inverse } = this.options;
     this.ctx.clearRect(0, 0, this.clientWidth, this.clientHeight);
     this.setCanvasMixBlendMode(inverse);
-    if (nativeCursor?.show) this.drawNativeCursor();
     const { x: tx, y: ty } = this.targetPoint;
     const { x: cx, y: cy } = this.currentPoint;
     if (tx !== cx || ty !== cy) {
@@ -170,6 +184,9 @@ class CreateCursorWith {
     if (tail?.show && !this.targetElement) {
       this.drawTail();
     }
+    if (nativeCursor?.show) this.drawNativeCursor();
+    if (this.clickEffectTrigger) this.clickEffectTrigger();
+    if (this.clickEffectRestore) this.clickEffectRestore();
     this.loopId = requestAnimationFrame(this.loop);
   };
 
@@ -204,9 +221,11 @@ class CreateCursorWith {
   // 销毁实例
   public destroy() {
     this.pause();
-    window.removeEventListener('resize', listenerUnWrapper('resize'));
     if (this.canvas) {
+      window.removeEventListener('resize', listenerUnWrapper('resize'));
       window.removeEventListener('mousemove', listenerUnWrapper('mousemove'));
+      window.removeEventListener('mousedown', listenerUnWrapper('mousedown'));
+      window.removeEventListener('mouseup', listenerUnWrapper('mouseup'));
     }
     if (this.canvas.parentNode) {
       this.canvas.parentNode.removeChild(this.canvas);

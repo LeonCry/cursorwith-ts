@@ -68,8 +68,6 @@ interface HoverEffect {
   }
 }
 
-interface ClickEffect {}
-
 interface Deform {
   active: boolean
   decay?: number
@@ -81,7 +79,7 @@ interface CursorWithOptions {
   tail?: Tail
   deform?: Deform
   hoverEffect?: HoverEffect
-  clickEffect?: ClickEffect
+  clickEffect?: boolean
   nativeCursor?: NativeCursorOptions
   inverse?: boolean
 }

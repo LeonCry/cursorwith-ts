@@ -5,7 +5,7 @@ const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
 onMounted(() => {
   cursorWith.value = new CreateCursorWith({
     style: {
-      radius: 10,
+      radius: 20,
       color: 'white',
       borderWidth: 2,
       borderColor: 'rgba(0,0,0,1)',
@@ -31,7 +31,8 @@ onMounted(() => {
         borderWidth: 1,
       },
     },
-    nativeCursor: { show: true, radius: 5, color: 'white' },
+    nativeCursor: { show: true, radius: 4, color: 'black' },
+    clickEffect: true,
   });
 });
 
