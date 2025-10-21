@@ -1,6 +1,5 @@
 import type { CursorWithOptions, Point, TargetBound, TrackPoint } from '../types';
-import { debounce, throttle } from 'radash';
-import { getFPS, listenerUnWrapper, listenerWrapper, notNone } from '../utils';
+import { debounce, getFPS, listenerUnWrapper, listenerWrapper, notNone } from '../utils';
 import { clickEffectRestoreCollector, clickEffectTriggerCollector } from './click-effect';
 import { canvasCreator } from './creator';
 import {
@@ -14,7 +13,6 @@ import { gapLoop, springLoop, timeLoop, trackLoop } from './loops';
 import { handleDealDefault, handleDealError } from './pre-check-fill';
 
 const BASE_FRAME_RATE = 60;
-const TRACK_DELAY = 0;
 class CreateCursorWith {
   private FPS: number;
   private options: CursorWithOptions;
@@ -68,20 +66,17 @@ class CreateCursorWith {
 
   // 初始化
   private init() {
-    window.addEventListener('mousemove', listenerWrapper(throttle(
-      { interval: TRACK_DELAY },
-      (e: MouseEvent) => {
-        const { clientX, clientY } = e;
-        this.targetPoint = { x: clientX, y: clientY };
-        const { hoverEffect, follow } = this.options;
-        if (hoverEffect?.active) {
-          [this.targetElement, this.targetStyle] = getActiveTarget(e.target as HTMLElement, hoverEffect);
-        }
-        if (follow?.type === 'track') {
-          this.trackPoints.push({ x: clientX, y: clientY, t: performance.now() });
-        }
-      },
-    ), 'mousemove'));
+    window.addEventListener('mousemove', listenerWrapper((e: MouseEvent) => {
+      const { clientX, clientY } = e;
+      this.targetPoint = { x: clientX, y: clientY };
+      const { hoverEffect, follow } = this.options;
+      if (hoverEffect?.active) {
+        [this.targetElement, this.targetStyle] = getActiveTarget(e.target as HTMLElement, hoverEffect);
+      }
+      if (follow?.type === 'track') {
+        this.trackPoints.push({ x: clientX, y: clientY, t: performance.now() });
+      }
+    }, 'mousemove'));
     window.addEventListener('resize', listenerWrapper(debounce(
       { delay: 300 },
       () => {

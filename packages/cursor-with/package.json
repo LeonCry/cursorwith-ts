@@ -41,9 +41,6 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "dependencies": {
-    "radash": "12.1.1"
-  },
   "devDependencies": {
     "tsup": "^8.5.0"
   }
