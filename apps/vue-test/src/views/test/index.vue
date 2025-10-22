@@ -50,7 +50,7 @@ onMounted(() => {
     // },
     // clickEffect: true,
   });
-  cursorWith.value.use(hoverEffect);
+  cursorWith.value.use(hoverEffect(cursorWith.value.getOptions()));
 });
 onBeforeUnmount(() => {
   cursorWith.value?.destroy();

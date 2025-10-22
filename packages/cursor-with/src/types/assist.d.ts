@@ -12,6 +12,8 @@ interface TargetBound {
   borderRadius: string
 }
 
-type AnyFn = (...args: any[]) => any;
+interface UseFn { name: symbol, execute: (this: InstanceMeta) => void }
 
-export { AnyFn, Point, TargetBound, TrackPoint };
+type AnyFn = (...args: any) => any;
+
+export { AnyFn, Point, TargetBound, TrackPoint, UseFn };
