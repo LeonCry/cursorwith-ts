@@ -1,16 +1,15 @@
 import type { CursorWithOptions } from '../types';
 import { notNone, throwError } from '.';
 
-function handleDealDefault(options: CursorWithOptions) {
-  const { follow, hoverEffect, style, nativeCursor } = options;
+function fillDefaultStyle(style: CursorWithOptions['style']) {
   style.borderWidth ??= 0;
+  style.shadowBlur ??= 0;
   style.borderColor ??= 'transparent';
-  if (nativeCursor) {
-    nativeCursor.borderWidth ??= 0;
-    nativeCursor.borderColor ??= 'transparent';
-  }
-  options.follow ??= { type: 'time', timeRatio: 0.1 };
-  switch (follow?.type) {
+  style.shadowColor ??= 'transparent';
+  style.shadowOffset ??= [0, 0];
+}
+function fillDefaultFollow(follow: Required<CursorWithOptions>['follow']) {
+  switch (follow.type) {
     case 'time':
       follow.timeRatio ??= 0.01;
       break;
@@ -25,41 +24,38 @@ function handleDealDefault(options: CursorWithOptions) {
       follow.damping ??= 0.25;
       break;
   }
-  options.deform ??= { active: false };
-  options.deform.decay ??= 6;
-  if (notNone(hoverEffect)) {
-    hoverEffect.duration ??= 1000;
-    hoverEffect.padding ??= 10;
-    hoverEffect.offset ??= 10;
-    hoverEffect.easing ??= 'bounce-out';
-    if (notNone(hoverEffect.flash)) {
-      hoverEffect.flash.duration ??= 1000;
-      hoverEffect.flash.easing ??= 'linear';
-    }
-  }
 }
 
-function handleDealError(options: CursorWithOptions) {
+function fillDefaultTail(tail: Required<CursorWithOptions>['tail']) {
+  tail.length ??= 10;
+  tail.color ??= 'rgba(255,255,255,0.2)';
+  tail.firstDockGap ??= 0;
+  tail.dockGap ??= 0;
+}
+function fillDefaultDeform(deform: Required<CursorWithOptions>['deform']) {
+  deform.decay ??= 6;
+}
+
+function fillDefaultHoverEffect(hoverEffect: Required<CursorWithOptions>['hoverEffect']) {
+  hoverEffect.padding ??= 10;
+  hoverEffect.offset ??= 10;
+  hoverEffect.duration ??= 1000;
+  hoverEffect.easing ??= 'bounce-out';
+  if (notNone(hoverEffect.flash)) {
+    hoverEffect.flash.active ??= false;
+    hoverEffect.flash.duration ??= 1000;
+    hoverEffect.flash.easing ??= 'linear';
+  }
+}
+function handleDealError() {
   if (!window) throwError('This library only works in browser environments.');
   if (!window?.requestAnimationFrame) throwError('RequestAnimationFrame is not supported in this environment.');
-  const { style, follow, deform, hoverEffect, nativeCursor } = options as Required<CursorWithOptions>;
-  const errorList: [() => boolean, string][] = [
-    [() => style.radius <= 0, 'Radius must be a positive number.'],
-    [() => notNone(nativeCursor?.radius) && nativeCursor.radius < 0, 'Radius must be a positive number.'],
-    [() => notNone(hoverEffect?.duration) && hoverEffect.duration < 0, 'Duration must be a positive number.'],
-    [() => notNone(hoverEffect?.padding) && hoverEffect.padding < 0, 'Padding must be a positive number.'],
-    [() => notNone(hoverEffect?.offset) && hoverEffect.offset < 0, 'Offset must be a positive number.'],
-    [() => notNone(hoverEffect?.flash?.duration) && hoverEffect.flash.duration < 0, 'Flash must be a positive number.'],
-    [() => typeof style.borderWidth === 'number' && style.borderWidth < 0, 'BorderWidth must be a positive number.'],
-    [() => follow.type === 'time' && notNone(follow.timeRatio) && follow.timeRatio <= 0, 'TimeRatio must be a positive number.'],
-    [() => follow.type === 'gap' && notNone(follow.distance) && follow.distance <= 0, 'Distance must be a positive number.'],
-    [() => follow.type === 'track' && notNone(follow.delay) && follow.delay < 0, 'Delay must be a positive number.'],
-    [() => follow.type === 'spring' && notNone(follow.stiffness) && follow.stiffness < 0, 'Stiffness must be a positive number.'],
-    [() => follow.type === 'spring' && notNone(follow.damping) && follow.damping < 0, 'Damping must be a positive number.'],
-    [() => notNone(deform?.decay) && deform.decay < 0, 'DeformStrength must be a positive number.'],
-  ];
-  errorList.forEach(([condition, msg]) => {
-    if (condition()) throwError(msg);
-  });
 }
-export { handleDealDefault, handleDealError };
+export {
+  fillDefaultDeform,
+  fillDefaultFollow,
+  fillDefaultHoverEffect,
+  fillDefaultStyle,
+  fillDefaultTail,
+  handleDealError,
+};

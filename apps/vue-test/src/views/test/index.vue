@@ -1,19 +1,17 @@
 <script setup lang="ts">
 import { CreateCursorWith } from 'cursorwith-ts/core';
-import { hoverEffect } from 'cursorwith-ts/use';
+import { follow } from 'cursorwith-ts/use';
 
 const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
 onMounted(() => {
   cursorWith.value = new CreateCursorWith({
-    style: {
-      radius: 20,
-      color: 'black',
-      borderWidth: 10,
-      borderColor: 'black',
-      shadowBlur: 20,
-      shadowColor: 'black',
-      shadowOffset: [0, 0],
-    },
+    radius: 20,
+    color: 'black',
+    borderWidth: 10,
+    borderColor: 'black',
+    shadowBlur: 20,
+    shadowColor: 'black',
+    shadowOffset: [0, 0],
     // inverse: false,
     // deform: { active: true, decay: 10 },
     // tail: { show: true, length: 10, color: 'rgba(255,255,255,0.2)' },
@@ -50,7 +48,7 @@ onMounted(() => {
     // },
     // clickEffect: true,
   });
-  cursorWith.value.use(hoverEffect(cursorWith.value.getOptions()));
+  cursorWith.value.use(follow({ type: 'time', timeRatio: 0.1 }));
 });
 onBeforeUnmount(() => {
   cursorWith.value?.destroy();

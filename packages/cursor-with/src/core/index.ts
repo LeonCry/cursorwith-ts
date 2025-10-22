@@ -6,8 +6,15 @@ import type {
   TrackPoint,
   UseFn,
 } from '../types';
-import { debounce, getFPS, listenerUnWrapper, listenerWrapper, notNone } from '../utils';
-import { handleDealDefault, handleDealError } from '../utils/pre-check-fill';
+import {
+  debounce,
+  getFPS,
+  listenerUnWrapper,
+  listenerWrapper,
+  notNone,
+  voidNothing,
+} from '../utils';
+import { fillDefaultStyle, handleDealError } from '../utils/pre-check-fill';
 import { clickEffectRestoreCollector, clickEffectTriggerCollector } from './click-effect-core';
 import { canvasCreator } from './creator';
 import {
@@ -17,7 +24,6 @@ import {
   tailDrawer,
 } from './draw';
 import { circleToRect, getActiveTarget, rectToCircle } from './hover-effect-core';
-import { gapLoop, springLoop, timeLoop, trackLoop } from './loops';
 
 export interface Meta {
   FPS: number
@@ -37,56 +43,44 @@ export interface Meta {
   oldTargetStyle: TargetBound | null
   clickEffectTrigger: (() => void) | null
   clickEffectRestore: (() => void) | null
+  computeCurrentPoint: ((t: number) => Point) | null
   useFns: Map<symbol | string, AnyFn>
   onMouseMoveFns: Map<symbol | string, AnyFn>
 }
 export type InstanceMeta = {
   [K in keyof CreateCursorWith]: CreateCursorWith[K]
 } & Meta;
-const BASE_FRAME_RATE = 60;
 class CreateCursorWith {
-  private FPS: Meta['FPS'];
+  private FPS: Meta['FPS'] = 0;
+  private clientWidth: Meta['clientWidth'] = document.documentElement.clientWidth;
+  private clientHeight: Meta['clientHeight'] = document.documentElement.clientHeight;
+  private currentPoint: Meta['currentPoint'] = { x: this.clientWidth / 2, y: this.clientHeight / 2 };
+  private targetPoint: Meta['targetPoint'] = { x: this.clientWidth / 2, y: this.clientHeight / 2 };
+  private trackPoints: Meta['trackPoints'] = [];
+  private loopId: Meta['loopId'] = null;
+  private subLoopId: Meta['subLoopId'] = null;
+  private targetElement: Meta['targetElement'] = null;
+  private oldTargetElement: Meta['oldTargetElement'] = null;
+  private targetStyle: Meta['targetStyle'] = null;
+  private oldTargetStyle: Meta['oldTargetStyle'] = null;
+  private clickEffectTrigger: Meta['clickEffectTrigger'] = null;
+  private clickEffectRestore: Meta['clickEffectRestore'] = null;
+  // 计算主要圆当前点位置
+  private computeCurrentPoint: Meta['computeCurrentPoint'] = null;
+  private useFns: Meta['useFns'] = new Map();
+  private onMouseMoveFns: Meta['onMouseMoveFns'] = new Map();
   private options: Meta['options'];
   private canvas: Meta['canvas'];
   private ctx: Meta['ctx'];
-  private clientWidth: Meta['clientWidth'];
-  private clientHeight: Meta['clientHeight'];
-  private currentPoint: Meta['currentPoint'];
-  private targetPoint: Meta['targetPoint'];
-  private trackPoints: Meta['trackPoints'];
-  private loopId: Meta['loopId'];
-  private subLoopId: Meta['subLoopId'];
-  private targetElement: Meta['targetElement'];
-  private oldTargetElement: Meta['oldTargetElement'];
-  private targetStyle: Meta['targetStyle'];
-  private oldTargetStyle: Meta['oldTargetStyle'];
-  private clickEffectTrigger: Meta['clickEffectTrigger'];
-  private clickEffectRestore: Meta['clickEffectRestore'];
-  private useFns: Meta['useFns'];
-  private onMouseMoveFns: Meta['onMouseMoveFns'];
-  constructor(options: CursorWithOptions) {
-    handleDealDefault(options);
-    handleDealError(options);
-    this.FPS = 0;
-    this.clientWidth = document.documentElement.clientWidth;
-    this.clientHeight = document.documentElement.clientHeight;
-    this.currentPoint = { x: this.clientWidth / 2, y: this.clientHeight / 2 };
-    this.targetPoint = { x: this.clientWidth / 2, y: this.clientHeight / 2 };
-    this.trackPoints = [];
-    this.loopId = null;
-    this.subLoopId = null;
-    this.targetElement = null;
-    this.oldTargetElement = null;
-    this.targetStyle = null;
-    this.oldTargetStyle = null;
-    this.clickEffectTrigger = null;
-    this.clickEffectRestore = null;
-    this.options = options;
+  constructor(styleOptions: CursorWithOptions['style']) {
+    handleDealError();
+    this.options = { style: styleOptions };
+    fillDefaultStyle(this.options.style);
     this.canvas = this.create();
     this.ctx = this.canvas.getContext('2d')!;
-    this.useFns = new Map();
-    this.onMouseMoveFns = new Map();
     this.init();
+    // 跨文件变量
+    voidNothing(this.FPS, this.trackPoints);
   }
 
   // 使用插件
@@ -95,18 +89,22 @@ class CreateCursorWith {
       fn.forEach((f) => {
         const { name, execute } = f;
         this.useFns.set(name, execute);
-        execute.call(this);
+        execute.call(this, true);
       });
     }
     else {
       const { name, execute } = fn;
       this.useFns.set(name, execute);
-      execute.call(this);
+      execute.call(this, true);
     }
   }
 
   // 卸载插件
   public unUse(fn: UseFn) {
+    const execute = this.useFns.get(fn.name);
+    if (execute) {
+      execute.call(this, false);
+    }
     this.useFns.delete(fn.name);
   }
 
@@ -212,24 +210,6 @@ class CreateCursorWith {
     );
   }
 
-  // 计算cursor主要圆当前位置
-  private computeCurrentPoint(t: number) {
-    const { follow } = this.options as Required<CursorWithOptions>;
-    const r = (this.FPS / BASE_FRAME_RATE) || 1;
-    const type = follow.type;
-    if (type === 'gap') return gapLoop([this.currentPoint, this.targetPoint], follow.distance! / r);
-    if (type === 'time') return timeLoop([this.currentPoint, this.targetPoint], follow.timeRatio! / r);
-    if (type === 'track') return trackLoop(this.trackPoints, this.currentPoint, t, follow.delay!);
-    if (type === 'spring') {
-      return springLoop(
-        [this.currentPoint, this.targetPoint],
-        follow.stiffness! / r,
-        follow.damping!,
-      );
-    }
-    return this.currentPoint;
-  }
-
   // 主循环
   private loop = (t: number) => {
     const { tail, nativeCursor } = this.options;
@@ -237,7 +217,7 @@ class CreateCursorWith {
     const { x: tx, y: ty } = this.targetPoint;
     const { x: cx, y: cy } = this.currentPoint;
     if (tx !== cx || ty !== cy) {
-      this.currentPoint = this.computeCurrentPoint(t);
+      this.currentPoint = this.computeCurrentPoint?.(t) || this.currentPoint;
     }
     if (this.targetElement && this.targetStyle) {
       this.oldTargetElement = this.targetElement;
@@ -250,7 +230,7 @@ class CreateCursorWith {
     else {
       this.drawCircle();
     }
-    if (tail?.show && !this.targetElement) {
+    if (tail?.active && !this.targetElement) {
       this.drawTail();
     }
     if (nativeCursor?.show) this.drawNativeCursor();

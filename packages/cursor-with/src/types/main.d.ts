@@ -36,10 +36,10 @@ interface SpringFollow {
   stiffness?: number
   damping?: number
 }
-type Follow = TimeFollow | GapFollow | TrackFollow | SpringFollow;
+type Follow = { active?: boolean } & (TimeFollow | GapFollow | TrackFollow | SpringFollow);
 
 interface Tail {
-  show: boolean
+  active?: boolean
   length: number
   color: string
   firstDockGap?: number
@@ -47,7 +47,7 @@ interface Tail {
 }
 
 interface HoverEffect {
-  active: boolean
+  active?: boolean
   padding?: number
   offset?: number
   duration?: number
@@ -65,9 +65,10 @@ interface HoverEffect {
 };
 
 interface Deform {
-  active: boolean
+  active?: boolean
   decay?: number
 }
+interface Inverse { active: boolean }
 
 interface CursorWithOptions {
   style: StyleOptions
@@ -77,7 +78,7 @@ interface CursorWithOptions {
   hoverEffect?: HoverEffect
   clickEffect?: boolean
   nativeCursor?: NativeCursorOptions
-  inverse?: boolean
+  inverse?: Inverse
 }
 
 export { CursorWithOptions };

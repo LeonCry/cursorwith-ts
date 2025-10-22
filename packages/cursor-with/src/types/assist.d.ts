@@ -12,7 +12,7 @@ interface TargetBound {
   borderRadius: string
 }
 
-interface UseFn { name: symbol, execute: (this: InstanceMeta) => void }
+interface UseFn { name: symbol, execute: (this: InstanceMeta, active: boolean) => void }
 
 type AnyFn = (...args: any) => any;
 
