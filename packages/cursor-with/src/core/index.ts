@@ -1,6 +1,7 @@
-import type { CursorWithOptions, Point, TargetBound, TrackPoint } from '../types';
+import type { AnyFn, CursorWithOptions, Point, TargetBound, TrackPoint } from '../types';
 import { debounce, getFPS, listenerUnWrapper, listenerWrapper, notNone } from '../utils';
-import { clickEffectRestoreCollector, clickEffectTriggerCollector } from './click-effect';
+import { handleDealDefault, handleDealError } from '../utils/pre-check-fill';
+import { clickEffectRestoreCollector, clickEffectTriggerCollector } from './click-effect-core';
 import { canvasCreator } from './creator';
 import {
   imageDrawer,
@@ -8,29 +9,54 @@ import {
   nativeCursorDrawer,
   tailDrawer,
 } from './draw';
-import { circleToRect, getActiveTarget, rectToCircle } from './hover-effect';
+import { circleToRect, getActiveTarget, rectToCircle } from './hover-effect-core';
 import { gapLoop, springLoop, timeLoop, trackLoop } from './loops';
-import { handleDealDefault, handleDealError } from './pre-check-fill';
 
+export interface Meta {
+  FPS: number
+  options: CursorWithOptions
+  canvas: HTMLCanvasElement
+  ctx: CanvasRenderingContext2D
+  clientWidth: number
+  clientHeight: number
+  currentPoint: Point
+  targetPoint: Point
+  trackPoints: TrackPoint[]
+  loopId: number | null
+  subLoopId: number | null
+  targetElement: HTMLElement | null
+  targetStyle: TargetBound | null
+  oldTargetElement: HTMLElement | null
+  oldTargetStyle: TargetBound | null
+  clickEffectTrigger: (() => void) | null
+  clickEffectRestore: (() => void) | null
+  useFns: Map<string, AnyFn>
+  onMouseMoveFns: Map<string, AnyFn>
+}
+export type InstanceMeta = {
+  [K in keyof CreateCursorWith]: CreateCursorWith[K]
+} & Meta;
 const BASE_FRAME_RATE = 60;
 class CreateCursorWith {
-  private FPS: number;
-  private options: CursorWithOptions;
-  private canvas: HTMLCanvasElement;
-  private ctx: CanvasRenderingContext2D;
-  private clientWidth: number;
-  private clientHeight: number;
-  private currentPoint: Point;
-  private targetPoint: Point;
-  private trackPoints: TrackPoint[];
-  private loopId: number | null;
-  private subLoopId: number | null;
-  private targetElement: HTMLElement | null;
-  private oldTargetElement: HTMLElement | null;
-  private targetStyle: TargetBound | null;
-  private oldTargetStyle: TargetBound | null;
-  private clickEffectTrigger: (() => void) | null;
-  private clickEffectRestore: (() => void) | null;
+  private FPS: Meta['FPS'];
+  private options: Meta['options'];
+  private canvas: Meta['canvas'];
+  private ctx: Meta['ctx'];
+  private clientWidth: Meta['clientWidth'];
+  private clientHeight: Meta['clientHeight'];
+  private currentPoint: Meta['currentPoint'];
+  private targetPoint: Meta['targetPoint'];
+  private trackPoints: Meta['trackPoints'];
+  private loopId: Meta['loopId'];
+  private subLoopId: Meta['subLoopId'];
+  private targetElement: Meta['targetElement'];
+  private oldTargetElement: Meta['oldTargetElement'];
+  private targetStyle: Meta['targetStyle'];
+  private oldTargetStyle: Meta['oldTargetStyle'];
+  private clickEffectTrigger: Meta['clickEffectTrigger'];
+  private clickEffectRestore: Meta['clickEffectRestore'];
+  private useFns: Meta['useFns'];
+  private onMouseMoveFns: Meta['onMouseMoveFns'];
   constructor(options: CursorWithOptions) {
     handleDealDefault(options);
     handleDealError(options);
@@ -51,7 +77,38 @@ class CreateCursorWith {
     this.options = options;
     this.canvas = this.create();
     this.ctx = this.canvas.getContext('2d')!;
+    this.useFns = new Map();
+    this.onMouseMoveFns = new Map();
     this.init();
+  }
+
+  // 使用插件
+  public use(fn: AnyFn | AnyFn[]) {
+    if (Array.isArray(fn)) {
+      fn.forEach((f) => {
+        this.useFns.set(f.name, f);
+        f.call(this);
+      });
+    }
+    else {
+      this.useFns.set(fn.name, fn);
+      fn.call(this);
+    }
+  }
+
+  // 卸载插件
+  public unUse(fn: AnyFn) {
+    this.useFns.delete(fn.name);
+  }
+
+  // 注册鼠标移动事件
+  public onMouseMove(fn: AnyFn) {
+    this.onMouseMoveFns.set(fn.name, fn);
+  }
+
+  // 卸载鼠标移动事件
+  public unOnMouseMove(fn: AnyFn) {
+    this.onMouseMoveFns.delete(fn.name);
   }
 
   // 创建canvas
@@ -64,23 +121,15 @@ class CreateCursorWith {
     window.addEventListener('mousemove', listenerWrapper((e: MouseEvent) => {
       const { clientX, clientY } = e;
       this.targetPoint = { x: clientX, y: clientY };
-      const { hoverEffect, follow } = this.options;
-      if (hoverEffect?.active) {
-        [this.targetElement, this.targetStyle] = getActiveTarget(e.target as HTMLElement, hoverEffect);
-      }
-      if (follow?.type === 'track') {
-        this.trackPoints.push({ x: clientX, y: clientY, t: performance.now() });
-      }
+      this.onMouseMoveFns.forEach(fn => fn(e));
+      // const { hoverEffect, follow } = this.options;
+      // if (hoverEffect?.active) {
+      //   [this.targetElement, this.targetStyle] = getActiveTarget(e.target as HTMLElement, hoverEffect);
+      // }
+      // if (follow?.type === 'track') {
+      //   this.trackPoints.push({ x: clientX, y: clientY, t: performance.now() });
+      // }
     }, 'mousemove'));
-    window.addEventListener('resize', listenerWrapper(debounce(
-      { delay: 300 },
-      () => {
-        this.clientWidth = document.documentElement.clientWidth;
-        this.clientHeight = document.documentElement.clientHeight;
-        this.canvas.width = this.clientWidth;
-        this.canvas.height = this.clientHeight;
-      },
-    ), 'resize'));
     window.addEventListener('mousedown', listenerWrapper(() => {
       const { clickEffect } = this.options;
       this.clickEffectTrigger = clickEffect ? clickEffectTriggerCollector(this.options) : null;
@@ -97,6 +146,15 @@ class CreateCursorWith {
         [this.targetElement, this.targetStyle] = getActiveTarget(e.target as HTMLElement, hoverEffect);
       }
     }, 'wheel'));
+    window.addEventListener('resize', listenerWrapper(debounce(
+      { delay: 300 },
+      () => {
+        this.clientWidth = document.documentElement.clientWidth;
+        this.clientHeight = document.documentElement.clientHeight;
+        this.canvas.width = this.clientWidth;
+        this.canvas.height = this.clientHeight;
+      },
+    ), 'resize'));
     this.loopId = requestAnimationFrame(this.loop);
     this.subLoopId = requestAnimationFrame(this.subLoop);
   }
@@ -204,6 +262,11 @@ class CreateCursorWith {
     this.subLoopId = null;
   }
 
+  // 获取当前canvas元素
+  public getCanvas() {
+    return this.canvas;
+  }
+
   // 暂停绘制
   public pause() {
     if (!notNone(this.loopId)) return;
@@ -217,19 +280,24 @@ class CreateCursorWith {
     this.loopId = requestAnimationFrame(this.loop);
   }
 
+  // 设置选项
+  public setOptions(options: CursorWithOptions) {
+    this.options = { ...this.options, ...options };
+  }
+
+  // 获取当前选项
+  public getOptions() {
+    return this.options;
+  }
+
   // 获取当前cursor主要圆位置
   public getCurrentPoint() {
     return this.currentPoint;
   }
 
-  // 设置样式
-  public setStyle(style: CursorWithOptions['style']) {
-    this.options.style = { ...this.options.style, ...style };
-  }
-
-  // 设置跟随模式
-  public setFollow(follow: CursorWithOptions['follow']) {
-    this.options.follow = { ...this.options.follow!, ...follow };
+  // 获取当前鼠标位置
+  public getTargetPoint() {
+    return this.targetPoint;
   }
 
   // 销毁实例

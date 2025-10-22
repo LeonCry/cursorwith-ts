@@ -1,5 +1,5 @@
 import type { CursorWithOptions } from '../types';
-import { notNone, throwError } from '../utils';
+import { notNone, throwError } from '.';
 
 function handleDealDefault(options: CursorWithOptions) {
   const { follow, hoverEffect, style, nativeCursor } = options;

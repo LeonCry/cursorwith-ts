@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { CreateCursorWith } from 'cursorwith-ts/core';
+import { hoverEffect } from 'cursorwith-ts/use';
 
 const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
 onMounted(() => {
@@ -13,42 +14,47 @@ onMounted(() => {
       shadowColor: 'black',
       shadowOffset: [0, 0],
     },
-    inverse: false,
-    deform: { active: true, decay: 10 },
-    tail: { show: true, length: 10, color: 'rgba(255,255,255,0.2)' },
-    follow: { type: 'time', timeRatio: 0.1 },
-    hoverEffect: {
-      active: true,
-      flash: {
-        active: false,
-        duration: 1000,
-        easing: 'linear',
-      },
-      scope: { dataset: ['test'] },
-      padding: 5,
-      duration: 1000,
-      easing: 'bounce-out',
-      style: {
-        color: 'rgba(0,0,0,0.2)',
-        borderColor: 'rgba(0,0,0,1)',
-        shadowBlur: 40,
-        shadowColor: 'black',
-        shadowOffset: [0, 0],
-        borderWidth: 5,
-      },
-    },
-    nativeCursor: {
-      show: true,
-      radius: 5,
-      color: 'red',
-      borderWidth: 2,
-      borderColor: 'yellow',
-      shadowBlur: 20,
-      shadowColor: 'yellow',
-      shadowOffset: [0, 0],
-    },
-    clickEffect: true,
+    // inverse: false,
+    // deform: { active: true, decay: 10 },
+    // tail: { show: true, length: 10, color: 'rgba(255,255,255,0.2)' },
+    // follow: { type: 'time', timeRatio: 0.1 },
+    // hoverEffect: {
+    //   active: true,
+    //   flash: {
+    //     active: false,
+    //     duration: 1000,
+    //     easing: 'linear',
+    //   },
+    //   scope: { dataset: ['test'] },
+    //   padding: 5,
+    //   duration: 1000,
+    //   easing: 'bounce-out',
+    //   style: {
+    //     color: 'rgba(0,0,0,0.2)',
+    //     borderColor: 'rgba(0,0,0,1)',
+    //     shadowBlur: 40,
+    //     shadowColor: 'black',
+    //     shadowOffset: [0, 0],
+    //     borderWidth: 5,
+    //   },
+    // },
+    // nativeCursor: {
+    //   show: true,
+    //   radius: 5,
+    //   color: 'red',
+    //   borderWidth: 2,
+    //   borderColor: 'yellow',
+    //   shadowBlur: 20,
+    //   shadowColor: 'yellow',
+    //   shadowOffset: [0, 0],
+    // },
+    // clickEffect: true,
   });
+  cursorWith.value.use(hoverEffect);
+});
+onBeforeUnmount(() => {
+  cursorWith.value?.destroy();
+  cursorWith.value = null;
 });
 
 function handlePause() {
@@ -56,12 +62,6 @@ function handlePause() {
 }
 function handleResume() {
   cursorWith.value?.resume();
-}
-function handleStyleChange() {
-  cursorWith.value?.setStyle({ color: 'rgba(255,0,0,0.2)', borderColor: 'rgba(255,0,0,1)', radius: 20 });
-}
-function handleFollowChange() {
-  cursorWith.value?.setFollow({ type: 'gap', distance: 10 });
 }
 function handleDestroy() {
   cursorWith.value?.destroy();
@@ -75,18 +75,12 @@ window.addEventListener('keydown', (e) => {
 </script>
 
 <template>
-  <section class="w-full h-full p-2 cursor-none bg-white overflow-auto">
+  <section class="w-full h-full p-2 bg-white overflow-auto">
     <ElButton @click="handlePause">
       暂停 (Space)
     </ElButton>
     <ElButton @click="handleResume">
       恢复 (Enter)
-    </ElButton>
-    <ElButton @click="handleStyleChange">
-      更改style
-    </ElButton>
-    <ElButton @click="handleFollowChange">
-      更改follow
     </ElButton>
     <ElButton type="danger" @click="handleDestroy">
       销毁

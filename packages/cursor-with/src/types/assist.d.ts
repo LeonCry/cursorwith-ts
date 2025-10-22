@@ -11,4 +11,7 @@ interface TargetBound {
   height: number
   borderRadius: string
 }
-export { Point, TargetBound, TrackPoint };
+
+type AnyFn = (...args: any[]) => any;
+
+export { AnyFn, Point, TargetBound, TrackPoint };
