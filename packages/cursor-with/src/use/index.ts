@@ -7,3 +7,6 @@ export const USEABLE_USE_FN_NAMES_SYMBOLS = {
   inverse: Symbol('inverse'),
   follow: Symbol('follow'),
 };
+export function isNameLegal(name: symbol) {
+  return Object.values(USEABLE_USE_FN_NAMES_SYMBOLS).includes(name);
+}

@@ -3,13 +3,16 @@ import type { CursorWithOptions } from '../types';
 import { getActiveTarget } from '../core/hover-effect-core';
 import { USEABLE_USE_FN_NAMES_SYMBOLS } from './index';
 // 使用hoverEffect
-export function hoverEffect(config: CursorWithOptions) {
-  function execute(this: InstanceMeta) {
-    const { hoverEffect } = this.options;
+export function hoverEffect(config: CursorWithOptions['hoverEffect']) {
+  function execute(this: InstanceMeta, active: boolean) {
+    if (!active) {
+      this.options.hoverEffect = undefined;
+      this.offMouseMove({ name: USEABLE_USE_FN_NAMES_SYMBOLS.hoverEffect });
+      return;
+    }
+    this.options.hoverEffect = config;
     this.onMouseMove((e: MouseEvent) => {
-      if (hoverEffect?.active) {
-        [this.targetElement, this.targetStyle] = getActiveTarget(e.target as HTMLElement, hoverEffect);
-      }
+      [this.targetElement, this.targetStyle] = getActiveTarget(e.target as HTMLElement, this.options.hoverEffect);
     });
   }
   return {

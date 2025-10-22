@@ -2,16 +2,19 @@ import type {
   AnyFn,
   CursorWithOptions,
   Point,
+  StopUseFn,
   TargetBound,
   TrackPoint,
   UseFn,
 } from '../types';
+import { isNameLegal } from '../use';
 import {
   debounce,
   getFPS,
   listenerUnWrapper,
   listenerWrapper,
   notNone,
+  throwError,
   voidNothing,
 } from '../utils';
 import { fillDefaultStyle, handleDealError } from '../utils/pre-check-fill';
@@ -88,24 +91,27 @@ class CreateCursorWith {
     if (Array.isArray(fn)) {
       fn.forEach((f) => {
         const { name, execute } = f;
+        if (!isNameLegal(name)) throwError(`The use function name ${String(name)} is not legal.`);
         this.useFns.set(name, execute);
         execute.call(this, true);
       });
     }
     else {
       const { name, execute } = fn;
+      if (!isNameLegal(name)) throwError(`The use function name ${String(name)} is not legal.`);
       this.useFns.set(name, execute);
       execute.call(this, true);
     }
   }
 
   // 卸载插件
-  public unUse(fn: UseFn) {
-    const execute = this.useFns.get(fn.name);
+  public stopUse(fn: StopUseFn) {
+    const { name, execute } = fn();
+    if (!isNameLegal(name)) throwError(`The use function name ${String(name)} is not legal.`);
     if (execute) {
       execute.call(this, false);
     }
-    this.useFns.delete(fn.name);
+    this.useFns.delete(name);
   }
 
   // 注册鼠标移动事件
@@ -114,7 +120,7 @@ class CreateCursorWith {
   }
 
   // 卸载鼠标移动事件
-  public unOnMouseMove(fn: AnyFn) {
+  public offMouseMove(fn: AnyFn | { name: symbol }) {
     this.onMouseMoveFns.delete(fn.name);
   }
 
@@ -149,9 +155,7 @@ class CreateCursorWith {
     }, 'mouseup'));
     window.addEventListener('wheel', listenerWrapper((e) => {
       const { hoverEffect } = this.options;
-      if (hoverEffect?.active) {
-        [this.targetElement, this.targetStyle] = getActiveTarget(e.target as HTMLElement, hoverEffect);
-      }
+      [this.targetElement, this.targetStyle] = getActiveTarget(e.target as HTMLElement, hoverEffect);
     }, 'wheel'));
     window.addEventListener('resize', listenerWrapper(debounce(
       { delay: 300 },
@@ -230,10 +234,10 @@ class CreateCursorWith {
     else {
       this.drawCircle();
     }
-    if (tail?.active && !this.targetElement) {
+    if (tail && !this.targetElement) {
       this.drawTail();
     }
-    if (nativeCursor?.show) this.drawNativeCursor();
+    if (nativeCursor) this.drawNativeCursor();
     if (this.clickEffectTrigger) this.clickEffectTrigger();
     if (this.clickEffectRestore) this.clickEffectRestore();
     this.loopId = requestAnimationFrame(this.loop);

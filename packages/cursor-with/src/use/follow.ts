@@ -7,6 +7,12 @@ import { USEABLE_USE_FN_NAMES_SYMBOLS } from './index';
 const BASE_FRAME_RATE = 60;
 export function follow(config: CursorWithOptions['follow']) {
   function execute(this: InstanceMeta, active: boolean) {
+    if (!active) {
+      this.options.follow = undefined;
+      this.offMouseMove({ name: USEABLE_USE_FN_NAMES_SYMBOLS.follow });
+      this.computeCurrentPoint = null;
+      return;
+    }
     this.options.follow = config;
     fillDefaultFollow(this.options.follow!);
     this.onMouseMove((e: MouseEvent) => {

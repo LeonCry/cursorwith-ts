@@ -14,10 +14,7 @@ interface StyleOptions extends CommonStyle {
   img?: string
 }
 
-interface NativeCursorOptions extends CommonStyle {
-  show: boolean
-  radius: number
-}
+interface NativeCursorOptions extends CommonStyle { radius: number }
 
 interface TimeFollow {
   type: 'time'
@@ -36,10 +33,9 @@ interface SpringFollow {
   stiffness?: number
   damping?: number
 }
-type Follow = { active?: boolean } & (TimeFollow | GapFollow | TrackFollow | SpringFollow);
+type Follow = TimeFollow | GapFollow | TrackFollow | SpringFollow;
 
 interface Tail {
-  active?: boolean
   length: number
   color: string
   firstDockGap?: number
@@ -47,7 +43,6 @@ interface Tail {
 }
 
 interface HoverEffect {
-  active?: boolean
   padding?: number
   offset?: number
   duration?: number
@@ -64,11 +59,7 @@ interface HoverEffect {
   style: CommonStyle
 };
 
-interface Deform {
-  active?: boolean
-  decay?: number
-}
-interface Inverse { active: boolean }
+interface Deform { decay?: number }
 
 interface CursorWithOptions {
   style: StyleOptions
@@ -78,7 +69,7 @@ interface CursorWithOptions {
   hoverEffect?: HoverEffect
   clickEffect?: boolean
   nativeCursor?: NativeCursorOptions
-  inverse?: Inverse
+  inverse?: boolean
 }
 
 export { CursorWithOptions };

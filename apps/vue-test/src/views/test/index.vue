@@ -49,6 +49,9 @@ onMounted(() => {
     // clickEffect: true,
   });
   cursorWith.value.use(follow({ type: 'time', timeRatio: 0.1 }));
+  setTimeout(() => {
+    cursorWith.value?.stopUse(follow);
+  }, 3000);
 });
 onBeforeUnmount(() => {
   cursorWith.value?.destroy();
