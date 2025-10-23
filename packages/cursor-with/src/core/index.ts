@@ -26,7 +26,6 @@ import {
   nativeCursorDrawer,
   tailDrawer,
 } from './draw';
-import { circleToRect, getActiveTarget, rectToCircle } from './hover-effect-core';
 
 export interface Meta {
   FPS: number
@@ -40,6 +39,7 @@ export interface Meta {
   trackPoints: TrackPoint[]
   loopId: number | null
   subLoopId: number | null
+  isDrawCircle: boolean
   targetElement: HTMLElement | null
   targetStyle: TargetBound | null
   oldTargetElement: HTMLElement | null
@@ -49,6 +49,11 @@ export interface Meta {
   computeCurrentPoint: ((t: number) => Point) | null
   useFns: Map<symbol | string, AnyFn>
   onMouseMoveFns: Map<symbol | string, AnyFn>
+  onMouseDownFns: Map<symbol | string, AnyFn>
+  onMouseUpFns: Map<symbol | string, AnyFn>
+  onMouseWheelFns: Map<symbol | string, AnyFn>
+  onLoopBeforeDrawFns: Map<symbol | string, AnyFn>
+  onLoopAfterDrawFns: Map<symbol | string, AnyFn>
 }
 export type InstanceMeta = {
   [K in keyof CreateCursorWith]: CreateCursorWith[K]
@@ -62,16 +67,21 @@ class CreateCursorWith {
   private trackPoints: Meta['trackPoints'] = [];
   private loopId: Meta['loopId'] = null;
   private subLoopId: Meta['subLoopId'] = null;
+  private isDrawCircle: boolean = true;
   private targetElement: Meta['targetElement'] = null;
   private oldTargetElement: Meta['oldTargetElement'] = null;
   private targetStyle: Meta['targetStyle'] = null;
   private oldTargetStyle: Meta['oldTargetStyle'] = null;
   private clickEffectTrigger: Meta['clickEffectTrigger'] = null;
   private clickEffectRestore: Meta['clickEffectRestore'] = null;
-  // 计算主要圆当前点位置
   private computeCurrentPoint: Meta['computeCurrentPoint'] = null;
   private useFns: Meta['useFns'] = new Map();
   private onMouseMoveFns: Meta['onMouseMoveFns'] = new Map();
+  private onMouseDownFns: Meta['onMouseDownFns'] = new Map();
+  private onMouseUpFns: Meta['onMouseUpFns'] = new Map();
+  private onMouseWheelFns: Meta['onMouseWheelFns'] = new Map();
+  private onLoopBeforeDrawFns: Meta['onLoopBeforeDrawFns'] = new Map();
+  private onLoopAfterDrawFns: Meta['onLoopAfterDrawFns'] = new Map();
   private options: Meta['options'];
   private canvas: Meta['canvas'];
   private ctx: Meta['ctx'];
@@ -83,7 +93,7 @@ class CreateCursorWith {
     this.ctx = this.canvas.getContext('2d')!;
     this.init();
     // 跨文件变量
-    voidNothing(this.FPS, this.trackPoints);
+    voidNothing(this.FPS, this.trackPoints, this.oldTargetElement, this.oldTargetStyle, this.targetStyle);
   }
 
   // 使用插件
@@ -124,6 +134,52 @@ class CreateCursorWith {
     this.onMouseMoveFns.delete(fn.name);
   }
 
+  // 注册鼠标按下事件
+  public onMouseDown(fn: AnyFn) {
+    this.onMouseDownFns.set(fn.name, fn);
+  }
+
+  // 卸载鼠标按下事件
+  public offMouseDown(fn: AnyFn | { name: symbol }) {
+    this.onMouseDownFns.delete(fn.name);
+  }
+
+  // 注册鼠标抬起事件
+  public onMouseUp(fn: AnyFn) {
+    this.onMouseUpFns.set(fn.name, fn);
+  }
+
+  // 卸载鼠标抬起事件
+  public offMouseUp(fn: AnyFn | { name: symbol }) {
+    this.onMouseUpFns.delete(fn.name);
+  }
+
+  // 注册鼠标滚轮事件
+  public onMouseWheel(fn: AnyFn) {
+    this.onMouseWheelFns.set(fn.name, fn);
+  }
+
+  // 卸载鼠标滚轮事件
+  public offMouseWheel(fn: AnyFn | { name: symbol }) {
+    this.onMouseWheelFns.delete(fn.name);
+  }
+
+  // 注册loop事件(在绘制cursor主要圆之前调用)
+  public onLoopBeforeDraw(fn: AnyFn) {
+    this.onLoopBeforeDrawFns.set(fn.name, fn);
+  }
+
+  // 注册loop事件(在绘制cursor主要圆之后调用)
+  public onLoopAfterDraw(fn: AnyFn) {
+    this.onLoopAfterDrawFns.set(fn.name, fn);
+  }
+
+  // 卸载loop事件
+  public offLoop(fn: AnyFn | { name: symbol }) {
+    this.onLoopBeforeDrawFns.delete(fn.name);
+    this.onLoopAfterDrawFns.delete(fn.name);
+  }
+
   // 创建canvas
   private create() {
     return canvasCreator(this.clientWidth, this.clientHeight);
@@ -131,17 +187,10 @@ class CreateCursorWith {
 
   // 初始化
   private init() {
-    window.addEventListener('mousemove', listenerWrapper((e: MouseEvent) => {
+    window.addEventListener('mousemove', listenerWrapper((e) => {
       const { clientX, clientY } = e;
       this.targetPoint = { x: clientX, y: clientY };
       this.onMouseMoveFns.forEach(fn => fn(e));
-      // const { hoverEffect, follow } = this.options;
-      // if (hoverEffect?.active) {
-      //   [this.targetElement, this.targetStyle] = getActiveTarget(e.target as HTMLElement, hoverEffect);
-      // }
-      // if (follow?.type === 'track') {
-      //   this.trackPoints.push({ x: clientX, y: clientY, t: performance.now() });
-      // }
     }, 'mousemove'));
     window.addEventListener('mousedown', listenerWrapper(() => {
       const { clickEffect } = this.options;
@@ -154,8 +203,7 @@ class CreateCursorWith {
       this.clickEffectTrigger = null;
     }, 'mouseup'));
     window.addEventListener('wheel', listenerWrapper((e) => {
-      const { hoverEffect } = this.options;
-      [this.targetElement, this.targetStyle] = getActiveTarget(e.target as HTMLElement, hoverEffect);
+      this.onMouseWheelFns.forEach(fn => fn(e));
     }, 'wheel'));
     window.addEventListener('resize', listenerWrapper(debounce(
       { delay: 300 },
@@ -172,6 +220,7 @@ class CreateCursorWith {
 
   // 绘制cursor主要圆
   private drawCircle() {
+    if (!this.isDrawCircle) return;
     const { img } = this.options.style;
     innerCircleDrawer(this.ctx, this.currentPoint, this.targetPoint, this.options);
     if (img) {
@@ -189,31 +238,6 @@ class CreateCursorWith {
     tailDrawer(this.ctx, this.currentPoint, this.targetPoint, this.options);
   }
 
-  // 绘制circle到rect
-  private drawCircleToRect() {
-    circleToRect(
-      this.ctx,
-      this.options,
-      this.targetStyle!,
-      this.targetElement!,
-      this.currentPoint,
-    );
-  }
-
-  private drawRectToCircle() {
-    rectToCircle(
-      this.ctx,
-      this.options,
-      this.oldTargetStyle!,
-      this.oldTargetElement!,
-      this.currentPoint,
-      () => {
-        this.oldTargetElement = null;
-        this.drawCircle();
-      },
-    );
-  }
-
   // 主循环
   private loop = (t: number) => {
     const { tail, nativeCursor } = this.options;
@@ -223,17 +247,9 @@ class CreateCursorWith {
     if (tx !== cx || ty !== cy) {
       this.currentPoint = this.computeCurrentPoint?.(t) || this.currentPoint;
     }
-    if (this.targetElement && this.targetStyle) {
-      this.oldTargetElement = this.targetElement;
-      this.oldTargetStyle = this.targetStyle;
-      this.drawCircleToRect();
-    }
-    else if (!this.targetElement && this.oldTargetElement) {
-      this.drawRectToCircle();
-    }
-    else {
-      this.drawCircle();
-    }
+    this.onLoopBeforeDrawFns.forEach(fn => fn());
+    this.drawCircle();
+    this.onLoopAfterDrawFns.forEach(fn => fn());
     if (tail && !this.targetElement) {
       this.drawTail();
     }

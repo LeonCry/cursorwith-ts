@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { CreateCursorWith } from 'cursorwith-ts/core';
-import { follow } from 'cursorwith-ts/use';
+import { follow, hoverEffect } from 'cursorwith-ts/use';
 
 const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
 onMounted(() => {
@@ -49,9 +49,26 @@ onMounted(() => {
     // clickEffect: true,
   });
   cursorWith.value.use(follow({ type: 'time', timeRatio: 0.1 }));
-  setTimeout(() => {
-    cursorWith.value?.stopUse(follow);
-  }, 3000);
+  cursorWith.value.use(hoverEffect({
+    flash: {
+      active: false,
+      duration: 1000,
+      easing: 'linear',
+    },
+    scope: { dataset: ['test'] },
+    offset: 10,
+    padding: 5,
+    duration: 1000,
+    easing: 'bounce-out',
+    style: {
+      color: 'black',
+      borderColor: 'black',
+      shadowBlur: 40,
+      shadowColor: 'black',
+      shadowOffset: [0, 0],
+      borderWidth: 5,
+    },
+  }));
 });
 onBeforeUnmount(() => {
   cursorWith.value?.destroy();
