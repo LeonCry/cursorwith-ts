@@ -86,7 +86,6 @@ interface Meta {
   loopId: number | null
   isDrawCircle: boolean
   isOnHoverTarget: boolean
-  computeCurrentPoint: ((t: number) => Point) | null
   useFns: Map<keyof any, AnyFn>
   eventListeners: Map<EventNames, Map<keyof any, ListenerFn>>
   eventResult: Map<EventNames, ReturnType<ListenerFn>[]>

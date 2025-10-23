@@ -30,7 +30,6 @@ class CreateCursorWith {
   private loopId: InstanceMeta['loopId'] = null;
   private isDrawCircle: InstanceMeta['isDrawCircle'] = true;
   private isOnHoverTarget: InstanceMeta['isOnHoverTarget'] = false;
-  private computeCurrentPoint: InstanceMeta['computeCurrentPoint'] = null;
   private useFns: InstanceMeta['useFns'] = new Map();
   private eventListeners: InstanceMeta['eventListeners'] = new Map();
   private eventResult: InstanceMeta['eventResult'] = new Map();
@@ -93,7 +92,7 @@ class CreateCursorWith {
   }
 
   // 执行事件并收集结果
-  private doEvent(eventName: EventNames, e?: Event) {
+  private doEvent(eventName: EventNames, e?: any) {
     this.eventResult.set(eventName, [...this.eventListeners.get(eventName) || []]?.map(([_, fn]) => fn(e)));
   }
 
@@ -143,14 +142,9 @@ class CreateCursorWith {
   // 主循环
   private loop = (t: number) => {
     this.ctx.clearRect(0, 0, this.clientWidth, this.clientHeight);
-    const { x: tx, y: ty } = this.targetPoint;
-    const { x: cx, y: cy } = this.currentPoint;
-    if ((tx !== cx || ty !== cy) && this.computeCurrentPoint) {
-      this.currentPoint = this.computeCurrentPoint(t) || this.currentPoint;
-    }
-    this.doEvent('loopBeforeDraw');
+    this.doEvent('loopBeforeDraw', t);
     this.drawCircle();
-    this.doEvent('loopAfterDraw');
+    this.doEvent('loopAfterDraw', t);
     this.loopId = requestAnimationFrame(this.loop);
   };
 

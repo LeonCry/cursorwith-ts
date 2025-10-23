@@ -1,4 +1,4 @@
-import type { CursorWithOptions, InstanceMeta, TrackPoint } from '../types';
+import type { CursorWithOptions, InstanceMeta, Point, TrackPoint } from '../types';
 import { gapLoop, springLoop, timeLoop, trackLoop } from '../core/loops';
 import { fillDefaultFollow, getFPS, notNone } from '../utils';
 import { USEABLE_USE_FN_NAMES_SYMBOLS } from './index';
@@ -18,13 +18,29 @@ function subLoopStop() {
   cancelAnimationFrame(subLoopId);
   subLoopId = null;
 }
+function computeCurrentPoint(follow: Required<CursorWithOptions>['follow'], currentPoint: Point, targetPoint: Point, t: number) {
+  const r = (fps / BASE_FRAME_RATE) || 1;
+  const type = follow.type;
+  if (type === 'gap') return gapLoop([currentPoint, targetPoint], follow.distance! / r);
+  if (type === 'time') return timeLoop([currentPoint, targetPoint], follow.timeRatio! / r);
+  if (type === 'track') return trackLoop(trackPoints, currentPoint, t, follow.delay!);
+  if (type === 'spring') {
+    return springLoop(
+      [currentPoint, targetPoint],
+      follow.stiffness! / r,
+      follow.damping!,
+    );
+  }
+  return currentPoint;
+};
+
 export function follow(config: CursorWithOptions['follow']) {
   const uniqueId = USEABLE_USE_FN_NAMES_SYMBOLS.follow;
   function execute(this: InstanceMeta, active: boolean) {
     if (!active) {
       this.options.follow = undefined;
       this.off('mousemove', null, uniqueId);
-      this.computeCurrentPoint = null;
+      this.off('loopBeforeDraw', null, uniqueId);
       subLoopStop();
       return;
     }
@@ -36,22 +52,13 @@ export function follow(config: CursorWithOptions['follow']) {
         trackPoints.push({ x: e.clientX, y: e.clientY, t: performance.now() });
       }
     }, uniqueId);
-    this.computeCurrentPoint = (t: number) => {
-      const { follow } = this.options as Required<CursorWithOptions>;
-      const r = (fps / BASE_FRAME_RATE) || 1;
-      const type = follow.type;
-      if (type === 'gap') return gapLoop([this.currentPoint, this.targetPoint], follow.distance! / r);
-      if (type === 'time') return timeLoop([this.currentPoint, this.targetPoint], follow.timeRatio! / r);
-      if (type === 'track') return trackLoop(trackPoints, this.currentPoint, t, follow.delay!);
-      if (type === 'spring') {
-        return springLoop(
-          [this.currentPoint, this.targetPoint],
-          follow.stiffness! / r,
-          follow.damping!,
-        );
+    this.on('loopBeforeDraw', (t: number) => {
+      const { x: tx, y: ty } = this.targetPoint;
+      const { x: cx, y: cy } = this.currentPoint;
+      if (tx !== cx || ty !== cy) {
+        this.currentPoint = computeCurrentPoint(this.options.follow!, this.currentPoint, this.targetPoint, t);
       }
-      return this.currentPoint;
-    };
+    }, uniqueId);
   }
   return {
     name: uniqueId,
