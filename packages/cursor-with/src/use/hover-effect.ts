@@ -9,24 +9,23 @@ let oldTargetElement: HTMLElement | null = null;
 let oldTargetStyle: TargetBound | null = null;
 // 使用hoverEffect
 export function hoverEffect(config: CursorWithOptions['hoverEffect']) {
+  const uniqueId = USEABLE_USE_FN_NAMES_SYMBOLS.hoverEffect;
   function execute(this: InstanceMeta, active: boolean) {
     if (!active) {
       this.options.hoverEffect = undefined;
       this.isDrawCircle = true;
-      this.off('mousemove', { name: USEABLE_USE_FN_NAMES_SYMBOLS.hoverEffect });
-      this.off('mousewheel', { name: USEABLE_USE_FN_NAMES_SYMBOLS.hoverEffect });
+      this.off('mousemove', null, uniqueId);
+      this.off('mousewheel', null, uniqueId);
       return;
     }
     this.options.hoverEffect = config;
     fillDefaultHoverEffect(this.options.hoverEffect!);
     this.on('mousemove', (e: MouseEvent) => {
       [targetElement, targetStyle] = getActiveTarget(e.target as HTMLElement, this.options.hoverEffect);
-      return { id: USEABLE_USE_FN_NAMES_SYMBOLS.hoverEffect, result: targetElement };
-    });
+    }, uniqueId);
     this.on('mousewheel', (e: MouseEvent) => {
       [targetElement, targetStyle] = getActiveTarget(e.target as HTMLElement, this.options.hoverEffect);
-      return { id: USEABLE_USE_FN_NAMES_SYMBOLS.hoverEffect, result: targetElement };
-    });
+    }, uniqueId);
     this.on('loopBeforeDraw', () => {
       this.isDrawCircle = false;
       if (targetElement && targetStyle) {
@@ -56,10 +55,10 @@ export function hoverEffect(config: CursorWithOptions['hoverEffect']) {
       else {
         this.isDrawCircle = true;
       }
-    });
+    }, uniqueId);
   }
   return {
-    name: USEABLE_USE_FN_NAMES_SYMBOLS.hoverEffect,
+    name: uniqueId,
     execute,
   };
 }

@@ -16,12 +16,10 @@ import {
   notNone,
   throwError,
 } from '../utils';
-import { clickEffectRestoreCollector, clickEffectTriggerCollector } from './click-effect-core';
 import { canvasCreator } from './creator';
 import {
   imageDrawer,
   innerCircleDrawer,
-  nativeCursorDrawer,
 } from './draw';
 
 class CreateCursorWith {
@@ -32,8 +30,6 @@ class CreateCursorWith {
   private loopId: InstanceMeta['loopId'] = null;
   private isDrawCircle: InstanceMeta['isDrawCircle'] = true;
   private isOnHoverTarget: InstanceMeta['isOnHoverTarget'] = false;
-  private clickEffectTrigger: InstanceMeta['clickEffectTrigger'] = null;
-  private clickEffectRestore: InstanceMeta['clickEffectRestore'] = null;
   private computeCurrentPoint: InstanceMeta['computeCurrentPoint'] = null;
   private useFns: InstanceMeta['useFns'] = new Map();
   private eventListeners: InstanceMeta['eventListeners'] = new Map();
@@ -56,7 +52,7 @@ class CreateCursorWith {
       const { name, execute } = f;
       if (!isNameLegal(name)) throwError(`The use function name ${String(name)} is not legal.`);
       this.useFns.set(name, execute);
-      execute.call(this, true);
+      execute.call(this as InstanceMeta, true);
     };
     const fns = Array.isArray(fn) ? fn : [fn];
     fns.forEach(handle);
@@ -68,7 +64,7 @@ class CreateCursorWith {
       const { name, execute } = f();
       if (!isNameLegal(name)) throwError(`The use function name ${String(name)} is not legal.`);
       if (execute) {
-        execute.call(this, false);
+        execute.call(this as InstanceMeta, false);
       }
       this.useFns.delete(name);
     };
@@ -77,23 +73,28 @@ class CreateCursorWith {
   }
 
   // 事件注册
-  public on(eventName: EventNames, fn: ListenerFn) {
-    if (!this.eventListeners.has(eventName)) {
+  public on(eventName: EventNames, fn: ListenerFn, uniqueId?: keyof any) {
+    if (!this.eventListeners.get(eventName)) {
       this.eventListeners.set(eventName, new Map());
     }
-    this.eventListeners.get(eventName)!.set(fn.name, fn);
+    this.eventListeners.get(eventName)!.set(uniqueId || fn.name, fn);
   }
 
   // 事件注销
-  public off(eventName: EventNames, fn: ListenerFn | { name: symbol }) {
+  public off(eventName: EventNames, fn: ListenerFn | null, uniqueId?: keyof any) {
     if (this.eventListeners.has(eventName)) {
-      this.eventListeners.get(eventName)!.delete(fn.name);
+      this.eventListeners.get(eventName)!.delete(uniqueId || fn?.name || '');
     }
   }
 
   // 获取事件结果
   public getEventResult(eventName: EventNames, id: keyof any) {
     return (this.eventResult.get(eventName) || []).find(item => item?.id === id);
+  }
+
+  // 执行事件并收集结果
+  private doEvent(eventName: EventNames, e?: Event) {
+    this.eventResult.set(eventName, [...this.eventListeners.get(eventName) || []]?.map(([_, fn]) => fn(e)));
   }
 
   // 创建canvas
@@ -106,22 +107,16 @@ class CreateCursorWith {
     window.addEventListener('mousemove', listenerWrapper((e) => {
       const { clientX, clientY } = e;
       this.targetPoint = { x: clientX, y: clientY };
-      this.eventResult.set('mousemove', [...this.eventListeners.get('mousemove') || []]?.map(([_, fn]) => fn(e)));
+      this.doEvent('mousemove', e);
     }, 'mousemove'));
     window.addEventListener('mousedown', listenerWrapper((e) => {
-      const { clickEffect } = this.options;
-      this.clickEffectTrigger = clickEffect ? clickEffectTriggerCollector(this.options) : null;
-      this.clickEffectRestore = null;
-      this.eventResult.set('mousedown', [...this.eventListeners.get('mousedown') || []]?.map(([_, fn]) => fn(e)));
+      this.doEvent('mousedown', e);
     }, 'mousedown'));
     window.addEventListener('mouseup', listenerWrapper((e) => {
-      const { clickEffect } = this.options;
-      this.clickEffectRestore = clickEffect ? clickEffectRestoreCollector(this.options) : null;
-      this.clickEffectTrigger = null;
-      this.eventResult.set('mouseup', [...this.eventListeners.get('mouseup') || []]?.map(([_, fn]) => fn(e)));
+      this.doEvent('mouseup', e);
     }, 'mouseup'));
     window.addEventListener('wheel', listenerWrapper((e) => {
-      this.eventResult.set('mousewheel', [...this.eventListeners.get('mousewheel') || []]?.map(([_, fn]) => fn(e)));
+      this.doEvent('mousewheel', e);
     }, 'wheel'));
     window.addEventListener('resize', listenerWrapper(debounce(
       { delay: 300 },
@@ -145,26 +140,17 @@ class CreateCursorWith {
     }
   }
 
-  // 绘制原生cursor替代圆
-  private drawNativeCursor() {
-    nativeCursorDrawer(this.ctx, this.targetPoint, this.options);
-  }
-
   // 主循环
   private loop = (t: number) => {
-    const { nativeCursor } = this.options;
     this.ctx.clearRect(0, 0, this.clientWidth, this.clientHeight);
     const { x: tx, y: ty } = this.targetPoint;
     const { x: cx, y: cy } = this.currentPoint;
-    if (tx !== cx || ty !== cy) {
-      this.currentPoint = this.computeCurrentPoint?.(t) || this.currentPoint;
+    if ((tx !== cx || ty !== cy) && this.computeCurrentPoint) {
+      this.currentPoint = this.computeCurrentPoint(t) || this.currentPoint;
     }
-    this.eventResult.set('loopBeforeDraw', [...this.eventListeners.get('loopBeforeDraw') || []]?.map(([_, fn]) => fn()));
+    this.doEvent('loopBeforeDraw');
     this.drawCircle();
-    this.eventResult.set('loopAfterDraw', [...this.eventListeners.get('loopAfterDraw') || []]?.map(([_, fn]) => fn()));
-    if (nativeCursor) this.drawNativeCursor();
-    if (this.clickEffectTrigger) this.clickEffectTrigger();
-    if (this.clickEffectRestore) this.clickEffectRestore();
+    this.doEvent('loopAfterDraw');
     this.loopId = requestAnimationFrame(this.loop);
   };
 

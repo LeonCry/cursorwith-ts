@@ -1,4 +1,4 @@
-import type { InstanceMeta } from './core';
+import type { InstanceMeta } from './index';
 
 type Execute = (this: InstanceMeta, active: boolean) => void;
 interface UseFn { name: symbol, execute: Execute }

@@ -18,12 +18,12 @@ function subLoopStop() {
   cancelAnimationFrame(subLoopId);
   subLoopId = null;
 }
-
 export function follow(config: CursorWithOptions['follow']) {
+  const uniqueId = USEABLE_USE_FN_NAMES_SYMBOLS.follow;
   function execute(this: InstanceMeta, active: boolean) {
     if (!active) {
       this.options.follow = undefined;
-      this.off('mousemove', { name: USEABLE_USE_FN_NAMES_SYMBOLS.follow });
+      this.off('mousemove', null, uniqueId);
       this.computeCurrentPoint = null;
       subLoopStop();
       return;
@@ -35,7 +35,7 @@ export function follow(config: CursorWithOptions['follow']) {
       if (this.options.follow?.type === 'track') {
         trackPoints.push({ x: e.clientX, y: e.clientY, t: performance.now() });
       }
-    });
+    }, uniqueId);
     this.computeCurrentPoint = (t: number) => {
       const { follow } = this.options as Required<CursorWithOptions>;
       const r = (fps / BASE_FRAME_RATE) || 1;
@@ -54,7 +54,7 @@ export function follow(config: CursorWithOptions['follow']) {
     };
   }
   return {
-    name: USEABLE_USE_FN_NAMES_SYMBOLS.follow,
+    name: uniqueId,
     execute,
   };
 }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { CreateCursorWith } from 'cursorwith-ts/core';
-import { follow, hoverEffect, tail } from 'cursorwith-ts/use';
+import { clickEffect, follow, hoverEffect, nativeCursor, tail } from 'cursorwith-ts/use';
 
 const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
 onMounted(() => {
@@ -69,7 +69,17 @@ onMounted(() => {
       borderWidth: 5,
     },
   }));
+  cursorWith.value.use(clickEffect());
   cursorWith.value.use(tail({ length: 10, color: 'rgba(0,0,0,0.2)' }));
+  cursorWith.value.use(nativeCursor({
+    radius: 5,
+    color: 'red',
+    borderWidth: 2,
+    borderColor: 'yellow',
+    shadowBlur: 20,
+    shadowColor: 'yellow',
+    shadowOffset: [0, 0],
+  }));
 });
 onBeforeUnmount(() => {
   cursorWith.value?.destroy();

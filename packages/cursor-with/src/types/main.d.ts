@@ -86,11 +86,9 @@ interface Meta {
   loopId: number | null
   isDrawCircle: boolean
   isOnHoverTarget: boolean
-  clickEffectTrigger: (() => void) | null
-  clickEffectRestore: (() => void) | null
   computeCurrentPoint: ((t: number) => Point) | null
-  useFns: Map<symbol | string, AnyFn>
-  eventListeners: Map<EventNames, Map<symbol | string, ListenerFn>>
+  useFns: Map<keyof any, AnyFn>
+  eventListeners: Map<EventNames, Map<keyof any, ListenerFn>>
   eventResult: Map<EventNames, ReturnType<ListenerFn>[]>
 }
 type InstanceMeta = {

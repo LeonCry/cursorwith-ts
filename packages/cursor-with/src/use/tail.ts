@@ -4,10 +4,11 @@ import { fillDefaultTail } from '../utils';
 import { USEABLE_USE_FN_NAMES_SYMBOLS } from './index';
 // 使用tail
 export function tail(config: CursorWithOptions['tail']) {
+  const uniqueId = USEABLE_USE_FN_NAMES_SYMBOLS.tail;
   function execute(this: InstanceMeta, active: boolean) {
     if (!active) {
       this.options.tail = undefined;
-      this.off('loopAfterDraw', { name: USEABLE_USE_FN_NAMES_SYMBOLS.tail });
+      this.off('loopAfterDraw', null, uniqueId);
       return;
     }
     this.options.tail = config;
@@ -16,10 +17,10 @@ export function tail(config: CursorWithOptions['tail']) {
       if (!this.isOnHoverTarget) {
         tailDrawer(this.ctx, this.currentPoint, this.targetPoint, this.options);
       }
-    });
+    }, uniqueId);
   }
   return {
-    name: USEABLE_USE_FN_NAMES_SYMBOLS.tail,
+    name: uniqueId,
     execute,
   };
 }

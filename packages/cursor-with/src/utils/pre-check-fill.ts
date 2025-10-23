@@ -35,6 +35,13 @@ function fillDefaultTail(tail: Required<CursorWithOptions>['tail']) {
 function fillDefaultDeform(deform: Required<CursorWithOptions>['deform']) {
   deform.decay ??= 6;
 }
+function fillDefaultNativeCursor(nativeCursor: Required<CursorWithOptions>['nativeCursor']) {
+  nativeCursor.borderWidth ??= 0;
+  nativeCursor.shadowBlur ??= 0;
+  nativeCursor.borderColor ??= 'transparent';
+  nativeCursor.shadowColor ??= 'transparent';
+  nativeCursor.shadowOffset ??= [0, 0];
+}
 
 function fillDefaultHoverEffect(hoverEffect: Required<CursorWithOptions>['hoverEffect']) {
   hoverEffect.padding ??= 10;
@@ -55,6 +62,7 @@ export {
   fillDefaultDeform,
   fillDefaultFollow,
   fillDefaultHoverEffect,
+  fillDefaultNativeCursor,
   fillDefaultStyle,
   fillDefaultTail,
   handleDealError,
