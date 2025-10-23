@@ -1,48 +1,53 @@
 import type { InstanceMeta } from '../core/index';
-import type { CursorWithOptions } from '../types';
+import type { CursorWithOptions, TargetBound } from '../types';
 import { circleToRect, getActiveTarget, rectToCircle } from '../core/hover-effect-core';
 import { fillDefaultHoverEffect } from '../utils/pre-check-fill';
 import { USEABLE_USE_FN_NAMES_SYMBOLS } from './index';
+
+let targetElement: HTMLElement | null = null;
+let targetStyle: TargetBound | null = null;
+let oldTargetElement: HTMLElement | null = null;
+let oldTargetStyle: TargetBound | null = null;
 // 使用hoverEffect
 export function hoverEffect(config: CursorWithOptions['hoverEffect']) {
   function execute(this: InstanceMeta, active: boolean) {
     if (!active) {
       this.options.hoverEffect = undefined;
       this.isDrawCircle = true;
-      this.offMouseMove({ name: USEABLE_USE_FN_NAMES_SYMBOLS.hoverEffect });
-      this.offMouseWheel({ name: USEABLE_USE_FN_NAMES_SYMBOLS.hoverEffect });
+      this.off('mousemove', { name: USEABLE_USE_FN_NAMES_SYMBOLS.hoverEffect });
+      this.off('mousewheel', { name: USEABLE_USE_FN_NAMES_SYMBOLS.hoverEffect });
       return;
     }
     this.options.hoverEffect = config;
     fillDefaultHoverEffect(this.options.hoverEffect!);
-    this.onMouseMove((e: MouseEvent) => {
-      [this.targetElement, this.targetStyle] = getActiveTarget(e.target as HTMLElement, this.options.hoverEffect);
+    this.on('mousemove', (e: MouseEvent) => {
+      [targetElement, targetStyle] = getActiveTarget(e.target as HTMLElement, this.options.hoverEffect);
     });
-    this.onMouseWheel((e: MouseEvent) => {
-      [this.targetElement, this.targetStyle] = getActiveTarget(e.target as HTMLElement, this.options.hoverEffect);
+    this.on('mousewheel', (e: MouseEvent) => {
+      [targetElement, targetStyle] = getActiveTarget(e.target as HTMLElement, this.options.hoverEffect);
     });
-    this.onLoopBeforeDraw(() => {
+    this.on('loopBeforeDraw', () => {
       this.isDrawCircle = false;
-      if (this.targetElement && this.targetStyle) {
-        this.oldTargetElement = this.targetElement;
-        this.oldTargetStyle = this.targetStyle;
+      if (targetElement && targetStyle) {
+        oldTargetElement = targetElement;
+        oldTargetStyle = targetStyle;
         circleToRect(
           this.ctx,
           this.options,
-          this.targetStyle,
-          this.targetElement,
+          targetStyle,
+          targetElement,
           this.currentPoint,
         );
       }
-      else if (!this.targetElement && this.oldTargetElement) {
+      else if (!targetElement && oldTargetElement) {
         rectToCircle(
           this.ctx,
           this.options,
-          this.oldTargetStyle!,
-          this.oldTargetElement,
+          oldTargetStyle!,
+          oldTargetElement,
           this.currentPoint,
           () => {
-            this.oldTargetElement = null;
+            oldTargetElement = null;
             this.isDrawCircle = true;
           },
         );

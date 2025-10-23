@@ -3,19 +3,15 @@ import type {
   CursorWithOptions,
   Point,
   StopUseFn,
-  TargetBound,
-  TrackPoint,
   UseFn,
 } from '../types';
 import { isNameLegal } from '../use';
 import {
   debounce,
-  getFPS,
   listenerUnWrapper,
   listenerWrapper,
   notNone,
   throwError,
-  voidNothing,
 } from '../utils';
 import { fillDefaultStyle, handleDealError } from '../utils/pre-check-fill';
 import { clickEffectRestoreCollector, clickEffectTriggerCollector } from './click-effect-core';
@@ -27,8 +23,8 @@ import {
   tailDrawer,
 } from './draw';
 
+export type EventNames = 'mousemove' | 'mousedown' | 'mouseup' | 'mousewheel' | 'loopBeforeDraw' | 'loopAfterDraw';
 export interface Meta {
-  FPS: number
   options: CursorWithOptions
   canvas: HTMLCanvasElement
   ctx: CanvasRenderingContext2D
@@ -36,52 +32,29 @@ export interface Meta {
   clientHeight: number
   currentPoint: Point
   targetPoint: Point
-  trackPoints: TrackPoint[]
   loopId: number | null
-  subLoopId: number | null
   isDrawCircle: boolean
-  targetElement: HTMLElement | null
-  targetStyle: TargetBound | null
-  oldTargetElement: HTMLElement | null
-  oldTargetStyle: TargetBound | null
   clickEffectTrigger: (() => void) | null
   clickEffectRestore: (() => void) | null
   computeCurrentPoint: ((t: number) => Point) | null
   useFns: Map<symbol | string, AnyFn>
-  onMouseMoveFns: Map<symbol | string, AnyFn>
-  onMouseDownFns: Map<symbol | string, AnyFn>
-  onMouseUpFns: Map<symbol | string, AnyFn>
-  onMouseWheelFns: Map<symbol | string, AnyFn>
-  onLoopBeforeDrawFns: Map<symbol | string, AnyFn>
-  onLoopAfterDrawFns: Map<symbol | string, AnyFn>
+  eventListeners: Map<EventNames, Map<symbol | string, AnyFn>>
 }
 export type InstanceMeta = {
   [K in keyof CreateCursorWith]: CreateCursorWith[K]
 } & Meta;
 class CreateCursorWith {
-  private FPS: Meta['FPS'] = 0;
   private clientWidth: Meta['clientWidth'] = document.documentElement.clientWidth;
   private clientHeight: Meta['clientHeight'] = document.documentElement.clientHeight;
   private currentPoint: Meta['currentPoint'] = { x: this.clientWidth / 2, y: this.clientHeight / 2 };
   private targetPoint: Meta['targetPoint'] = { x: this.clientWidth / 2, y: this.clientHeight / 2 };
-  private trackPoints: Meta['trackPoints'] = [];
   private loopId: Meta['loopId'] = null;
-  private subLoopId: Meta['subLoopId'] = null;
   private isDrawCircle: boolean = true;
-  private targetElement: Meta['targetElement'] = null;
-  private oldTargetElement: Meta['oldTargetElement'] = null;
-  private targetStyle: Meta['targetStyle'] = null;
-  private oldTargetStyle: Meta['oldTargetStyle'] = null;
   private clickEffectTrigger: Meta['clickEffectTrigger'] = null;
   private clickEffectRestore: Meta['clickEffectRestore'] = null;
   private computeCurrentPoint: Meta['computeCurrentPoint'] = null;
   private useFns: Meta['useFns'] = new Map();
-  private onMouseMoveFns: Meta['onMouseMoveFns'] = new Map();
-  private onMouseDownFns: Meta['onMouseDownFns'] = new Map();
-  private onMouseUpFns: Meta['onMouseUpFns'] = new Map();
-  private onMouseWheelFns: Meta['onMouseWheelFns'] = new Map();
-  private onLoopBeforeDrawFns: Meta['onLoopBeforeDrawFns'] = new Map();
-  private onLoopAfterDrawFns: Meta['onLoopAfterDrawFns'] = new Map();
+  private eventListeners: Meta['eventListeners'] = new Map();
   private options: Meta['options'];
   private canvas: Meta['canvas'];
   private ctx: Meta['ctx'];
@@ -92,8 +65,6 @@ class CreateCursorWith {
     this.canvas = this.create();
     this.ctx = this.canvas.getContext('2d')!;
     this.init();
-    // 跨文件变量
-    voidNothing(this.FPS, this.trackPoints, this.oldTargetElement, this.oldTargetStyle, this.targetStyle);
   }
 
   // 使用插件
@@ -124,60 +95,19 @@ class CreateCursorWith {
     this.useFns.delete(name);
   }
 
-  // 注册鼠标移动事件
-  public onMouseMove(fn: AnyFn) {
-    this.onMouseMoveFns.set(fn.name, fn);
+  // 事件注册
+  public on(eventName: EventNames, fn: AnyFn) {
+    if (!this.eventListeners.has(eventName)) {
+      this.eventListeners.set(eventName, new Map());
+    }
+    this.eventListeners.get(eventName)!.set(fn.name, fn);
   }
 
-  // 卸载鼠标移动事件
-  public offMouseMove(fn: AnyFn | { name: symbol }) {
-    this.onMouseMoveFns.delete(fn.name);
-  }
-
-  // 注册鼠标按下事件
-  public onMouseDown(fn: AnyFn) {
-    this.onMouseDownFns.set(fn.name, fn);
-  }
-
-  // 卸载鼠标按下事件
-  public offMouseDown(fn: AnyFn | { name: symbol }) {
-    this.onMouseDownFns.delete(fn.name);
-  }
-
-  // 注册鼠标抬起事件
-  public onMouseUp(fn: AnyFn) {
-    this.onMouseUpFns.set(fn.name, fn);
-  }
-
-  // 卸载鼠标抬起事件
-  public offMouseUp(fn: AnyFn | { name: symbol }) {
-    this.onMouseUpFns.delete(fn.name);
-  }
-
-  // 注册鼠标滚轮事件
-  public onMouseWheel(fn: AnyFn) {
-    this.onMouseWheelFns.set(fn.name, fn);
-  }
-
-  // 卸载鼠标滚轮事件
-  public offMouseWheel(fn: AnyFn | { name: symbol }) {
-    this.onMouseWheelFns.delete(fn.name);
-  }
-
-  // 注册loop事件(在绘制cursor主要圆之前调用)
-  public onLoopBeforeDraw(fn: AnyFn) {
-    this.onLoopBeforeDrawFns.set(fn.name, fn);
-  }
-
-  // 注册loop事件(在绘制cursor主要圆之后调用)
-  public onLoopAfterDraw(fn: AnyFn) {
-    this.onLoopAfterDrawFns.set(fn.name, fn);
-  }
-
-  // 卸载loop事件
-  public offLoop(fn: AnyFn | { name: symbol }) {
-    this.onLoopBeforeDrawFns.delete(fn.name);
-    this.onLoopAfterDrawFns.delete(fn.name);
+  // 事件注销
+  public off(eventName: EventNames, fn: AnyFn | { name: symbol }) {
+    if (this.eventListeners.has(eventName)) {
+      this.eventListeners.get(eventName)!.delete(fn.name);
+    }
   }
 
   // 创建canvas
@@ -190,20 +120,22 @@ class CreateCursorWith {
     window.addEventListener('mousemove', listenerWrapper((e) => {
       const { clientX, clientY } = e;
       this.targetPoint = { x: clientX, y: clientY };
-      this.onMouseMoveFns.forEach(fn => fn(e));
+      this.eventListeners.get('mousemove')?.forEach(fn => fn(e));
     }, 'mousemove'));
-    window.addEventListener('mousedown', listenerWrapper(() => {
+    window.addEventListener('mousedown', listenerWrapper((e) => {
       const { clickEffect } = this.options;
       this.clickEffectTrigger = clickEffect ? clickEffectTriggerCollector(this.options) : null;
       this.clickEffectRestore = null;
+      this.eventListeners.get('mousedown')?.forEach(fn => fn(e));
     }, 'mousedown'));
-    window.addEventListener('mouseup', listenerWrapper(() => {
+    window.addEventListener('mouseup', listenerWrapper((e) => {
       const { clickEffect } = this.options;
       this.clickEffectRestore = clickEffect ? clickEffectRestoreCollector(this.options) : null;
       this.clickEffectTrigger = null;
+      this.eventListeners.get('mouseup')?.forEach(fn => fn(e));
     }, 'mouseup'));
     window.addEventListener('wheel', listenerWrapper((e) => {
-      this.onMouseWheelFns.forEach(fn => fn(e));
+      this.eventListeners.get('mousewheel')?.forEach(fn => fn(e));
     }, 'wheel'));
     window.addEventListener('resize', listenerWrapper(debounce(
       { delay: 300 },
@@ -215,7 +147,6 @@ class CreateCursorWith {
       },
     ), 'resize'));
     this.loopId = requestAnimationFrame(this.loop);
-    this.subLoopId = requestAnimationFrame(this.subLoop);
   }
 
   // 绘制cursor主要圆
@@ -247,10 +178,10 @@ class CreateCursorWith {
     if (tx !== cx || ty !== cy) {
       this.currentPoint = this.computeCurrentPoint?.(t) || this.currentPoint;
     }
-    this.onLoopBeforeDrawFns.forEach(fn => fn());
+    this.eventListeners.get('loopBeforeDraw')?.forEach(fn => fn());
     this.drawCircle();
-    this.onLoopAfterDrawFns.forEach(fn => fn());
-    if (tail && !this.targetElement) {
+    this.eventListeners.get('loopAfterDraw')?.forEach(fn => fn());
+    if (tail && this.isDrawCircle) {
       this.drawTail();
     }
     if (nativeCursor) this.drawNativeCursor();
@@ -258,18 +189,6 @@ class CreateCursorWith {
     if (this.clickEffectRestore) this.clickEffectRestore();
     this.loopId = requestAnimationFrame(this.loop);
   };
-
-  // 副循环
-  private subLoop = () => {
-    this.FPS = getFPS();
-    this.subLoopId = requestAnimationFrame(this.subLoop);
-  };
-
-  private subLoopStop() {
-    if (!notNone(this.subLoopId)) return;
-    cancelAnimationFrame(this.subLoopId);
-    this.subLoopId = null;
-  }
 
   // 获取当前canvas元素
   public getCanvas() {
@@ -312,7 +231,6 @@ class CreateCursorWith {
   // 销毁实例
   public destroy() {
     this.pause();
-    this.subLoopStop();
     if (this.canvas) {
       window.removeEventListener('resize', listenerUnWrapper('resize'));
       window.removeEventListener('mousemove', listenerUnWrapper('mousemove'));
