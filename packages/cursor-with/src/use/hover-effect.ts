@@ -1,7 +1,6 @@
-import type { InstanceMeta } from '../core/index';
-import type { CursorWithOptions, TargetBound } from '../types';
+import type { CursorWithOptions, InstanceMeta, TargetBound } from '../types';
 import { circleToRect, getActiveTarget, rectToCircle } from '../core/hover-effect-core';
-import { fillDefaultHoverEffect } from '../utils/pre-check-fill';
+import { fillDefaultHoverEffect } from '../utils';
 import { USEABLE_USE_FN_NAMES_SYMBOLS } from './index';
 
 let targetElement: HTMLElement | null = null;
@@ -22,9 +21,11 @@ export function hoverEffect(config: CursorWithOptions['hoverEffect']) {
     fillDefaultHoverEffect(this.options.hoverEffect!);
     this.on('mousemove', (e: MouseEvent) => {
       [targetElement, targetStyle] = getActiveTarget(e.target as HTMLElement, this.options.hoverEffect);
+      return { id: USEABLE_USE_FN_NAMES_SYMBOLS.hoverEffect, result: targetElement };
     });
     this.on('mousewheel', (e: MouseEvent) => {
       [targetElement, targetStyle] = getActiveTarget(e.target as HTMLElement, this.options.hoverEffect);
+      return { id: USEABLE_USE_FN_NAMES_SYMBOLS.hoverEffect, result: targetElement };
     });
     this.on('loopBeforeDraw', () => {
       this.isDrawCircle = false;

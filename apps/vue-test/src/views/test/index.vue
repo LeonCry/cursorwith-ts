@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { CreateCursorWith } from 'cursorwith-ts/core';
-import { follow, hoverEffect } from 'cursorwith-ts/use';
+import { follow, hoverEffect, tail } from 'cursorwith-ts/use';
 
 const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
 onMounted(() => {
@@ -69,6 +69,7 @@ onMounted(() => {
       borderWidth: 5,
     },
   }));
+  cursorWith.value.use(tail({ length: 10, color: 'rgba(0,0,0,0.2)' }));
 });
 onBeforeUnmount(() => {
   cursorWith.value?.destroy();

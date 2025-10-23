@@ -1,8 +1,6 @@
-import type { InstanceMeta } from '../core/index';
-import type { CursorWithOptions, TrackPoint } from '../types';
+import type { CursorWithOptions, InstanceMeta, TrackPoint } from '../types';
 import { gapLoop, springLoop, timeLoop, trackLoop } from '../core/loops';
-import { getFPS, notNone } from '../utils';
-import { fillDefaultFollow } from '../utils/pre-check-fill';
+import { fillDefaultFollow, getFPS, notNone } from '../utils';
 import { USEABLE_USE_FN_NAMES_SYMBOLS } from './index';
 // 使用follow
 const BASE_FRAME_RATE = 60;

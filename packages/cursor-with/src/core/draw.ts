@@ -17,7 +17,7 @@ function arcOrEllipseDrawer(
 ) {
   const { x, y } = currentPoint;
   const { x: tx, y: ty } = targetPoint;
-  if (!deform || !deform.active) return ctx.arc(x, y, radius, 0, Math.PI * 2);
+  if (!deform || !deform?.decay) return ctx.arc(x, y, radius, 0, Math.PI * 2);
   const distance = Math.sqrt((tx - x) ** 2 + (ty - y) ** 2);
   const angle = Math.atan2(ty - y, tx - x);
   const d = Math.max(radius, Math.min(distance / deform.decay!, 2 * radius));
@@ -98,7 +98,7 @@ function tailDrawer(
   const { radius } = options.style;
   const { x: tx, y: ty } = targetPoint;
   const { x: cx, y: cy } = currentPoint;
-  const { length, color, dockGap = 1, firstDockGap = 1 } = options.tail!;
+  const { length, color, dockGap = 0, firstDockGap = 0 } = options.tail!;
   if (tx !== cx || ty !== cy) tailPoints.push({ ...currentPoint });
   else tailPoints.shift();
   while (tailPoints.length > length) tailPoints.shift();
@@ -120,10 +120,11 @@ function tailDrawer(
   arcOrEllipseDrawer(ctx, currentPoint, targetPoint, radius, options.deform);
   ctx.clip('evenodd');
   ctx.strokeStyle = color;
-  for (let i = 1; i < total - firstDockGap; i += dockGap) {
+  for (let i = 1; i < total - firstDockGap + 1; i += dockGap + 1) {
     const prev = pts[i - 1];
     const curr = pts[i];
     const next = pts[i + 1];
+    if (!prev || !next) continue;
     const start = midpoint(prev, curr);
     const end = midpoint(curr, next);
     const t = i / (total - 1);

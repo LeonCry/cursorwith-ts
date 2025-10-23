@@ -12,15 +12,11 @@ interface TargetBound {
   borderRadius: string
 }
 
-interface UseFn { name: symbol, execute: (this: InstanceMeta, active: boolean) => void }
-type StopUseFn = (config?: any) => UseFn;
 type AnyFn = (...args: any) => any;
 
 export {
   AnyFn,
   Point,
-  StopUseFn,
   TargetBound,
   TrackPoint,
-  UseFn,
 };

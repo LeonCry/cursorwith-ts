@@ -1,4 +1,6 @@
+import type { CreateCursorWith } from '../core/index';
 import type { EasingInput } from '../utils/easing';
+import type { ListenerFn } from './use';
 
 interface CommonStyle {
   color: string
@@ -72,4 +74,27 @@ interface CursorWithOptions {
   inverse?: boolean
 }
 
-export { CursorWithOptions };
+type EventNames = 'mousemove' | 'mousedown' | 'mouseup' | 'mousewheel' | 'loopBeforeDraw' | 'loopAfterDraw';
+interface Meta {
+  options: CursorWithOptions
+  canvas: HTMLCanvasElement
+  ctx: CanvasRenderingContext2D
+  clientWidth: number
+  clientHeight: number
+  currentPoint: Point
+  targetPoint: Point
+  loopId: number | null
+  isDrawCircle: boolean
+  isOnHoverTarget: boolean
+  clickEffectTrigger: (() => void) | null
+  clickEffectRestore: (() => void) | null
+  computeCurrentPoint: ((t: number) => Point) | null
+  useFns: Map<symbol | string, AnyFn>
+  eventListeners: Map<EventNames, Map<symbol | string, ListenerFn>>
+  eventResult: Map<EventNames, ReturnType<ListenerFn>[]>
+}
+type InstanceMeta = {
+  [K in keyof CreateCursorWith]: CreateCursorWith[K]
+} & Meta;
+
+export { CursorWithOptions, EventNames, InstanceMeta };
