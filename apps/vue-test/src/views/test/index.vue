@@ -1,18 +1,73 @@
 <script setup lang="ts">
-import { CreateCursorWith } from 'cursorwith-ts';
+import { CreateCursorWith } from 'cursorwith-ts/core';
+import {
+  clickEffect,
+  follow,
+  hoverEffect,
+  inverse,
+  nativeCursor,
+  tail,
+} from 'cursorwith-ts/use';
 
 const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
+const container = ref<HTMLDivElement | null>(null);
 onMounted(() => {
+  if (!container.value) return;
   cursorWith.value = new CreateCursorWith({
-    style: {
-      radius: 10,
-      color: 'rgba(0,0,0,0.2)',
-      borderWidth: 1,
-      borderColor: 'rgba(0,0,0,1)',
+    config: {
+      radius: 20,
+      color: 'black',
+      borderWidth: 10,
+      borderColor: 'black',
+      shadowBlur: 20,
+      shadowColor: 'black',
+      shadowOffset: [0, 0],
+      deform: { decay: 10 },
     },
-    follow: { type: 'time', timeRatio: 0.15 },
-    hoverEffect: { active: true, scope: { dataset: ['test'] }, padding: 20 },
+    container: container.value,
   });
+  cursorWith.value.use(follow({ type: 'time', timeRatio: 0.1 }));
+  cursorWith.value.use(hoverEffect({
+    flash: {
+      active: false,
+      duration: 1000,
+      easing: 'linear',
+    },
+    scope: { dataset: ['test'] },
+    offset: 10,
+    padding: 5,
+    duration: 1000,
+    easing: 'bounce-out',
+    style: {
+      color: 'black',
+      borderColor: 'black',
+      shadowBlur: 40,
+      shadowColor: 'black',
+      shadowOffset: [0, 0],
+      borderWidth: 5,
+    },
+  }));
+  cursorWith.value.use(clickEffect());
+  cursorWith.value.use(tail({ length: 10, color: 'rgba(0,0,0,0.2)' }));
+  cursorWith.value.use(nativeCursor({
+    radius: 5,
+    color: 'red',
+    borderWidth: 2,
+    borderColor: 'yellow',
+    shadowBlur: 20,
+    shadowColor: 'yellow',
+    shadowOffset: [0, 0],
+  }));
+  cursorWith.value.use(inverse());
+  cursorWith.value.stopUse(inverse());
+  setTimeout(() => {
+    container.value!.style.width = '1000px';
+    cursorWith.value?.updateBound();
+  }, 3000);
+});
+onBeforeUnmount(() => {
+  cursorWith.value?.destroy();
+  cursorWith.value = null;
 });
 
 function handlePause() {
@@ -20,16 +75,6 @@ function handlePause() {
 }
 function handleResume() {
   cursorWith.value?.resume();
-}
-function handleStyleChange() {
-  cursorWith.value?.setStyle({ color: 'rgba(255,0,0,0.2)', borderColor: 'rgba(255,0,0,1)', radius: 20 });
-}
-function handleFollowChange() {
-  cursorWith.value?.setFollow({ type: 'gap', distance: 10 });
-}
-function handleDestroy() {
-  cursorWith.value?.destroy();
-  cursorWith.value = null;
 }
 
 window.addEventListener('keydown', (e) => {
@@ -39,30 +84,13 @@ window.addEventListener('keydown', (e) => {
 </script>
 
 <template>
-  <section class="w-full h-full p-2">
-    <ElButton @click="handlePause">
-      暂停 (Space)
-    </ElButton>
-    <ElButton @click="handleResume">
-      恢复 (Enter)
-    </ElButton>
-    <ElButton @click="handleStyleChange">
-      更改style
-    </ElButton>
-    <ElButton @click="handleFollowChange">
-      更改follow
-    </ElButton>
-    <ElButton type="danger" @click="handleDestroy">
-      销毁
-    </ElButton>
-
-    <button data-test class="absolute top-80 left-1/2 border p-4">
-      外元素
-      <p class="px-4 border border-blue-100">
-        内元素
-      </p>
-    </button>
-
-    <TestTable class=" absolute top-1/2 -translate-y-1/2" />
+  <section class="w-full h-full p-2 bg-white overflow-auto flex items-center justify-center">
+    <div ref="container" class="w-[800px] h-[400px] bg-red-50 relative" />
   </section>
 </template>
+
+<style scoped>
+.text-rounded {
+  border-radius: 10px 8px 6px 4px;
+}
+</style>

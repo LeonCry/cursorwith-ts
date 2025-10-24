@@ -1,46 +1,53 @@
-import type { CursorWithOptions, Point, TargetBound } from '../types';
+import type { CursorWithOptions, Point } from '../types';
+
+/**
+ * 控制绘制圆还是椭圆(是否变形)
+ * @param ctx ctx实例
+ * @param currentPoint 当前点
+ * @param targetPoint 目标点
+ * @param radius 半径
+ * @param deform 变形配置
+ */
+function arcOrEllipseDrawer(
+  ctx: CanvasRenderingContext2D,
+  currentPoint: Point,
+  targetPoint: Point,
+  radius: number,
+  deform?: CursorWithOptions['style']['deform'],
+) {
+  const { x, y } = currentPoint;
+  const { x: tx, y: ty } = targetPoint;
+  if (!deform || !deform?.decay) return ctx.arc(x, y, radius, 0, Math.PI * 2);
+  const distance = Math.sqrt((tx - x) ** 2 + (ty - y) ** 2);
+  const angle = Math.atan2(ty - y, tx - x);
+  const d = Math.max(radius, Math.min(distance / deform.decay!, 2 * radius));
+  ctx.ellipse(x, y, radius, d, angle - Math.PI / 2, 0, Math.PI * 2);
+}
 /**
  * 绘制内圆
  * @param ctx ctx实例
- * @param point 中心点
- * @param style 内圆样式
+ * @param currentPoint 中心点
+ * @param targetPoint 目标点
+ * @param options 配置
  */
 function innerCircleDrawer(
   ctx: CanvasRenderingContext2D,
-  point: Point,
-  style: CursorWithOptions['style'],
+  currentPoint: Point,
+  targetPoint: Point,
+  options: CursorWithOptions,
 ) {
-  const { x, y } = point;
-  const { radius, color } = style;
-  ctx.save();
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.arc(x, y, radius, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.closePath();
-  ctx.restore();
-}
-
-/**
- * 绘制外圆
- * @param ctx ctx实例
- * @param point 中心点
- * @param style 外圆样式
- */
-function outerCircleDrawer(
-  ctx: CanvasRenderingContext2D,
-  point: Point,
-  style: CursorWithOptions['style'],
-) {
-  const { x, y } = point;
+  const { style } = options;
   const {
     radius,
+    color,
     shadowBlur,
     shadowColor,
     shadowOffset,
+    deform,
   } = style;
   const { borderWidth, borderColor } = style as Required<CursorWithOptions['style']>;
   ctx.save();
+  ctx.fillStyle = color;
   if (shadowBlur && shadowColor) {
     ctx.shadowOffsetX = shadowOffset?.[0] || 0;
     ctx.shadowOffsetY = shadowOffset?.[1] || 0;
@@ -50,8 +57,9 @@ function outerCircleDrawer(
   ctx.strokeStyle = borderColor;
   ctx.lineWidth = borderWidth;
   ctx.beginPath();
-  ctx.arc(x, y, radius + borderWidth / 2, 0, Math.PI * 2);
+  arcOrEllipseDrawer(ctx, currentPoint, targetPoint, radius, deform);
   ctx.stroke();
+  ctx.fill();
   ctx.closePath();
   ctx.restore();
 }
@@ -59,22 +67,22 @@ function outerCircleDrawer(
 /**
  * 绘制图像
  * @param ctx ctx实例
- * @param point 中心点
- * @param style 图像样式
+ * @param currentPoint 中心点
+ * @param options 配置
  */
 function imageDrawer(
   ctx: CanvasRenderingContext2D,
-  point: Point,
-  style: Pick<CursorWithOptions['style'], 'radius' | 'img'>,
+  currentPoint: Point,
+  options: CursorWithOptions,
 ) {
-  const { x, y } = point;
-  const { radius, img } = style;
+  const { x, y } = currentPoint;
+  const { radius, img } = options.style;
   if (!img) return;
   const image = new Image();
   image.crossOrigin = 'anonymous';
   image.src = img;
-  ctx.beginPath();
   ctx.save();
+  ctx.beginPath();
   ctx.drawImage(image, x - radius, y - radius, radius * 2, radius * 2);
   ctx.restore();
   ctx.closePath();
@@ -83,21 +91,21 @@ function imageDrawer(
 /**
  * 绘制尾巴
  * @param ctx ctx实例
- * @param points 当前点
- * @param style 尾巴样式
+ * @param currentPoint 当前点
+ * @param targetPoint 目标点
+ * @param options 配置
  */
 const tailPoints: Point[] = [];
 function tailDrawer(
   ctx: CanvasRenderingContext2D,
   currentPoint: Point,
   targetPoint: Point,
-  style: CursorWithOptions['tail'],
-  radius: number,
+  options: CursorWithOptions,
 ) {
-  if (!style) return;
+  const { radius } = options.style;
   const { x: tx, y: ty } = targetPoint;
   const { x: cx, y: cy } = currentPoint;
-  const { length, color } = style;
+  const { length, color, dockGap = 0, firstDockGap = 0 } = options.tail!;
   if (tx !== cx || ty !== cy) tailPoints.push({ ...currentPoint });
   else tailPoints.shift();
   while (tailPoints.length > length) tailPoints.shift();
@@ -105,19 +113,25 @@ function tailDrawer(
   const pts = tailPoints;
   const total = pts.length;
   const maxWidth = radius * 2;
-  const minWidth = radius * 0.25;
+  const minWidth = radius;
   const minAlpha = 0;
-  const maxAlpha = 1.0;
+  const maxAlpha = 1;
 
   function midpoint(a: Point, b: Point) {
     return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
   }
   ctx.save();
+  // 镂空,去除圆球内部多余的拖尾
+  ctx.beginPath();
+  ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  arcOrEllipseDrawer(ctx, currentPoint, targetPoint, radius, options.style.deform);
+  ctx.clip('evenodd');
   ctx.strokeStyle = color;
-  for (let i = 1; i < total - 1; i++) {
+  for (let i = 1; i < total - firstDockGap + 1; i += dockGap + 1) {
     const prev = pts[i - 1];
     const curr = pts[i];
     const next = pts[i + 1];
+    if (!prev || !next) continue;
     const start = midpoint(prev, curr);
     const end = midpoint(curr, next);
     const t = i / (total - 1);
@@ -134,50 +148,40 @@ function tailDrawer(
   ctx.restore();
 }
 
-// 以下为hoverEffect相关绘制
-
-function outerRectDrawer(
+function nativeCursorDrawer(
   ctx: CanvasRenderingContext2D,
-  point: Point,
-  style: CursorWithOptions['style'],
-  targetStyle: TargetBound,
-  padding: number = 0,
+  currentPoint: Point,
+  options: CursorWithOptions,
 ) {
-  const { borderWidth, borderColor } = style as Required<CursorWithOptions['style']>;
-  const { width, height, left, top } = targetStyle;
+  const {
+    radius,
+    color,
+    borderWidth,
+    borderColor,
+    shadowBlur,
+    shadowColor,
+    shadowOffset,
+  } = options.nativeCursor as NonNullable<Required<CursorWithOptions['nativeCursor']>>;
   ctx.save();
+  ctx.fillStyle = color;
   ctx.strokeStyle = borderColor;
   ctx.lineWidth = borderWidth;
+  if (shadowBlur && shadowColor) {
+    ctx.shadowOffsetX = shadowOffset?.[0] || 0;
+    ctx.shadowOffsetY = shadowOffset?.[1] || 0;
+    ctx.shadowColor = shadowColor;
+    ctx.shadowBlur = shadowBlur;
+  }
   ctx.beginPath();
-  ctx.rect(left - padding, top - padding, width + padding * 2, height + padding * 2);
+  ctx.arc(currentPoint.x, currentPoint.y, radius, 0, Math.PI * 2);
+  ctx.fill();
   ctx.stroke();
   ctx.closePath();
   ctx.restore();
 }
-
-function innerRectDrawer(
-  ctx: CanvasRenderingContext2D,
-  point: Point,
-  style: CursorWithOptions['style'],
-  targetStyle: TargetBound,
-  padding: number = 0,
-) {
-  const { color } = style;
-  const { width, height, left, top } = targetStyle;
-  ctx.save();
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.rect(left - padding, top - padding, width + padding * 2, height + padding * 2);
-  ctx.fill();
-  ctx.closePath();
-  ctx.restore();
-}
-
 export {
   imageDrawer,
   innerCircleDrawer,
-  innerRectDrawer,
-  outerCircleDrawer,
-  outerRectDrawer,
+  nativeCursorDrawer,
   tailDrawer,
 };

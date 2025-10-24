@@ -1,153 +1,230 @@
-import type { CursorWithOptions, Point, TargetBound, TrackPoint } from '../types';
-import { debounce, throttle } from 'radash';
-import { listenerUnWrapper, listenerWrapper, notNone } from '../utils';
+import type {
+  CursorWithOptions,
+  EventNames,
+  InstanceMeta,
+  ListenerFn,
+  UseFn,
+} from '../types';
+import { isNameLegal } from '../use';
+import {
+  debounce,
+  deepClone,
+  fillDefaultStyle,
+  handleDealError,
+  listenerUnWrapper,
+  listenerWrapper,
+  notNone,
+  throwError,
+} from '../utils';
 import { canvasCreator } from './creator';
 import {
   imageDrawer,
   innerCircleDrawer,
-  innerRectDrawer,
-  outerCircleDrawer,
-  outerRectDrawer,
-  tailDrawer,
 } from './draw';
-import { getActiveTarget } from './hover-effect';
-import { gapLoop, springLoop, timeLoop, trackLoop } from './loops';
-import { handleDealDefault, handleDealError } from './pre-check-fill';
 
 class CreateCursorWith {
-  options: CursorWithOptions;
-  private TRACK_DELAY = 0;
-  private canvas: HTMLCanvasElement;
-  private ctx: CanvasRenderingContext2D;
-  private clientWidth: number;
-  private clientHeight: number;
-  private currentPoint: Point;
-  private targetPoint: Point;
-  private trackPoints: TrackPoint[];
-  private loopId: number | null;
-  private targetElement: HTMLElement | null;
-  private targetStyle: TargetBound | null;
-  constructor(options: CursorWithOptions) {
-    handleDealDefault(options);
-    handleDealError(options);
-    this.clientWidth = document.documentElement.clientWidth;
-    this.clientHeight = document.documentElement.clientHeight;
-    this.currentPoint = { x: this.clientWidth / 2, y: this.clientHeight / 2 };
-    this.targetPoint = { x: this.clientWidth / 2, y: this.clientHeight / 2 };
-    this.trackPoints = [];
-    this.loopId = null;
-    this.targetElement = null;
-    this.targetStyle = null;
-    this.options = options;
+  private container: InstanceMeta['container'];
+  private containerRect: InstanceMeta['containerRect'];
+  private currentPoint: InstanceMeta['currentPoint'] = { x: 0, y: 0 };
+  private targetPoint: InstanceMeta['targetPoint'] = { x: 0, y: 0 };
+  private loopId: InstanceMeta['loopId'] = null;
+  private isDrawCircle: InstanceMeta['isDrawCircle'] = true;
+  private isOnHoverTarget: InstanceMeta['isOnHoverTarget'] = false;
+  private useFns: InstanceMeta['useFns'] = new Map();
+  private eventListeners: InstanceMeta['eventListeners'] = new Map();
+  private eventResult: InstanceMeta['eventResult'] = new Map();
+  private options: InstanceMeta['options'];
+  private rowOptions: InstanceMeta['options'];
+  private canvas: InstanceMeta['canvas'];
+  private ctx: InstanceMeta['ctx'];
+  constructor(options: {
+    config: CursorWithOptions['style']
+    container?: CursorWithOptions['container']
+  }) {
+    const { config, container } = options;
+    handleDealError();
+    this.container = container || document.body;
+    this.containerRect = this.container.getBoundingClientRect();
+    this.rowOptions = { style: config };
+    this.options = new Proxy(this.rowOptions, {
+      set: (target, key, val, receiver) => {
+        this.doEvent('optionSetter', { target, key, val });
+        return Reflect.set(target, key, val, receiver);
+      },
+      get: (target, key, receiver) => {
+        this.doEvent('optionGetter', { target, key });
+        return Reflect.get(target, key, receiver);
+      },
+    });
+    fillDefaultStyle(this.options.style);
     this.canvas = this.create();
     this.ctx = this.canvas.getContext('2d')!;
     this.init();
   }
 
-  private create() {
-    return canvasCreator(this.clientWidth, this.clientHeight);
+  // 使用插件
+  public use(fn: UseFn | UseFn[]) {
+    const handle = (f: UseFn) => {
+      const { name, execute } = f;
+      if (!isNameLegal(name)) throwError(`The use function name ${String(name)} is not legal.`);
+      if (this.useFns.has(name)) this.stopUse(f);
+      this.useFns.set(name, execute);
+      execute.call(this as InstanceMeta, true);
+    };
+    const fns = Array.isArray(fn) ? fn : [fn];
+    fns.forEach(handle);
   }
 
+  // 卸载插件
+  public stopUse(fn: UseFn | UseFn[]) {
+    const handle = (f: UseFn) => {
+      const { name, execute } = f;
+      if (!isNameLegal(name)) throwError(`The use function name ${String(name)} is not legal.`);
+      if (execute) {
+        execute.call(this as InstanceMeta, false);
+      }
+      this.useFns.delete(name);
+    };
+    const fns = Array.isArray(fn) ? fn : [fn];
+    fns.forEach(handle);
+  }
+
+  // 事件注册
+  public on(eventName: EventNames, fn: ListenerFn, uniqueId?: keyof any) {
+    if (!this.eventListeners.get(eventName)) {
+      this.eventListeners.set(eventName, new Map());
+    }
+    this.eventListeners.get(eventName)!.set(uniqueId || fn.name, fn);
+  }
+
+  // 事件注销
+  public off(eventName: EventNames, fn: ListenerFn | null, uniqueId?: keyof any) {
+    if (this.eventListeners.has(eventName)) {
+      this.eventListeners.get(eventName)!.delete(uniqueId || fn?.name || '');
+    }
+  }
+
+  // 获取事件结果
+  public getEventResult(eventName: EventNames, id: keyof any) {
+    return (this.eventResult.get(eventName) || []).find(item => item?.id === id);
+  }
+
+  // 执行事件并收集结果
+  private doEvent(eventName: EventNames, e?: any) {
+    this.eventResult.set(eventName, [...this.eventListeners.get(eventName) || []]?.map(([_, fn]) => fn(e)));
+  }
+
+  // 创建canvas
+  private create() {
+    return canvasCreator(this.containerRect, this.container);
+  }
+
+  // 初始化
   private init() {
-    window.addEventListener('mousemove', listenerWrapper(throttle(
-      { interval: this.TRACK_DELAY },
-      (e: MouseEvent) => {
-        const { hoverEffect } = this.options;
-        if (hoverEffect?.active) {
-          [this.targetElement, this.targetStyle] = getActiveTarget(e.target as HTMLElement, hoverEffect);
-        }
-        const { clientX, clientY } = e;
-        this.targetPoint = { x: clientX, y: clientY };
-        if (this.options.follow?.type === 'track') {
-          this.trackPoints.push({ x: clientX, y: clientY, t: performance.now() });
-        }
-      },
-    ), 'mousemove'));
+    this.container.addEventListener('mousemove', listenerWrapper((e) => {
+      const { clientX, clientY } = e;
+      this.targetPoint = { x: clientX - this.containerRect.left, y: clientY - this.containerRect.top };
+      this.doEvent('mousemove', e);
+    }, 'mousemove'));
+    this.container.addEventListener('mousedown', listenerWrapper((e) => {
+      this.doEvent('mousedown', e);
+    }, 'mousedown'));
+    this.container.addEventListener('mouseup', listenerWrapper((e) => {
+      this.doEvent('mouseup', e);
+    }, 'mouseup'));
+    this.container.addEventListener('wheel', listenerWrapper((e) => {
+      this.doEvent('mousewheel', e);
+    }, 'wheel'));
     window.addEventListener('resize', listenerWrapper(debounce(
       { delay: 300 },
       () => {
-        this.clientWidth = document.documentElement.clientWidth;
-        this.clientHeight = document.documentElement.clientHeight;
-        this.canvas.width = this.clientWidth;
-        this.canvas.height = this.clientHeight;
+        this.containerRect = this.container.getBoundingClientRect();
+        this.canvas.width = this.containerRect.width;
+        this.canvas.height = this.containerRect.height;
       },
     ), 'resize'));
     this.loopId = requestAnimationFrame(this.loop);
   }
 
-  private drawCircle(point: Point) {
-    if (this.options.style.borderWidth) {
-      outerCircleDrawer(this.ctx, point, this.options.style);
-    }
-    innerCircleDrawer(this.ctx, point, this.options.style);
-    if (this.options.style.img) {
-      imageDrawer(this.ctx, point, this.options.style);
+  // 绘制cursor主要圆
+  private drawCircle() {
+    if (!this.isDrawCircle || this.isOnHoverTarget) return;
+    const { img } = this.options.style;
+    innerCircleDrawer(this.ctx, this.currentPoint, this.targetPoint, this.options);
+    if (img) {
+      imageDrawer(this.ctx, this.currentPoint, this.options);
     }
   }
 
-  private drawRect(point: Point) {
-    outerRectDrawer(this.ctx, point, this.options.style, this.targetStyle!, this.options.hoverEffect!.padding);
-    innerRectDrawer(this.ctx, point, this.options.style, this.targetStyle!, this.options.hoverEffect!.padding);
-  }
-
+  // 主循环
   private loop = (t: number) => {
-    this.ctx.clearRect(0, 0, this.clientWidth, this.clientHeight);
-    const follow = this.options.follow!;
-    const type = follow.type;
-    const { x: tx, y: ty } = this.targetPoint;
-    const { x: cx, y: cy } = this.currentPoint;
-    if (tx !== cx || ty !== cy) {
-      if (type === 'gap') this.currentPoint = gapLoop([this.currentPoint, this.targetPoint], follow.distance!);
-      if (type === 'time') this.currentPoint = timeLoop([this.currentPoint, this.targetPoint], follow.timeRatio!);
-      if (type === 'track') this.currentPoint = trackLoop(this.trackPoints, this.currentPoint, t, follow.delay!);
-      if (type === 'spring') {
-        this.currentPoint = springLoop(
-          [this.currentPoint, this.targetPoint],
-          follow.stiffness!,
-          follow.damping!,
-        );
-      }
-    }
-    if (this.targetElement && this.targetStyle) {
-      this.drawRect(this.targetPoint);
-    }
-    else {
-      this.drawCircle(this.currentPoint);
-    }
-    if (this.options.tail?.show) {
-      tailDrawer(this.ctx, this.currentPoint, this.targetPoint, this.options.tail!, this.options.style.radius);
-    }
+    this.ctx.clearRect(0, 0, this.containerRect.width, this.containerRect.height);
+    this.doEvent('loopBeforeDraw', t);
+    this.drawCircle();
+    this.doEvent('loopAfterDraw', t);
     this.loopId = requestAnimationFrame(this.loop);
   };
 
+  // 获取当前canvas元素
+  public getCanvas() {
+    return this.canvas;
+  }
+
+  // 暂停绘制
   public pause() {
     if (!notNone(this.loopId)) return;
     cancelAnimationFrame(this.loopId);
     this.loopId = null;
   }
 
+  // 恢复绘制
   public resume() {
     if (notNone(this.loopId)) return;
     this.loopId = requestAnimationFrame(this.loop);
   }
 
+  // 设置选项
+  public setOptions(options: CursorWithOptions) {
+    const o = deepClone(options);
+    Object.keys(o).forEach((key) => {
+      const k = key as keyof CursorWithOptions;
+      // tslint:disable-next-line:no-any
+      this.options[k] = o[k] as any;
+    });
+  }
+
+  // 获取当前选项
+  public getOptions() {
+    return this.rowOptions;
+  }
+
+  // 获取当前cursor主要圆位置
   public getCurrentPoint() {
     return this.currentPoint;
   }
 
-  public setStyle(style: CursorWithOptions['style']) {
-    this.options.style = { ...this.options.style, ...style };
+  // 获取当前鼠标位置
+  public getTargetPoint() {
+    return this.targetPoint;
   }
 
-  public setFollow(follow: CursorWithOptions['follow']) {
-    this.options.follow = { ...this.options.follow!, ...follow };
+  // 更新canvas大小
+  public updateBound() {
+    this.containerRect = this.container.getBoundingClientRect();
+    this.canvas.width = this.containerRect.width;
+    this.canvas.height = this.containerRect.height;
   }
 
+  // 销毁实例
   public destroy() {
     this.pause();
-    window.removeEventListener('resize', listenerUnWrapper('resize'));
+    this.stopUse(Array.from(this.useFns.values()));
     if (this.canvas) {
-      window.removeEventListener('mousemove', listenerUnWrapper('mousemove'));
+      window.removeEventListener('resize', listenerUnWrapper('resize'));
+      this.container.removeEventListener('mousemove', listenerUnWrapper('mousemove'));
+      this.container.removeEventListener('mousedown', listenerUnWrapper('mousedown'));
+      this.container.removeEventListener('mouseup', listenerUnWrapper('mouseup'));
+      this.container.removeEventListener('wheel', listenerUnWrapper('wheel'));
     }
     if (this.canvas.parentNode) {
       this.canvas.parentNode.removeChild(this.canvas);
