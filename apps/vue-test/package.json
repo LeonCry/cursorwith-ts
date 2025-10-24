@@ -7,9 +7,9 @@
     "dev": "vite --mode dev --host"
   },
   "dependencies": {
-    "cursorwith-ts": "workspace:*",
     "@tabler/icons-vue": "^3.34.0",
     "@vueuse/core": "^13.4.0",
+    "cursorwith-ts": "workspace:*",
     "element-plus": "^2.11.1",
     "ky": "^1.9.1",
     "pinia": "^3.0.3",

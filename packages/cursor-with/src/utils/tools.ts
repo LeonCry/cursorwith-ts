@@ -30,3 +30,11 @@ export function debounce<TArgs extends any[]>({ delay }: { delay: number }, func
 
   return debounced;
 }
+
+export function deepClone<T>(data: T): T {
+  if (typeof data !== 'object' || data === null) return data;
+  if (Array.isArray(data)) return data.map(deepClone) as unknown as T;
+  const cloned = {} as T;
+  for (const k in data) cloned[k] = deepClone(data[k]);
+  return cloned;
+}

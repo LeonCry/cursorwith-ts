@@ -1,4 +1,6 @@
-import type { EasingInput } from '../utils/easing';
+import type { CreateCursorWith } from '../core/index';
+import type { EasingInput } from './index';
+import type { ListenerFn } from './use';
 
 interface CommonStyle {
   color: string
@@ -12,12 +14,10 @@ interface CommonStyle {
 interface StyleOptions extends CommonStyle {
   radius: number
   img?: string
+  deform?: { decay?: number }
 }
 
-interface NativeCursorOptions extends CommonStyle {
-  show: boolean
-  radius: number
-}
+interface NativeCursorOptions extends CommonStyle { radius: number }
 
 interface TimeFollow {
   type: 'time'
@@ -39,7 +39,6 @@ interface SpringFollow {
 type Follow = TimeFollow | GapFollow | TrackFollow | SpringFollow;
 
 interface Tail {
-  show: boolean
   length: number
   color: string
   firstDockGap?: number
@@ -47,7 +46,6 @@ interface Tail {
 }
 
 interface HoverEffect {
-  active: boolean
   padding?: number
   offset?: number
   duration?: number
@@ -64,20 +62,35 @@ interface HoverEffect {
   style: CommonStyle
 };
 
-interface Deform {
-  active: boolean
-  decay?: number
-}
-
 interface CursorWithOptions {
+  container?: Element
   style: StyleOptions
   follow?: Follow
   tail?: Tail
-  deform?: Deform
   hoverEffect?: HoverEffect
   clickEffect?: boolean
   nativeCursor?: NativeCursorOptions
   inverse?: boolean
 }
 
-export { CursorWithOptions };
+type EventNames = 'mousemove' | 'mousedown' | 'mouseup' | 'mousewheel' | 'loopBeforeDraw' | 'loopAfterDraw' | 'optionSetter' | 'optionGetter';
+interface Meta {
+  container: Element
+  options: CursorWithOptions
+  canvas: HTMLCanvasElement
+  ctx: CanvasRenderingContext2D
+  containerRect: DOMRect
+  currentPoint: Point
+  targetPoint: Point
+  loopId: number | null
+  isDrawCircle: boolean
+  isOnHoverTarget: boolean
+  useFns: Map<keyof any, AnyFn>
+  eventListeners: Map<EventNames, Map<keyof any, ListenerFn>>
+  eventResult: Map<EventNames, ReturnType<ListenerFn>[]>
+}
+type InstanceMeta = {
+  [K in keyof CreateCursorWith]: CreateCursorWith[K]
+} & Meta;
+
+export { CursorWithOptions, EventNames, InstanceMeta };
