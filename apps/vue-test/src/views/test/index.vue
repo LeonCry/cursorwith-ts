@@ -61,7 +61,7 @@ onMounted(() => {
   cursorWith.value.use(inverse());
   cursorWith.value.stopUse(inverse());
   setTimeout(() => {
-    container.value!.style.width = '1000px';
+    container.value!.style.width = '2000px';
     cursorWith.value?.updateBound();
   }, 3000);
 });
@@ -84,8 +84,9 @@ window.addEventListener('keydown', (e) => {
 </script>
 
 <template>
-  <section class="w-full h-full p-2 bg-white overflow-auto flex items-center justify-center">
-    <div ref="container" class="w-[800px] h-[400px] bg-red-50 relative" />
+  <section class="w-full h-full p-2 bg-white overflow-auto">
+    <div class="h-[200px]" />
+    <div ref="container" class="w-[8000px] h-[400px] bg-red-50 relative ml-40 mt-40 perspective-[0]" />
   </section>
 </template>
 

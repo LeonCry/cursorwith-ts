@@ -25,8 +25,8 @@ import {
 class CreateCursorWith {
   private container: InstanceMeta['container'];
   private containerRect: InstanceMeta['containerRect'];
-  private currentPoint: InstanceMeta['currentPoint'] = { x: 0, y: 0 };
-  private targetPoint: InstanceMeta['targetPoint'] = { x: 0, y: 0 };
+  private currentPoint: InstanceMeta['currentPoint'];
+  private targetPoint: InstanceMeta['targetPoint'];
   private loopId: InstanceMeta['loopId'] = null;
   private isDrawCircle: InstanceMeta['isDrawCircle'] = true;
   private isOnHoverTarget: InstanceMeta['isOnHoverTarget'] = false;
@@ -44,7 +44,16 @@ class CreateCursorWith {
     const { config, container } = options;
     handleDealError();
     this.container = container || document.body;
+    // 设置currentPoint,targetPoint为中间位置
     this.containerRect = this.container.getBoundingClientRect();
+    this.currentPoint = {
+      x: this.containerRect.width / 2,
+      y: this.containerRect.height / 2,
+    };
+    this.targetPoint = {
+      x: this.containerRect.width / 2,
+      y: this.containerRect.height / 2,
+    };
     this.rowOptions = { style: config };
     this.options = new Proxy(this.rowOptions, {
       set: (target, key, val, receiver) => {
@@ -119,30 +128,47 @@ class CreateCursorWith {
     return canvasCreator(this.containerRect, this.container);
   }
 
+  private removeEventListener() {
+    window.removeEventListener('resize', listenerUnWrapper('resize'));
+    this.container.removeEventListener('mousemove', listenerUnWrapper('mousemove'));
+    this.container.removeEventListener('mousedown', listenerUnWrapper('mousedown'));
+    this.container.removeEventListener('mouseup', listenerUnWrapper('mouseup'));
+    this.container.removeEventListener('wheel', listenerUnWrapper('wheel'));
+  }
+
   // 初始化
   private init() {
-    this.container.addEventListener('mousemove', listenerWrapper((e) => {
-      const { clientX, clientY } = e;
-      this.targetPoint = { x: clientX - this.containerRect.left, y: clientY - this.containerRect.top };
-      this.doEvent('mousemove', e);
-    }, 'mousemove'));
-    this.container.addEventListener('mousedown', listenerWrapper((e) => {
-      this.doEvent('mousedown', e);
-    }, 'mousedown'));
-    this.container.addEventListener('mouseup', listenerWrapper((e) => {
-      this.doEvent('mouseup', e);
-    }, 'mouseup'));
-    this.container.addEventListener('wheel', listenerWrapper((e) => {
-      this.doEvent('mousewheel', e);
-    }, 'wheel'));
-    window.addEventListener('resize', listenerWrapper(debounce(
-      { delay: 300 },
-      () => {
-        this.containerRect = this.container.getBoundingClientRect();
-        this.canvas.width = this.containerRect.width;
-        this.canvas.height = this.containerRect.height;
-      },
-    ), 'resize'));
+    const addEventListener = () => {
+      this.container.addEventListener('mousemove', listenerWrapper((e) => {
+        const { clientX, clientY } = e;
+        const { left, top } = this.containerRect;
+        this.targetPoint = { x: clientX - left, y: clientY - top };
+        this.doEvent('mousemove', e);
+      }, 'mousemove'));
+      this.container.addEventListener('mousedown', listenerWrapper((e) => {
+        this.doEvent('mousedown', e);
+      }, 'mousedown'));
+      this.container.addEventListener('mouseup', listenerWrapper((e) => {
+        this.doEvent('mouseup', e);
+      }, 'mouseup'));
+      this.container.addEventListener('wheel', listenerWrapper((e) => {
+        this.updateBound();
+        this.doEvent('mousewheel', e);
+      }, 'wheel'));
+      window.addEventListener('resize', listenerWrapper(debounce(
+        { delay: 300 },
+        () => {
+          this.updateBound();
+        },
+      ), 'resize'));
+    };
+    this.container.addEventListener('mouseenter', listenerWrapper(() => {
+      this.updateBound();
+      addEventListener();
+    }, 'mouseenter'));
+    this.container.addEventListener('mouseleave', listenerWrapper(() => {
+      this.removeEventListener();
+    }, 'mouseleave'));
     this.loopId = requestAnimationFrame(this.loop);
   }
 
@@ -220,11 +246,9 @@ class CreateCursorWith {
     this.pause();
     this.stopUse(Array.from(this.useFns.values()));
     if (this.canvas) {
-      window.removeEventListener('resize', listenerUnWrapper('resize'));
-      this.container.removeEventListener('mousemove', listenerUnWrapper('mousemove'));
-      this.container.removeEventListener('mousedown', listenerUnWrapper('mousedown'));
-      this.container.removeEventListener('mouseup', listenerUnWrapper('mouseup'));
-      this.container.removeEventListener('wheel', listenerUnWrapper('wheel'));
+      this.removeEventListener();
+      this.container.removeEventListener('mouseenter', listenerUnWrapper('mouseenter'));
+      this.container.removeEventListener('mouseleave', listenerUnWrapper('mouseleave'));
     }
     if (this.canvas.parentNode) {
       this.canvas.parentNode.removeChild(this.canvas);

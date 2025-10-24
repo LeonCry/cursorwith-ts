@@ -37,6 +37,7 @@ export function hoverEffect(config: CursorWithOptions['hoverEffect']) {
           targetStyle,
           targetElement,
           this.currentPoint,
+          this.containerRect,
         );
       }
       else if (!targetElement && oldTargetElement) {
@@ -46,6 +47,7 @@ export function hoverEffect(config: CursorWithOptions['hoverEffect']) {
           oldTargetStyle!,
           oldTargetElement,
           this.currentPoint,
+          this.containerRect,
           () => {
             oldTargetElement = null;
             this.isDrawCircle = true;

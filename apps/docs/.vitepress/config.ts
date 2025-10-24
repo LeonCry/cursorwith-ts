@@ -2,6 +2,63 @@ import { defineConfig } from 'vitepress';
 
 export default defineConfig({
   base: '/cursorwith-ts/',
+  // 多语言配置，将中文主题配置放入 locales.zh.themeConfig
+  locales: {
+    root: { label: 'English', lang: 'en-US' },
+    zh: {
+      label: '简体中文',
+      lang: 'zh-CN',
+      themeConfig: {
+        nav: [
+          { text: '首页', link: '/zh/' },
+          { text: '指南', link: '/zh/guide', activeMatch: '/zh/guide/' },
+          { text: 'API', link: '/zh/api', activeMatch: '/zh/api/' },
+          { text: '问题', link: 'https://github.com/LeonCry/cursorwith-ts/issues' },
+          { text: '更新日志', link: 'https://github.com/LeonCry/cursorwith-ts/blob/main/CHANGELOG.md' },
+          {
+            text: '版本: 0.1.0',
+            items: [
+              { text: '0.1.0', link: 'https://www.npmjs.com/package/cursorwith-ts/v/1.0.0' },
+              { text: '测试版', link: 'https://www.npmjs.com/package/cursorwith-ts/v/BETA' },
+            ],
+          },
+        ],
+        sidebar: {
+          '/zh/guide/': [
+            {
+              text: '指南',
+              collapsed: true,
+              items: [
+                { text: '简介', link: '/zh/guide/' },
+                { text: '安装', link: '/zh/guide/install' },
+              ],
+            },
+            {
+              text: '配置项',
+              collapsed: true,
+              items: [
+                { text: '样式 Style', link: '/zh/guide/options/style' },
+                { text: '跟随 Follow', link: '/zh/guide/options/follow' },
+              ],
+            },
+          ],
+          '/zh/api/': [
+            {
+              text: 'API',
+              items: [
+                { text: '创建', link: '/zh/api/' },
+                { text: '实例公共方法', link: '/zh/api/instance' },
+              ],
+            },
+          ],
+        },
+        footer: {
+          message: '基于 MIT 许可发布。',
+          copyright: '版权所有 © 2025-present Voidis',
+        },
+      },
+    },
+  },
   title: 'cursorwith-docs',
   head: [['link', { rel: 'icon', href: '/cursorwith-ts/favicon.ico' }]],
   description: 'A tiny, customizable, easy-to-use, framework-agnostic, and high performance cursor following effect.',

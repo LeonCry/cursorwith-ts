@@ -11,7 +11,7 @@ function fillDefaultStyle(style: CursorWithOptions['style']) {
 function fillDefaultFollow(follow: Required<CursorWithOptions>['follow']) {
   switch (follow.type) {
     case 'time':
-      follow.timeRatio ??= 0.01;
+      follow.timeRatio ??= 0.1;
       break;
     case 'gap':
       follow.distance ??= 5;
