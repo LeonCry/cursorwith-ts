@@ -32,9 +32,6 @@ function fillDefaultTail(tail: Required<CursorWithOptions>['tail']) {
   tail.firstDockGap ??= 0;
   tail.dockGap ??= 0;
 }
-function fillDefaultDeform(deform: Required<CursorWithOptions>['deform']) {
-  deform.decay ??= 6;
-}
 function fillDefaultNativeCursor(nativeCursor: Required<CursorWithOptions>['nativeCursor']) {
   nativeCursor.borderWidth ??= 0;
   nativeCursor.shadowBlur ??= 0;
@@ -59,7 +56,6 @@ function handleDealError() {
   if (!window?.requestAnimationFrame) throwError('RequestAnimationFrame is not supported in this environment.');
 }
 export {
-  fillDefaultDeform,
   fillDefaultFollow,
   fillDefaultHoverEffect,
   fillDefaultNativeCursor,

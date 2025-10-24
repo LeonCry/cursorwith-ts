@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { CreateCursorWith } from 'cursorwith-ts/core';
-import { clickEffect, follow, hoverEffect, nativeCursor, tail } from 'cursorwith-ts/use';
+import {
+  clickEffect,
+  follow,
+  hoverEffect,
+  inverse,
+  nativeCursor,
+  tail,
+} from 'cursorwith-ts/use';
 
 const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
 onMounted(() => {
@@ -12,41 +19,7 @@ onMounted(() => {
     shadowBlur: 20,
     shadowColor: 'black',
     shadowOffset: [0, 0],
-    // inverse: false,
-    // deform: { active: true, decay: 10 },
-    // tail: { show: true, length: 10, color: 'rgba(255,255,255,0.2)' },
-    // follow: { type: 'time', timeRatio: 0.1 },
-    // hoverEffect: {
-    //   active: true,
-    //   flash: {
-    //     active: false,
-    //     duration: 1000,
-    //     easing: 'linear',
-    //   },
-    //   scope: { dataset: ['test'] },
-    //   padding: 5,
-    //   duration: 1000,
-    //   easing: 'bounce-out',
-    //   style: {
-    //     color: 'rgba(0,0,0,0.2)',
-    //     borderColor: 'rgba(0,0,0,1)',
-    //     shadowBlur: 40,
-    //     shadowColor: 'black',
-    //     shadowOffset: [0, 0],
-    //     borderWidth: 5,
-    //   },
-    // },
-    // nativeCursor: {
-    //   show: true,
-    //   radius: 5,
-    //   color: 'red',
-    //   borderWidth: 2,
-    //   borderColor: 'yellow',
-    //   shadowBlur: 20,
-    //   shadowColor: 'yellow',
-    //   shadowOffset: [0, 0],
-    // },
-    // clickEffect: true,
+    deform: { decay: 10 },
   });
   cursorWith.value.use(follow({ type: 'time', timeRatio: 0.1 }));
   cursorWith.value.use(hoverEffect({
@@ -80,6 +53,8 @@ onMounted(() => {
     shadowColor: 'yellow',
     shadowOffset: [0, 0],
   }));
+  cursorWith.value.use(inverse());
+  cursorWith.value.stopUse(inverse());
 });
 onBeforeUnmount(() => {
   cursorWith.value?.destroy();

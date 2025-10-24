@@ -1,5 +1,5 @@
 import type { CreateCursorWith } from '../core/index';
-import type { EasingInput } from '../utils/easing';
+import type { EasingInput } from './index';
 import type { ListenerFn } from './use';
 
 interface CommonStyle {
@@ -14,6 +14,7 @@ interface CommonStyle {
 interface StyleOptions extends CommonStyle {
   radius: number
   img?: string
+  deform?: { decay?: number }
 }
 
 interface NativeCursorOptions extends CommonStyle { radius: number }
@@ -61,20 +62,17 @@ interface HoverEffect {
   style: CommonStyle
 };
 
-interface Deform { decay?: number }
-
 interface CursorWithOptions {
   style: StyleOptions
   follow?: Follow
   tail?: Tail
-  deform?: Deform
   hoverEffect?: HoverEffect
   clickEffect?: boolean
   nativeCursor?: NativeCursorOptions
   inverse?: boolean
 }
 
-type EventNames = 'mousemove' | 'mousedown' | 'mouseup' | 'mousewheel' | 'loopBeforeDraw' | 'loopAfterDraw';
+type EventNames = 'mousemove' | 'mousedown' | 'mouseup' | 'mousewheel' | 'loopBeforeDraw' | 'loopAfterDraw' | 'optionSetter' | 'optionGetter';
 interface Meta {
   options: CursorWithOptions
   canvas: HTMLCanvasElement

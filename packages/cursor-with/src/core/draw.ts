@@ -13,7 +13,7 @@ function arcOrEllipseDrawer(
   currentPoint: Point,
   targetPoint: Point,
   radius: number,
-  deform?: CursorWithOptions['deform'],
+  deform?: CursorWithOptions['style']['deform'],
 ) {
   const { x, y } = currentPoint;
   const { x: tx, y: ty } = targetPoint;
@@ -36,8 +36,15 @@ function innerCircleDrawer(
   targetPoint: Point,
   options: CursorWithOptions,
 ) {
-  const { style, deform } = options;
-  const { radius, color, shadowBlur, shadowColor, shadowOffset } = style;
+  const { style } = options;
+  const {
+    radius,
+    color,
+    shadowBlur,
+    shadowColor,
+    shadowOffset,
+    deform,
+  } = style;
   const { borderWidth, borderColor } = style as Required<CursorWithOptions['style']>;
   ctx.save();
   ctx.fillStyle = color;
@@ -117,7 +124,7 @@ function tailDrawer(
   // 镂空,去除圆球内部多余的拖尾
   ctx.beginPath();
   ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
-  arcOrEllipseDrawer(ctx, currentPoint, targetPoint, radius, options.deform);
+  arcOrEllipseDrawer(ctx, currentPoint, targetPoint, radius, options.style.deform);
   ctx.clip('evenodd');
   ctx.strokeStyle = color;
   for (let i = 1; i < total - firstDockGap + 1; i += dockGap + 1) {

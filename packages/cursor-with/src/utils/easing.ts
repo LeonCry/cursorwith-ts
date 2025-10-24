@@ -1,9 +1,6 @@
-// every easing function is from https://easings.net
-export type EasingMode = 'in' | 'out' | 'inOut';
-export type EasingInput
-  = 'linear' | `${'ease' | 'back' | 'elastic' | 'bounce' | 'sine' | 'quad' | 'quart' | 'quint' | 'expo' | 'circ' | 'spring'}-${'in' | 'out' | 'in-out'}`
-    | ((t: number) => number);
+import type { EasingInput } from '../types';
 
+// every easing function is from https://easings.net
 function linear(t: number) {
   return t;
 }

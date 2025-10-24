@@ -14,8 +14,13 @@ interface TargetBound {
 
 type AnyFn = (...args: any) => any;
 
+type EasingInput
+  = 'linear' | `${'ease' | 'back' | 'elastic' | 'bounce' | 'sine' | 'quad' | 'quart' | 'quint' | 'expo' | 'circ' | 'spring'}-${'in' | 'out' | 'in-out'}`
+    | ((t: number) => number);
+
 export {
   AnyFn,
+  EasingInput,
   Point,
   TargetBound,
   TrackPoint,

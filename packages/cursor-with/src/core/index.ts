@@ -3,12 +3,12 @@ import type {
   EventNames,
   InstanceMeta,
   ListenerFn,
-  StopUseFn,
   UseFn,
 } from '../types';
 import { isNameLegal } from '../use';
 import {
   debounce,
+  deepClone,
   fillDefaultStyle,
   handleDealError,
   listenerUnWrapper,
@@ -34,11 +34,22 @@ class CreateCursorWith {
   private eventListeners: InstanceMeta['eventListeners'] = new Map();
   private eventResult: InstanceMeta['eventResult'] = new Map();
   private options: InstanceMeta['options'];
+  private rowOptions: InstanceMeta['options'];
   private canvas: InstanceMeta['canvas'];
   private ctx: InstanceMeta['ctx'];
   constructor(styleOptions: CursorWithOptions['style']) {
     handleDealError();
-    this.options = { style: styleOptions };
+    this.rowOptions = { style: styleOptions };
+    this.options = new Proxy(this.rowOptions, {
+      set: (target, key, val, receiver) => {
+        this.doEvent('optionSetter', { target, key, val });
+        return Reflect.set(target, key, val, receiver);
+      },
+      get: (target, key, receiver) => {
+        this.doEvent('optionGetter', { target, key });
+        return Reflect.get(target, key, receiver);
+      },
+    });
     fillDefaultStyle(this.options.style);
     this.canvas = this.create();
     this.ctx = this.canvas.getContext('2d')!;
@@ -50,6 +61,7 @@ class CreateCursorWith {
     const handle = (f: UseFn) => {
       const { name, execute } = f;
       if (!isNameLegal(name)) throwError(`The use function name ${String(name)} is not legal.`);
+      if (this.useFns.has(name)) this.stopUse(f);
       this.useFns.set(name, execute);
       execute.call(this as InstanceMeta, true);
     };
@@ -58,9 +70,9 @@ class CreateCursorWith {
   }
 
   // 卸载插件
-  public stopUse(fn: StopUseFn | StopUseFn[]) {
-    const handle = (f: StopUseFn) => {
-      const { name, execute } = f();
+  public stopUse(fn: UseFn | UseFn[]) {
+    const handle = (f: UseFn) => {
+      const { name, execute } = f;
       if (!isNameLegal(name)) throwError(`The use function name ${String(name)} is not legal.`);
       if (execute) {
         execute.call(this as InstanceMeta, false);
@@ -168,12 +180,17 @@ class CreateCursorWith {
 
   // 设置选项
   public setOptions(options: CursorWithOptions) {
-    this.options = { ...this.options, ...options };
+    const o = deepClone(options);
+    Object.keys(o).forEach((key) => {
+      const k = key as keyof CursorWithOptions;
+      // tslint:disable-next-line:no-any
+      this.options[k] = o[k] as any;
+    });
   }
 
   // 获取当前选项
   public getOptions() {
-    return this.options;
+    return this.rowOptions;
   }
 
   // 获取当前cursor主要圆位置
