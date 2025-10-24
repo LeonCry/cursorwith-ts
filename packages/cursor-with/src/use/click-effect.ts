@@ -6,9 +6,13 @@ let clickEffectTrigger: (() => boolean | undefined) | null = null;
 let clickEffectRestore: (() => boolean | undefined) | null = null;
 
 export function clickEffect(
-  customTrigger?: () => [(p: number) => any, (p: number) => any],
-  ease?: [EasingInput, EasingInput],
+  config?: {
+    customTrigger?: () => [(p: number) => any, (p: number) => any]
+    ease?: [EasingInput, EasingInput]
+    duration?: number
+  },
 ) {
+  const { customTrigger, ease, duration } = config || {};
   const uniqueId = USEABLE_USE_FN_NAMES_SYMBOLS.clickEffect;
   function execute(this: InstanceMeta, active: boolean) {
     if (!active) {
@@ -36,12 +40,12 @@ export function clickEffect(
 
     this.on('mousedown', () => {
       this.setOptions(originOptions);
-      clickEffectTrigger = clickEffectTriggerCollector(clickFinish, this.options, triggerEase, trigger);
+      clickEffectTrigger = clickEffectTriggerCollector(clickFinish, this.options, triggerEase, duration, trigger);
       clickEffectRestore = null;
     }, uniqueId);
     this.on('mouseup', () => {
       this.setOptions(originOptions);
-      clickEffectRestore = clickEffectRestoreCollector(clickFinish, this.options, restoreEase, restore);
+      clickEffectRestore = clickEffectRestoreCollector(clickFinish, this.options, restoreEase, duration, restore);
       clickEffectTrigger = null;
     }, uniqueId);
     this.on('loopAfterDraw', () => {

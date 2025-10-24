@@ -1,14 +1,15 @@
 import type { CursorWithOptions, EasingInput } from '../types';
 import { resolveEasing } from '../utils';
 
-const DURATION = 600;
 let saveRadius = 0;
 let clickStartTime = 0;
 let clickEndTime = 0;
+const DURATION = 600;
 function clickEffectTriggerCollector(
   clickFinish: { trigger: boolean, restore: boolean },
   options: CursorWithOptions,
   ease: EasingInput,
+  duration?: number,
   trigger?: (p: number) => any,
 ) {
   const { style } = options;
@@ -22,7 +23,7 @@ function clickEffectTriggerCollector(
     if (clickEndTime) return;
     clickFinish.trigger = false;
     const n = performance.now();
-    const progress = Math.min((n - clickStartTime) / DURATION, 1);
+    const progress = Math.min((n - clickStartTime) / (duration || DURATION), 1);
     if (progress === 1) return clickFinish.trigger = true;
     const easeValue = resolveEasing(ease)(progress);
     const pe = Math.min(1, Math.max(0, easeValue));
@@ -38,6 +39,7 @@ function clickEffectRestoreCollector(
   clickFinish: { trigger: boolean, restore: boolean },
   options: CursorWithOptions,
   ease: EasingInput,
+  duration?: number,
   restore?: (p: number) => any,
 ) {
   const { style } = options;
@@ -50,7 +52,7 @@ function clickEffectRestoreCollector(
     if (clickStartTime) return;
     clickFinish.restore = false;
     const n = performance.now();
-    const progress = Math.min((n - clickEndTime) / DURATION, 1);
+    const progress = Math.min((n - clickEndTime) / (duration || DURATION), 1);
     if (progress === 1) return clickFinish.restore = true;
     const easeValue = resolveEasing(ease)(progress);
     const pe = Math.min(1, Math.max(0, easeValue));
