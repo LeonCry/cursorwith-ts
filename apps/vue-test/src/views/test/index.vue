@@ -60,6 +60,10 @@ onMounted(() => {
   }));
   cursorWith.value.use(inverse());
   cursorWith.value.stopUse(inverse());
+  setTimeout(() => {
+    container.value!.style.width = '1000px';
+    cursorWith.value?.updateBound();
+  }, 3000);
 });
 onBeforeUnmount(() => {
   cursorWith.value?.destroy();

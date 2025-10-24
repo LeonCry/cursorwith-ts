@@ -135,7 +135,7 @@ class CreateCursorWith {
     this.container.addEventListener('wheel', listenerWrapper((e) => {
       this.doEvent('mousewheel', e);
     }, 'wheel'));
-    this.container.addEventListener('resize', listenerWrapper(debounce(
+    window.addEventListener('resize', listenerWrapper(debounce(
       { delay: 300 },
       () => {
         this.containerRect = this.container.getBoundingClientRect();
@@ -208,12 +208,19 @@ class CreateCursorWith {
     return this.targetPoint;
   }
 
+  // 更新canvas大小
+  public updateBound() {
+    this.containerRect = this.container.getBoundingClientRect();
+    this.canvas.width = this.containerRect.width;
+    this.canvas.height = this.containerRect.height;
+  }
+
   // 销毁实例
   public destroy() {
     this.pause();
     this.stopUse(Array.from(this.useFns.values()));
     if (this.canvas) {
-      this.container.removeEventListener('resize', listenerUnWrapper('resize'));
+      window.removeEventListener('resize', listenerUnWrapper('resize'));
       this.container.removeEventListener('mousemove', listenerUnWrapper('mousemove'));
       this.container.removeEventListener('mousedown', listenerUnWrapper('mousedown'));
       this.container.removeEventListener('mouseup', listenerUnWrapper('mouseup'));
