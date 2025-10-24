@@ -23,10 +23,10 @@ import {
 } from './draw';
 
 class CreateCursorWith {
-  private clientWidth: InstanceMeta['clientWidth'] = document.documentElement.clientWidth;
-  private clientHeight: InstanceMeta['clientHeight'] = document.documentElement.clientHeight;
-  private currentPoint: InstanceMeta['currentPoint'] = { x: this.clientWidth / 2, y: this.clientHeight / 2 };
-  private targetPoint: InstanceMeta['targetPoint'] = { x: this.clientWidth / 2, y: this.clientHeight / 2 };
+  private container: InstanceMeta['container'];
+  private containerRect: InstanceMeta['containerRect'];
+  private currentPoint: InstanceMeta['currentPoint'] = { x: 0, y: 0 };
+  private targetPoint: InstanceMeta['targetPoint'] = { x: 0, y: 0 };
   private loopId: InstanceMeta['loopId'] = null;
   private isDrawCircle: InstanceMeta['isDrawCircle'] = true;
   private isOnHoverTarget: InstanceMeta['isOnHoverTarget'] = false;
@@ -37,9 +37,15 @@ class CreateCursorWith {
   private rowOptions: InstanceMeta['options'];
   private canvas: InstanceMeta['canvas'];
   private ctx: InstanceMeta['ctx'];
-  constructor(styleOptions: CursorWithOptions['style']) {
+  constructor(options: {
+    config: CursorWithOptions['style']
+    container?: CursorWithOptions['container']
+  }) {
+    const { config, container } = options;
     handleDealError();
-    this.rowOptions = { style: styleOptions };
+    this.container = container || document.body;
+    this.containerRect = this.container.getBoundingClientRect();
+    this.rowOptions = { style: config };
     this.options = new Proxy(this.rowOptions, {
       set: (target, key, val, receiver) => {
         this.doEvent('optionSetter', { target, key, val });
@@ -110,32 +116,31 @@ class CreateCursorWith {
 
   // 创建canvas
   private create() {
-    return canvasCreator(this.clientWidth, this.clientHeight);
+    return canvasCreator(this.containerRect, this.container);
   }
 
   // 初始化
   private init() {
-    window.addEventListener('mousemove', listenerWrapper((e) => {
+    this.container.addEventListener('mousemove', listenerWrapper((e) => {
       const { clientX, clientY } = e;
-      this.targetPoint = { x: clientX, y: clientY };
+      this.targetPoint = { x: clientX - this.containerRect.left, y: clientY - this.containerRect.top };
       this.doEvent('mousemove', e);
     }, 'mousemove'));
-    window.addEventListener('mousedown', listenerWrapper((e) => {
+    this.container.addEventListener('mousedown', listenerWrapper((e) => {
       this.doEvent('mousedown', e);
     }, 'mousedown'));
-    window.addEventListener('mouseup', listenerWrapper((e) => {
+    this.container.addEventListener('mouseup', listenerWrapper((e) => {
       this.doEvent('mouseup', e);
     }, 'mouseup'));
-    window.addEventListener('wheel', listenerWrapper((e) => {
+    this.container.addEventListener('wheel', listenerWrapper((e) => {
       this.doEvent('mousewheel', e);
     }, 'wheel'));
-    window.addEventListener('resize', listenerWrapper(debounce(
+    this.container.addEventListener('resize', listenerWrapper(debounce(
       { delay: 300 },
       () => {
-        this.clientWidth = document.documentElement.clientWidth;
-        this.clientHeight = document.documentElement.clientHeight;
-        this.canvas.width = this.clientWidth;
-        this.canvas.height = this.clientHeight;
+        this.containerRect = this.container.getBoundingClientRect();
+        this.canvas.width = this.containerRect.width;
+        this.canvas.height = this.containerRect.height;
       },
     ), 'resize'));
     this.loopId = requestAnimationFrame(this.loop);
@@ -153,7 +158,7 @@ class CreateCursorWith {
 
   // 主循环
   private loop = (t: number) => {
-    this.ctx.clearRect(0, 0, this.clientWidth, this.clientHeight);
+    this.ctx.clearRect(0, 0, this.containerRect.width, this.containerRect.height);
     this.doEvent('loopBeforeDraw', t);
     this.drawCircle();
     this.doEvent('loopAfterDraw', t);
@@ -206,12 +211,13 @@ class CreateCursorWith {
   // 销毁实例
   public destroy() {
     this.pause();
+    this.stopUse(Array.from(this.useFns.values()));
     if (this.canvas) {
-      window.removeEventListener('resize', listenerUnWrapper('resize'));
-      window.removeEventListener('mousemove', listenerUnWrapper('mousemove'));
-      window.removeEventListener('mousedown', listenerUnWrapper('mousedown'));
-      window.removeEventListener('mouseup', listenerUnWrapper('mouseup'));
-      window.removeEventListener('wheel', listenerUnWrapper('wheel'));
+      this.container.removeEventListener('resize', listenerUnWrapper('resize'));
+      this.container.removeEventListener('mousemove', listenerUnWrapper('mousemove'));
+      this.container.removeEventListener('mousedown', listenerUnWrapper('mousedown'));
+      this.container.removeEventListener('mouseup', listenerUnWrapper('mouseup'));
+      this.container.removeEventListener('wheel', listenerUnWrapper('wheel'));
     }
     if (this.canvas.parentNode) {
       this.canvas.parentNode.removeChild(this.canvas);

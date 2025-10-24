@@ -10,16 +10,21 @@ import {
 } from 'cursorwith-ts/use';
 
 const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
+const container = ref<HTMLDivElement | null>(null);
 onMounted(() => {
+  if (!container.value) return;
   cursorWith.value = new CreateCursorWith({
-    radius: 20,
-    color: 'black',
-    borderWidth: 10,
-    borderColor: 'black',
-    shadowBlur: 20,
-    shadowColor: 'black',
-    shadowOffset: [0, 0],
-    deform: { decay: 10 },
+    config: {
+      radius: 20,
+      color: 'black',
+      borderWidth: 10,
+      borderColor: 'black',
+      shadowBlur: 20,
+      shadowColor: 'black',
+      shadowOffset: [0, 0],
+      deform: { decay: 10 },
+    },
+    container: container.value,
   });
   cursorWith.value.use(follow({ type: 'time', timeRatio: 0.1 }));
   cursorWith.value.use(hoverEffect({
@@ -67,10 +72,6 @@ function handlePause() {
 function handleResume() {
   cursorWith.value?.resume();
 }
-function handleDestroy() {
-  cursorWith.value?.destroy();
-  cursorWith.value = null;
-}
 
 window.addEventListener('keydown', (e) => {
   if (e.code === 'Space') handlePause();
@@ -79,33 +80,8 @@ window.addEventListener('keydown', (e) => {
 </script>
 
 <template>
-  <section class="w-full h-full p-2 bg-white overflow-auto">
-    <ElButton @click="handlePause">
-      暂停 (Space)
-    </ElButton>
-    <ElButton @click="handleResume">
-      恢复 (Enter)
-    </ElButton>
-    <ElButton type="danger" @click="handleDestroy">
-      销毁
-    </ElButton>
-
-    <button data-test class="absolute bottom-25 left-1/2 border p-4 z-10 text-rounded">
-      外元素
-      <p class="px-4 border border-blue-100">
-        内元素
-      </p>
-    </button>
-
-    <button data-test class=" bottom-25 left-1/4 border p-4 z-10 text-rounded">
-      外元素2
-      <p class="px-4 border border-blue-100">
-        内元素2
-      </p>
-    </button>
-
-    <TestTable class=" absolute top-1/2 -translate-y-1/2" />
-    <div class="h-[5000px] w-[5000px]" />
+  <section class="w-full h-full p-2 bg-white overflow-auto flex items-center justify-center">
+    <div ref="container" class="w-[800px] h-[400px] bg-red-50 relative" />
   </section>
 </template>
 

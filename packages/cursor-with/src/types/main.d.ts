@@ -63,6 +63,7 @@ interface HoverEffect {
 };
 
 interface CursorWithOptions {
+  container?: Element
   style: StyleOptions
   follow?: Follow
   tail?: Tail
@@ -74,11 +75,11 @@ interface CursorWithOptions {
 
 type EventNames = 'mousemove' | 'mousedown' | 'mouseup' | 'mousewheel' | 'loopBeforeDraw' | 'loopAfterDraw' | 'optionSetter' | 'optionGetter';
 interface Meta {
+  container: Element
   options: CursorWithOptions
   canvas: HTMLCanvasElement
   ctx: CanvasRenderingContext2D
-  clientWidth: number
-  clientHeight: number
+  containerRect: DOMRect
   currentPoint: Point
   targetPoint: Point
   loopId: number | null
