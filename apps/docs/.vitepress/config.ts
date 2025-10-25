@@ -27,7 +27,7 @@ export default defineConfig({
           '/zh/guide/': [
             {
               text: '指南',
-              collapsed: true,
+              collapsed: false,
               items: [
                 { text: '简介', link: '/zh/guide/' },
                 { text: '安装', link: '/zh/guide/install' },
@@ -35,7 +35,7 @@ export default defineConfig({
             },
             {
               text: '实例',
-              collapsed: true,
+              collapsed: false,
               items: [
                 { text: '创建', link: '/zh/guide/instance/create' },
                 { text: '实例方法', link: '/zh/guide/instance/fns' },
@@ -43,7 +43,7 @@ export default defineConfig({
             },
             {
               text: '插件',
-              collapsed: true,
+              collapsed: false,
               items: [
                 { text: 'follow', link: '/zh/guide/plugins/follow' },
                 { text: 'hoverEffect', link: '/zh/guide/plugins/hoverEffect' },
@@ -57,9 +57,11 @@ export default defineConfig({
           '/zh/api/': [
             {
               text: 'API',
+              collapsed: false,
               items: [
-                { text: '创建', link: '/zh/api/' },
-                { text: '实例公共方法', link: '/zh/api/instance' },
+                { text: '所有类型', link: '/zh/api/' },
+                { text: '实例', link: '/zh/api/instance' },
+                { text: '插件', link: '/zh/api/plugins' },
               ],
             },
           ],
