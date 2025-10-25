@@ -9,7 +9,7 @@
   "homepage": "https://leoncry.github.io/cursorwith-ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LeonCry/cursorwith-ts.git"
+    "url": "https://github.com/LeonCry/cursorwith-ts"
   },
   "bugs": "https://github.com/LeonCry/cursorwith-ts/issues",
   "keywords": [
@@ -31,6 +31,10 @@
     "./use": {
       "types": "./dist/use/index.d.ts",
       "import": "./dist/use/index.js"
+    },
+    "./types": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/types/index.js"
     }
   },
   "files": [

@@ -20,39 +20,33 @@ yarn add cursorwith-ts
 ### ES6 Modules
 
 ```ts
-import { CreateCursorWith } from 'cursorwith-ts';
+import { CreateCursorWith } from 'cursorwith-ts/core';
+import { follow } from 'cursorwith-ts/use';
 
 const cw = new CreateCursorWith({
-  style: {
-    radius: 10,
-    color: 'rgba(0,0,0,0.1)',
-    borderWidth: 1,
-    borderColor: '#000000'
-  },
-  follow: {
-    type: 'time',
-    timeRatio: 0.04
-  }
-})
+    style: {
+      radius: 20,
+      color: '#ddddddaa',
+    },
+    container: container.value,
+  })
+cw.value.use(follow({ type: 'time' }));
 ```
 
 ### CDN
 
 ```ts
-import { CreateCursorWith } from 'https://unpkg.com/cursorwith@latest/dist/index.esm.js';
+import { CreateCursorWith } from 'https://unpkg.com/cursorwith-ts@latest/dist/core/index.js';
+import { follow } from 'https://unpkg.com/cursorwith-ts@latest/dist/use/index.js';
 
 const cw = new CreateCursorWith({
-  style: {
-    radius: 10,
-    color: 'rgba(0,0,0,0.1)',
-    borderWidth: 1,
-    borderColor: '#000000'
-  },
-  follow: {
-    type: 'time',
-    timeRatio: 0.04
-  }
-})
+    style: {
+      radius: 20,
+      color: '#ddddddaa',
+    },
+    container: container.value,
+  })
+cw.value.use(follow({ type: 'time' }));
 ```
 
 ### TypeScript 支持
@@ -60,25 +54,16 @@ const cw = new CreateCursorWith({
 cursorwith 完整支持 TypeScript，所有函数均提供完备类型定义。
 
 ```ts
-import { CreateCursorWith } from 'cursorwith-ts';
-import type { CursorWithOptions } from 'cursorwith-ts';
+import { CreateCursorWith } from 'cursorwith-ts/core';
+import type { CursorWithOptions } from 'cursorwith-ts/types';
 
-const options: CursorWithOptions = {
-  style: {
-    radius: 10,
-    color: 'rgba(0,0,0,0.1)',
-    borderWidth: 1,
-    borderColor: '#000000'
-  },
-  follow: {
-    type: 'time',
-    timeRatio: 0.04
-  }
-}
-const cw = new CreateCursorWith(options);
+const style: CursorWithOptions['style'] = {
+  radius: 20,
+  color: '#ddddddaa',
+},
+const cw = new CreateCursorWith({ style });
 ```
 
 ## 环境要求
 
 - 支持 ES6 Modules 的现代浏览器
-- 不支持 IE 浏览器

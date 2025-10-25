@@ -38,10 +38,10 @@ class CreateCursorWith {
   private canvas: InstanceMeta['canvas'];
   private ctx: InstanceMeta['ctx'];
   constructor(options: {
-    config: CursorWithOptions['style']
+    style: CursorWithOptions['style']
     container?: CursorWithOptions['container']
   }) {
-    const { config, container } = options;
+    const { style: styleConfig, container } = options;
     handleDealError();
     this.container = container || document.body;
     // 设置currentPoint,targetPoint为中间位置
@@ -54,7 +54,7 @@ class CreateCursorWith {
       x: this.containerRect.width / 2,
       y: this.containerRect.height / 2,
     };
-    this.rowOptions = { style: config };
+    this.rowOptions = { style: styleConfig };
     this.options = new Proxy(this.rowOptions, {
       set: (target, key, val, receiver) => {
         this.doEvent('optionSetter', { target, key, val });

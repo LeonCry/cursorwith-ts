@@ -3,7 +3,7 @@
 layout: home
 
 hero:
-  name: "CURSORWITH"
+  name: "CURSORWITH-TS"
   text: "A Tiny, High Performance And Framework-Agnostic Cursor Following Effect."
   tagline: customizable and easy to use.
   image:

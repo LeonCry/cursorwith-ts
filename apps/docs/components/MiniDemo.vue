@@ -8,9 +8,9 @@ const cw = ref<InstanceType<typeof CreateCursorWith> | null>(null);
 onMounted(() => {
   if (!container.value) return;
   cw.value = new CreateCursorWith({
-    config: {
+    style: {
       radius: 20,
-      color: '#dddddd',
+      color: '#ddddddaa',
     },
     container: container.value,
   });
@@ -43,11 +43,12 @@ onMounted(() => {
 
 <style scoped>
 .demo {
+  cursor: none;
   position: relative;
   perspective: 0;
   width: 100%;
   height: 300px;
-  background-color: #f6f6f7;
+  background-color: #f6f6f754;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -58,7 +59,7 @@ onMounted(() => {
   color: #444444;
   padding: 10px 30px;
   border-radius: 10px;
-  background-color: #ebebeb;
+  background-color: #ebebeb83;
   line-height: 2;
   font-size: 24px;
 }

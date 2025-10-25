@@ -16,10 +16,10 @@ export default defineConfig({
           { text: '问题', link: 'https://github.com/LeonCry/cursorwith-ts/issues' },
           { text: '更新日志', link: 'https://github.com/LeonCry/cursorwith-ts/blob/main/CHANGELOG.md' },
           {
-            text: '版本: 0.1.0',
+            text: '版本: 1.0.0',
             items: [
-              { text: '0.1.0', link: 'https://www.npmjs.com/package/cursorwith-ts/v/1.0.0' },
-              { text: '测试版', link: 'https://www.npmjs.com/package/cursorwith-ts/v/BETA' },
+              { text: '1.0.0', link: 'https://www.npmjs.com/package/cursorwith-ts/v/1.0.0' },
+              { text: 'BETA', link: 'https://www.npmjs.com/package/cursorwith-ts/v/BETA' },
             ],
           },
         ],
@@ -34,11 +34,23 @@ export default defineConfig({
               ],
             },
             {
-              text: '配置项',
+              text: '实例',
               collapsed: true,
               items: [
-                { text: '样式 Style', link: '/zh/guide/options/style' },
-                { text: '跟随 Follow', link: '/zh/guide/options/follow' },
+                { text: '创建', link: '/zh/guide/instance/create' },
+                { text: '实例方法', link: '/zh/guide/instance/fns' },
+              ],
+            },
+            {
+              text: '插件',
+              collapsed: true,
+              items: [
+                { text: 'follow', link: '/zh/guide/plugins/follow' },
+                { text: 'hoverEffect', link: '/zh/guide/plugins/hoverEffect' },
+                { text: 'clickEffect', link: '/zh/guide/plugins/clickEffect' },
+                { text: 'tail', link: '/zh/guide/plugins/tail' },
+                { text: 'inverse', link: '/zh/guide/plugins/inverse' },
+                { text: 'nativeCursor', link: '/zh/guide/plugins/nativeCursor' },
               ],
             },
           ],
@@ -63,7 +75,7 @@ export default defineConfig({
   head: [['link', { rel: 'icon', href: '/cursorwith-ts/favicon.ico' }]],
   description: 'A tiny, customizable, easy-to-use, framework-agnostic, and high performance cursor following effect.',
   themeConfig: {
-    siteTitle: 'CURSORWITH',
+    siteTitle: 'CURSORWITH-TS',
     search: { provider: 'local' },
     logo: '/logo.png',
     nav: [
@@ -73,9 +85,9 @@ export default defineConfig({
       { text: 'Issues', link: 'https://github.com/LeonCry/cursorwith-ts/issues' },
       { text: 'ChangeLog', link: 'https://github.com/LeonCry/cursorwith-ts/blob/main/CHANGELOG.md' },
       {
-        text: 'Version: 0.1.0',
+        text: 'Version: 1.0.0',
         items: [
-          { text: '0.1.0', link: 'https://www.npmjs.com/package/cursorwith-ts/v/1.0.0' },
+          { text: '1.0.0', link: 'https://www.npmjs.com/package/cursorwith-ts/v/1.0.0' },
           { text: 'BETA', link: 'https://www.npmjs.com/package/cursorwith-ts/v/BETA' },
         ],
       },
@@ -91,11 +103,11 @@ export default defineConfig({
           ],
         },
         {
-          text: 'Options',
+          text: 'Plugins',
           collapsed: true,
           items: [
-            { text: 'Style', link: '/guide/options/style' },
-            { text: 'Follow', link: '/guide/options/follow' },
+            { text: 'Style', link: '/guide/plugins/style' },
+            { text: 'Follow', link: '/guide/plugins/follow' },
           ],
         },
       ],

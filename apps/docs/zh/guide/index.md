@@ -1,26 +1,26 @@
-# Cursorwith 介绍
+# Cursorwith-ts 介绍
 
-cursorwith 是一个小巧、零依赖、TypeScript 驱动、跨框架、高性能的鼠标光标跟随效果库。
+cursorwith-ts 是一个小巧、零依赖、TypeScript 驱动、跨框架、高性能的鼠标光标跟随效果库。
 
 ## 🎈 小巧
 
-仅 **≈ 4 kB**，零依赖 —— 一行代码即可让你的光标拥有拖尾效果。
+仅 **≈ 7 kB**，零依赖,低配置 —— 几行代码即可让你的光标拥有跟随效果。
 
 ```ts
-// 仅 4.4kb（gzip 后约 1.6kb）（基于 VSCode 扩展 Import Cost 估算）
-import { CreateCursorWith } from 'cursorwith-ts';
+// 仅 6.9kb（gzip 后约 2.4kb）
+import { CreateCursorWith } from 'cursorwith-ts/core';
 ```
 
 ## 🚀 零依赖
 
-不依赖任何第三方库，所有功能均由内部实现，降低项目维护成本与复杂度。
+不依赖任何第三方库，所有功能均由内部实现，降低项目复杂度与打包体积。
 
 ## 🔒 TypeScript 支持
 
 全量 TypeScript 编写，提供完整类型声明，让开发更安全。
 
 ```ts
-import type { CursorWithOptions } from 'cursorwith-ts';
+import type { CursorWithOptions } from 'cursorwith-ts/types';
 ```
 
 ## 🍭 跨框架
@@ -29,48 +29,44 @@ import type { CursorWithOptions } from 'cursorwith-ts';
 
 ::: code-group
 ```ts [app.vue]
-import { CreateCursorWith } from 'cursorwith-ts';
+import { CreateCursorWith } from 'cursorwith-ts/core';
+import { follow } from 'cursorwith-ts/use';
 import { onMounted, onBeforeUnmount, ref } from 'vue';
-const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
+
+const cw = ref<InstanceType<typeof CreateCursorWith> | null>(null);
+
 onMounted(() => {
-  cursorWith.value = new CreateCursorWith({
+  cw.value = new CreateCursorWith({
     style: {
-      radius: 10,
-      color: 'rgba(0,0,0,0.1)',
-      borderWidth: 1,
-      borderColor: 'rgba(0,0,0,1)'
+      radius: 20,
+      color: '#ddddddaa',
     },
-    follow: {
-      type: 'time',
-      timeRatio: 0.04
-    }
+    container,
   });
 });
+cw.value.use(follow({ type: 'time' }));
+
 onBeforeUnmount(() => {
-  cursorWith.value?.destroy();
+  cw.value?.destroy();
 });
 ```
 ```tsx [react.tsx]
 import { useEffect, useRef } from 'react';
-import { CreateCursorWith } from 'cursorwith-ts';
+import { CreateCursorWith } from 'cursorwith-ts/core';
+import { follow } from 'cursorwith-ts/use';
 
 export default function App() {
   const cursorRef = useRef<InstanceType<typeof CreateCursorWith> | null>(null);
 
   useEffect(() => {
     cursorRef.current = new CreateCursorWith({
-      style: {
-        radius: 10,
-        color: 'rgba(0,0,0,0.1)',
-        borderWidth: 1,
-        borderColor: 'rgba(0,0,0,1)'
-      },
-      follow: {
-        type: 'time',
-        timeRatio: 0.04
-      }
+    style: {
+      radius: 20,
+      color: '#ddddddaa',
+    },
+    container,
     });
-
+    cursorRef.current.use(follow({ type: 'time' }));
     return () => {
       cursorRef.current?.destroy();
     };

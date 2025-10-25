@@ -3,7 +3,7 @@
 layout: home
 
 hero:
-  name: "CURSORWITH"
+  name: "CURSORWITH-TS"
   text: "一个小巧、高性能、跨框架的光标跟随效果。"
   tagline: 可定制且易于使用。
   image:
@@ -54,9 +54,9 @@ import { follow } from 'cursorwith-ts/use';
 const container = document.getElementById('app');
 // 创建一个 cursorwith 实例
 const cw = new CreateCursorWith({
-    config: {
+    style: {
       radius: 20,
-      color: '#dddddd',
+      color: '#ddddddaa',
     },
     container,
   })
