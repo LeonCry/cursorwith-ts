@@ -50,6 +50,9 @@ importers:
 
   apps/docs:
     dependencies:
+      cursorwith-ts:
+        specifier: workspace:*
+        version: link:../../packages/cursor-with
       vue:
         specifier: 3.5.21
         version: 3.5.21(typescript@5.9.2)

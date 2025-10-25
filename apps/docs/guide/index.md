@@ -1,79 +1,68 @@
+# Introduction to cursorwith-ts
 
-# Cursorwith Introduction
+cursorwith-ts is a tiny, zero-dependency, TypeScript-driven, framework-agnostic, high-performance library for cursor-following effects.
 
-cursorwith is a tiny, zero-dependency, TypeScript-powered, framework-agnostic, high-performance mouse-trailing effect.
+## 🎈 Tiny
 
-## 🎈  Tiny
-
-Just **≈ 4 kB**, zero-deps-one line and your cursor grows a tail.
-
-```ts
-// only 4.4kb gzipped 1.6kb (computed from vscode extension [Import Cost])
-import { CreateCursorWith } from 'cursorwith-ts';
-```
-
-## 🚀  Zero-Dependency
-
-No third-party libraries are required; all functionality is implemented internally, minimizing project complexity.
-
-## 🔒  TypeScript Support
-
-Written entirely in TypeScript across the stack, complete with type definitions to enhance development safety.
+Only ≈ 7 kB, zero-dependency, low configuration — a few lines of code bring a smooth cursor-following effect.
 
 ```ts
-import type { CursorWithOptions } from 'cursorwith-ts';
-
+// Just ~6.9kb (≈2.4kb gzipped)
+import { CreateCursorWith } from 'cursorwith-ts/core';
 ```
 
-## 🍭  Framework-Agnostic
+## 🚀 Zero-dependency
 
-Built without any framework dependencies—pure native implementation that can be dropped into Vue, React, Angular, or any other stack.
+No third-party libraries required. All features are implemented internally, reducing project complexity and bundle size.
 
+## 🔒 TypeScript support
+
+Written in TypeScript end-to-end, with complete type declarations for safer development.
+
+```ts
+import type { CursorWithOptions } from 'cursorwith-ts/types';
+```
+
+## 🍭 Framework-agnostic
+
+Works in any stack without framework bindings. Pure native implementation that drops into Vue, React, Angular, and more.
 
 ::: code-group
-```ts [app.vue]
-import { CreateCursorWith } from 'cursorwith-ts';
-import {onMounted, onBeforeUnmount, ref} from "vue";
-const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
+```ts [Vue]
+import { CreateCursorWith } from 'cursorwith-ts/core';
+import { follow } from 'cursorwith-ts/use';
+import { onMounted, onBeforeUnmount, ref } from 'vue';
+
+const cw = ref<InstanceType<typeof CreateCursorWith> | null>(null);
+const container = ref<HTMLElement | null>(null);
+
 onMounted(() => {
-  cursorWith.value = new CreateCursorWith({
-    style: { 
-        radius: 10, 
-        color: 'rgba(0,0,0,0.1)', 
-        borderWidth: 1, 
-        borderColor: 'rgba(0,0,0,1)' 
-        }
-    follow: { 
-        type: 'time', 
-        timeRatio: 0.04
-        }
+  cw.value = new CreateCursorWith({
+    style: { radius: 20, color: '#ddddddaa' },
+    container: container.value ?? document.body,
   });
+  cw.value.use(follow({ type: 'time' }));
 });
+
 onBeforeUnmount(() => {
-  cursorWith.value?.destroy();
+  cw.value?.destroy();
 });
 ```
-```tsx [react.tsx]
+```tsx [React]
 import { useEffect, useRef } from 'react';
-import { CreateCursorWith } from 'cursorwith-ts';
+import { CreateCursorWith } from 'cursorwith-ts/core';
+import { follow } from 'cursorwith-ts/use';
 
 export default function App() {
   const cursorRef = useRef<InstanceType<typeof CreateCursorWith> | null>(null);
+  const container = document.body;
 
   useEffect(() => {
     cursorRef.current = new CreateCursorWith({
-      style: { 
-        radius: 10, 
-        color: 'rgba(0,0,0,0.1)', 
-        borderWidth: 1, 
-        borderColor: 'rgba(0,0,0,1)' 
-        },
-      follow: { 
-        type: 'time', 
-        timeRatio: 0.04 
-        }
+      style: { radius: 20, color: '#ddddddaa' },
+      container,
     });
-
+    cursorRef.current.use(follow({ type: 'time' }));
     return () => {
       cursorRef.current?.destroy();
     };
@@ -84,8 +73,6 @@ export default function App() {
 ```
 :::
 
+## ⚡️ High performance
 
-## ⚡️  High Performance
-
-Implemented natively with Canvas and zero DOM manipulation, zero render-thread blocking.
-
+Implemented natively using Canvas — zero DOM manipulation and no render-thread blocking.

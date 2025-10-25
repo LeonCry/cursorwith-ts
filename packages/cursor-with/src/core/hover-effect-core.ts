@@ -77,6 +77,7 @@ function circleToRect(
   targetStyle: TargetBound,
   targetElement: HTMLElement,
   currentPoint: Point,
+  containerRect: DOMRect,
 ) {
   const {
     borderWidth,
@@ -112,8 +113,8 @@ function circleToRect(
     shadowOffset: shadowOffset || [0, 0],
   };
   const to = {
-    left: left - padding,
-    top: top - padding,
+    left: left - padding - containerRect.left,
+    top: top - padding - containerRect.top,
     width: width + padding * 2,
     height: height + padding * 2,
     color: hs?.color || 'transparent',
@@ -211,6 +212,7 @@ function circleToRect(
  * @param targetStyle 目标样式
  * @param targetElement 目标元素
  * @param currentPoint 当前点
+ * @param containerRect 容器矩形
  * @param onComplete 完成回调
  */
 function rectToCircle(
@@ -219,6 +221,7 @@ function rectToCircle(
   targetStyle: TargetBound,
   targetElement: HTMLElement,
   currentPoint: Point,
+  containerRect: DOMRect,
   onComplete: () => void,
 ) {
   const {
@@ -235,8 +238,8 @@ function rectToCircle(
   const { left, top, width, height, borderRadius } = targetStyle;
   const { x: cx, y: cy } = currentPoint;
   const from = {
-    left: left - padding,
-    top: top - padding,
+    left: left - padding - containerRect.left,
+    top: top - padding - containerRect.top,
     width: width + padding * 2,
     height: height + padding * 2,
     color: hs?.color || 'transparent',

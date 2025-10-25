@@ -1,37 +1,13 @@
-# Create
+# API Overview
 
---- 
-### Class CreateCursorWith
+Welcome to the English API documentation. Use the sidebar to navigate.
 
-> Create a cursor follower instance.
+- See `Types` for type references: `/api/types`
+- See `Instance` for public methods and events: `/api/instance`
+- See `Plugins` for plugin signatures and options: `/api/plugins`
 
-#### constructor(options)
+## Quick Links
 
-> *params type:*
-```ts
-interface StyleOptions {
-  radius: number
-  color: string
-  img?: string
-  borderWidth?: number
-  borderColor?: string
-}
-
-interface TimeFollow {
-  type: 'time'
-  timeRatio?: number
-}
-
-interface GapFollow {
-  type: 'gap'
-  distance?: number
-}
-
-type Follow = TimeFollow | GapFollow;
-
-options: {
-    style: StyleOptions,
-    follow?: Follow
-}
-
-```
+- Types: [Types](/api/types)
+- Instance: [Instance API](/api/instance)
+- Plugins: [Plugin API](/api/plugins)

@@ -3,6 +3,8 @@ function canvasCreator(rect: DOMRect, container: Element) {
   canvas.width = rect.width;
   canvas.height = rect.height;
   canvas.style.setProperty('position', 'fixed', 'important');
+  canvas.style.setProperty('top', '0px', 'important');
+  canvas.style.setProperty('left', '0px', 'important');
   canvas.style.setProperty('z-index', '114514', 'important');
   canvas.style.setProperty('pointer-events', 'none', 'important');
   canvas.style.setProperty('will-change', 'transform', 'important');
