@@ -146,10 +146,10 @@ export default defineConfig({
   vite: {
     resolve: {
       alias: {
-        'cursorwith-ts/core': r('../../packages/cursor-with/src/core/index.ts'),
-        'cursorwith-ts/use': r('../../packages/cursor-with/src/use/index.ts'),
-        'cursorwith-ts/types': r('../../packages/cursor-with/src/types/index.ts'),
-        'cursorwith-ts': r('../../packages/cursor-with/src/index.ts'),
+        'cursorwith-ts/core': r('../../../packages/cursor-with/src/core/index.ts'),
+        'cursorwith-ts/use': r('../../../packages/cursor-with/src/use/index.ts'),
+        'cursorwith-ts/types': r('../../../packages/cursor-with/src/types/index.ts'),
+        'cursorwith-ts': r('../../../packages/cursor-with/src/index.ts'),
       },
     },
   },
