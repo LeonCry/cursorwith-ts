@@ -20,8 +20,8 @@ export default defineConfig({
           { text: '问题', link: 'https://github.com/LeonCry/cursorwith-ts/issues' },
           { text: '更新日志', link: 'https://github.com/LeonCry/cursorwith-ts/blob/main/CHANGELOG.md' },
           {
-            text: '版本: 1.0.1',
-            items: [{ text: '1.0.1', link: 'https://www.npmjs.com/package/cursorwith-ts/v/1.0.1' }],
+            text: '版本: 1.1.0',
+            items: [{ text: '1.1.0', link: 'https://www.npmjs.com/package/cursorwith-ts/v/1.1.0' }],
           },
         ],
         sidebar: {
@@ -88,8 +88,8 @@ export default defineConfig({
       { text: 'Issues', link: 'https://github.com/LeonCry/cursorwith-ts/issues' },
       { text: 'ChangeLog', link: 'https://github.com/LeonCry/cursorwith-ts/blob/main/CHANGELOG.md' },
       {
-        text: 'Version: 1.0.1',
-        items: [{ text: '1.0.1', link: 'https://www.npmjs.com/package/cursorwith-ts/v/1.0.1' }],
+        text: 'Version: 1.1.0',
+        items: [{ text: '1.1.0', link: 'https://www.npmjs.com/package/cursorwith-ts/v/1.1.0' }],
       },
     ],
     sidebar: {
