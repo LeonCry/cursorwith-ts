@@ -215,7 +215,7 @@ class CreateCursorWith {
     Object.keys(o).forEach((key) => {
       const k = key as keyof CursorWithOptions;
       // tslint:disable-next-line:no-any
-      this.options[k] = o[k] as any;
+      this.options[k] = { ...this.options, ...o[k] as any };
     });
   }
 
