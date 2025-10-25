@@ -4,7 +4,7 @@
   <img src="https://cdn.jsdelivr.net/gh/voidissss/picture-bed@main/images/picssUso0Dn.png" alt="cursorwith logo" width="140" />
 </p>
 
-<p align="center"><b>Tiny (~4 kB)</b> · <b>Zero dependency</b> · <b>TypeScript-first</b> · <b>Framework agnostic</b> · <b>High performance</b></p>
+<p align="center"><b>Tiny (~7 kB)</b> · <b>Zero dependency</b> · <b>TypeScript-first</b> · <b>Framework agnostic</b> · <b>High performance</b></p>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/cursorwith-ts"><img src="https://img.shields.io/npm/v/cursorwith-ts.svg?color=3178c6&label=npm" alt="npm version" /></a>
@@ -18,13 +18,17 @@
   <a href="https://leoncry.github.io/cursorwith-ts" target="_blank">
       Full Documentation
   </a>
+  &nbsp;·&nbsp;
+  <a href="https://leoncry.github.io/cursorwith-ts/zh/" target="_blank">
+      简体中文文档
+  </a>
 </div>
 
 ---
 
 ## 🔥 Features
 
-- Tiny: ~4 kB (gzipped) output
+- Tiny: ~7 kB (gzipped) output
 - Zero runtime dependencies
 - Complete TypeScript declarations
 - Works with any framework (Vue / React / Svelte / Vanilla ...)
@@ -35,10 +39,10 @@
 
 ## 🎈  Tiny
 
-Just **≈ 4 kB**. Import, instantiate, done.
+Just **≈ 7 kB**. Import, instantiate, done.
 
 ```ts
-import { CreateCursorWith } from 'cursorwith-ts'; // ~4 kB gzipped
+import { CreateCursorWith } from 'cursorwith-ts/core'; // ~7 kB gzipped
 ```
 
 ## 🚀  Zero-Dependency
@@ -50,7 +54,7 @@ import { CreateCursorWith } from 'cursorwith-ts'; // ~4 kB gzipped
 Written entirely in **TypeScript** across the stack, complete with type definitions to enhance development safety.
 
 ```ts
-import type { CursorWithOptions } from 'cursorwith-ts';
+import type { CursorWithOptions } from 'cursorwith-ts/types';
 
 ```
 
@@ -61,22 +65,21 @@ Pure implementation – drop it into Vue, React, Angular, Svelte, Solid or plain
 ### Vue Example (`App.vue`)
 
 ```ts [app.vue]
-import { CreateCursorWith } from 'cursorwith-ts';
-import {onMounted, onBeforeUnmount, ref} from "vue";
+import { CreateCursorWith } from 'cursorwith-ts/core';
+import { follow } from 'cursorwith-ts/use';
+import { onMounted, onBeforeUnmount, ref } from 'vue';
+
 const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
 onMounted(() => {
   cursorWith.value = new CreateCursorWith({
     style: { 
-        radius: 10, 
-        color: 'rgba(0,0,0,0.1)', 
-        borderWidth: 1, 
-        borderColor: 'rgba(0,0,0,1)' 
-        }
-    follow: { 
-        type: 'time', 
-        timeRatio: 0.04
-        }
+      radius: 10, 
+      color: 'rgba(0,0,0,0.1)', 
+      borderWidth: 1, 
+      borderColor: 'rgba(0,0,0,1)' 
+    }
   });
+  cursorWith.value.use(follow({ type: 'time', timeRatio: 0.04 }));
 });
 onBeforeUnmount(() => {
   cursorWith.value?.destroy();
@@ -88,7 +91,8 @@ onBeforeUnmount(() => {
 
 ```tsx
 import { useEffect, useRef } from 'react';
-import { CreateCursorWith } from 'cursorwith-ts';
+import { CreateCursorWith } from 'cursorwith-ts/core';
+import { follow } from 'cursorwith-ts/use';
 
 export default function App() {
   const cursorRef = useRef<InstanceType<typeof CreateCursorWith> | null>(null);
@@ -100,12 +104,9 @@ export default function App() {
         color: 'rgba(0,0,0,0.1)', 
         borderWidth: 1, 
         borderColor: 'rgba(0,0,0,1)' 
-        },
-      follow: { 
-        type: 'time', 
-        timeRatio: 0.04 
-        }
+      }
     });
+    cursorRef.current.use(follow({ type: 'time', timeRatio: 0.04 }));
 
     return () => {
       cursorRef.current?.destroy();
@@ -148,7 +149,8 @@ yarn add cursorwith-ts
 ### ES6 Modules
 
 ```ts
-import { CreateCursorWith } from 'cursorwith-ts';
+import { CreateCursorWith } from 'cursorwith-ts/core';
+import { follow } from 'cursorwith-ts/use';
 
 const cw = new CreateCursorWith({
   style: { 
@@ -156,23 +158,23 @@ const cw = new CreateCursorWith({
     color: 'rgba(0,0,0,0.1)', 
     borderWidth: 1, 
     borderColor: '#000000' 
-    }
-  follow: { 
-    type: 'time', 
-    timeRatio: 0.04 
-    }
-})
+  }
+});
+cw.use(follow({ 
+  type: 'time', 
+  timeRatio: 0.04 
+}));
 ```
 
 ### CDN (unpkg)
 
 ```html
 <script type="module">
-  import { CreateCursorWith } from 'https://unpkg.com/cursorwith-ts@latest/dist/index.js';
+  import { CreateCursorWith, follow } from 'https://unpkg.com/cursorwith-ts@latest/dist/index.js';
   const cw = new CreateCursorWith({
-    style: { radius: 10, color: 'rgba(0,0,0,0.1)', borderWidth: 1, borderColor: '#000000' },
-    follow: { type: 'time', timeRatio: 0.04 }
+    style: { radius: 10, color: 'rgba(0,0,0,0.1)', borderWidth: 1, borderColor: '#000000' }
   });
+  cw.use(follow({ type: 'time', timeRatio: 0.04 }));
 </script>
 ```
 
@@ -181,22 +183,20 @@ const cw = new CreateCursorWith({
 `cursorwith-ts` ships full declaration files – no extra config needed.
 
 ```ts
-import { CreateCursorWith } from 'cursorwith-ts';
-import type { CursorWithOptions } from 'cursorwith-ts';
+import { CreateCursorWith } from 'cursorwith-ts/core';
+import type { CursorWithOptions } from 'cursorwith-ts/types';
+import { follow } from 'cursorwith-ts/use';
 
-const options:CursorWithOptions = {
+const options: CursorWithOptions = {
   style: { 
     radius: 10, 
     color: 'rgba(0,0,0,0.1)', 
     borderWidth: 1, 
     borderColor: '#000000' 
-    },
-  follow: { 
-    type: 'time', 
-    timeRatio: 0.04 
-    }
-}
+  }
+};
 const cw = new CreateCursorWith(options);
+cw.use(follow({ type: 'time', timeRatio: 0.04 }));
 ```
 
 ## 🌍 Environment Requirements 
@@ -206,12 +206,13 @@ const cw = new CreateCursorWith(options);
 ## ⚙️ Minimal API (Quick Reference)
 
 ```ts
-import { CreateCursorWith } from 'cursorwith-ts';
+import { CreateCursorWith } from 'cursorwith-ts/core';
+import { follow } from 'cursorwith-ts/use';
 
 const instance = new CreateCursorWith({
-  style: { radius: 10, color: 'rgba(0,0,0,0.1)' },
-  follow: { type: 'time', timeRatio: 0.04 }
+  style: { radius: 10, color: 'rgba(0,0,0,0.1)' }
 });
+instance.use(follow({ type: 'time', timeRatio: 0.04 }));
 
 // Later
 instance.destroy();
