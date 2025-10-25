@@ -3,7 +3,7 @@
 layout: home
 
 hero:
-  name: "CURSORWITH"
+  name: "CURSORWITH-TS"
   text: "A Tiny, High Performance And Framework-Agnostic Cursor Following Effect."
   tagline: customizable and easy to use.
   image:
@@ -50,6 +50,7 @@ pnpm add cursorwith-ts
 
 ```ts
 import { CreateCursorWith } from 'cursorwith-ts';
+import { follow } from 'cursorwith-ts/use';
 
 // create a cursorwith instance
 const cw = new CreateCursorWith({
@@ -58,12 +59,11 @@ const cw = new CreateCursorWith({
     color: 'rgba(0,0,0,0.1)', 
     borderWidth: 1, 
     borderColor: '#000000' 
-    },
-  follow: { 
-    type: 'time', 
-    timeRatio: 0.04 
-    },
-})
+  },
+});
+
+// enable follow plugin
+cw.use(follow({ type: 'time', timeRatio: 0.04 }));
 ```
 
 **Then you will get a following circle. ☺️**

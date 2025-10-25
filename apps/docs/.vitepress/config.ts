@@ -2,11 +2,79 @@ import { defineConfig } from 'vitepress';
 
 export default defineConfig({
   base: '/cursorwith-ts/',
+  // 多语言配置，将中文主题配置放入 locales.zh.themeConfig
+  locales: {
+    root: { label: 'English', lang: 'en-US' },
+    zh: {
+      label: '简体中文',
+      lang: 'zh-CN',
+      themeConfig: {
+        nav: [
+          { text: '首页', link: '/zh/' },
+          { text: '指南', link: '/zh/guide', activeMatch: '/zh/guide/' },
+          { text: 'API', link: '/zh/api', activeMatch: '/zh/api/' },
+          { text: '问题', link: 'https://github.com/LeonCry/cursorwith-ts/issues' },
+          { text: '更新日志', link: 'https://github.com/LeonCry/cursorwith-ts/blob/main/CHANGELOG.md' },
+          {
+            text: '版本: 1.0.1',
+            items: [{ text: '1.0.1', link: 'https://www.npmjs.com/package/cursorwith-ts/v/1.0.1' }],
+          },
+        ],
+        sidebar: {
+          '/zh/guide/': [
+            {
+              text: '指南',
+              collapsed: false,
+              items: [
+                { text: '简介', link: '/zh/guide/' },
+                { text: '安装', link: '/zh/guide/install' },
+              ],
+            },
+            {
+              text: '实例',
+              collapsed: false,
+              items: [
+                { text: '创建', link: '/zh/guide/instance/create' },
+                { text: '实例方法', link: '/zh/guide/instance/fns' },
+              ],
+            },
+            {
+              text: '插件',
+              collapsed: false,
+              items: [
+                { text: 'follow', link: '/zh/guide/plugins/follow' },
+                { text: 'hoverEffect', link: '/zh/guide/plugins/hoverEffect' },
+                { text: 'clickEffect', link: '/zh/guide/plugins/clickEffect' },
+                { text: 'tail', link: '/zh/guide/plugins/tail' },
+                { text: 'inverse', link: '/zh/guide/plugins/inverse' },
+                { text: 'nativeCursor', link: '/zh/guide/plugins/nativeCursor' },
+              ],
+            },
+          ],
+          '/zh/api/': [
+            {
+              text: 'API',
+              collapsed: false,
+              items: [
+                { text: '类型', link: '/zh/api/types' },
+                { text: '实例', link: '/zh/api/instance' },
+                { text: '插件', link: '/zh/api/plugins' },
+              ],
+            },
+          ],
+        },
+        footer: {
+          message: '基于 MIT 许可发布。',
+          copyright: '版权所有 © 2025-present Voidis',
+        },
+      },
+    },
+  },
   title: 'cursorwith-docs',
   head: [['link', { rel: 'icon', href: '/cursorwith-ts/favicon.ico' }]],
   description: 'A tiny, customizable, easy-to-use, framework-agnostic, and high performance cursor following effect.',
   themeConfig: {
-    siteTitle: 'CURSORWITH',
+    siteTitle: 'CURSORWITH-TS',
     search: { provider: 'local' },
     logo: '/logo.png',
     nav: [
@@ -16,29 +84,38 @@ export default defineConfig({
       { text: 'Issues', link: 'https://github.com/LeonCry/cursorwith-ts/issues' },
       { text: 'ChangeLog', link: 'https://github.com/LeonCry/cursorwith-ts/blob/main/CHANGELOG.md' },
       {
-        text: 'Version: 0.1.0',
-        items: [
-          { text: '0.1.0', link: 'https://www.npmjs.com/package/cursorwith-ts/v/1.0.0' },
-          { text: 'BETA', link: 'https://www.npmjs.com/package/cursorwith-ts/v/BETA' },
-        ],
+        text: 'Version: 1.0.1',
+        items: [{ text: '1.0.1', link: 'https://www.npmjs.com/package/cursorwith-ts/v/1.0.1' }],
       },
     ],
     sidebar: {
       '/guide/': [
         {
           text: 'Guide',
-          collapsed: true,
+          collapsed: false,
           items: [
             { text: 'Introduction', link: '/guide/' },
             { text: 'Install', link: '/guide/install' },
           ],
         },
         {
-          text: 'Options',
-          collapsed: true,
+          text: 'Instance',
+          collapsed: false,
           items: [
-            { text: 'Style', link: '/guide/options/style' },
-            { text: 'Follow', link: '/guide/options/follow' },
+            { text: 'Create', link: '/guide/instance/create' },
+            { text: 'Instance Methods', link: '/guide/instance/fns' },
+          ],
+        },
+        {
+          text: 'Plugins',
+          collapsed: false,
+          items: [
+            { text: 'follow', link: '/guide/plugins/follow' },
+            { text: 'hoverEffect', link: '/guide/plugins/hoverEffect' },
+            { text: 'clickEffect', link: '/guide/plugins/clickEffect' },
+            { text: 'tail', link: '/guide/plugins/tail' },
+            { text: 'inverse', link: '/guide/plugins/inverse' },
+            { text: 'nativeCursor', link: '/guide/plugins/nativeCursor' },
           ],
         },
       ],
@@ -46,10 +123,9 @@ export default defineConfig({
         {
           text: 'API',
           items: [
-            { text: 'Create', link: '/api/' },
-            { text: 'Instance Public Methods ', link: '/api/instance' },
-            { text: 'Listener Functions', link: '/api/listener' },
-            { text: 'Functions', link: '/api/function' },
+            { text: 'Types', link: '/api/types' },
+            { text: 'Instance', link: '/api/instance' },
+            { text: 'Plugins', link: '/api/plugins' },
           ],
         },
       ],

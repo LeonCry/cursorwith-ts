@@ -49,7 +49,8 @@ export function follow(config: CursorWithOptions['follow']) {
     subLoopId = requestAnimationFrame(subLoop);
     this.on('mousemove', (e: MouseEvent) => {
       if (this.options.follow?.type === 'track') {
-        trackPoints.push({ x: e.clientX, y: e.clientY, t: performance.now() });
+        const { left, top } = this.containerRect;
+        trackPoints.push({ x: e.clientX - left, y: e.clientY - top, t: performance.now() });
       }
     }, uniqueId);
     this.on('loopBeforeDraw', (t: number) => {
