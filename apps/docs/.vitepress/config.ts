@@ -16,11 +16,8 @@ export default defineConfig({
           { text: '问题', link: 'https://github.com/LeonCry/cursorwith-ts/issues' },
           { text: '更新日志', link: 'https://github.com/LeonCry/cursorwith-ts/blob/main/CHANGELOG.md' },
           {
-            text: '版本: 1.0.0',
-            items: [
-              { text: '1.0.0', link: 'https://www.npmjs.com/package/cursorwith-ts/v/1.0.0' },
-              { text: 'BETA', link: 'https://www.npmjs.com/package/cursorwith-ts/v/BETA' },
-            ],
+            text: '版本: 1.0.1',
+            items: [{ text: '1.0.1', link: 'https://www.npmjs.com/package/cursorwith-ts/v/1.0.1' }],
           },
         ],
         sidebar: {
@@ -59,7 +56,7 @@ export default defineConfig({
               text: 'API',
               collapsed: false,
               items: [
-                { text: '所有类型', link: '/zh/api/' },
+                { text: '类型', link: '/zh/api/types' },
                 { text: '实例', link: '/zh/api/instance' },
                 { text: '插件', link: '/zh/api/plugins' },
               ],
@@ -87,29 +84,38 @@ export default defineConfig({
       { text: 'Issues', link: 'https://github.com/LeonCry/cursorwith-ts/issues' },
       { text: 'ChangeLog', link: 'https://github.com/LeonCry/cursorwith-ts/blob/main/CHANGELOG.md' },
       {
-        text: 'Version: 1.0.0',
-        items: [
-          { text: '1.0.0', link: 'https://www.npmjs.com/package/cursorwith-ts/v/1.0.0' },
-          { text: 'BETA', link: 'https://www.npmjs.com/package/cursorwith-ts/v/BETA' },
-        ],
+        text: 'Version: 1.0.1',
+        items: [{ text: '1.0.1', link: 'https://www.npmjs.com/package/cursorwith-ts/v/1.0.1' }],
       },
     ],
     sidebar: {
       '/guide/': [
         {
           text: 'Guide',
-          collapsed: true,
+          collapsed: false,
           items: [
             { text: 'Introduction', link: '/guide/' },
             { text: 'Install', link: '/guide/install' },
           ],
         },
         {
-          text: 'Plugins',
-          collapsed: true,
+          text: 'Instance',
+          collapsed: false,
           items: [
-            { text: 'Style', link: '/guide/plugins/style' },
-            { text: 'Follow', link: '/guide/plugins/follow' },
+            { text: 'Create', link: '/guide/instance/create' },
+            { text: 'Instance Methods', link: '/guide/instance/fns' },
+          ],
+        },
+        {
+          text: 'Plugins',
+          collapsed: false,
+          items: [
+            { text: 'follow', link: '/guide/plugins/follow' },
+            { text: 'hoverEffect', link: '/guide/plugins/hoverEffect' },
+            { text: 'clickEffect', link: '/guide/plugins/clickEffect' },
+            { text: 'tail', link: '/guide/plugins/tail' },
+            { text: 'inverse', link: '/guide/plugins/inverse' },
+            { text: 'nativeCursor', link: '/guide/plugins/nativeCursor' },
           ],
         },
       ],
@@ -117,10 +123,9 @@ export default defineConfig({
         {
           text: 'API',
           items: [
-            { text: 'Create', link: '/api/' },
-            { text: 'Instance Public Methods ', link: '/api/instance' },
-            { text: 'Listener Functions', link: '/api/listener' },
-            { text: 'Functions', link: '/api/function' },
+            { text: 'Types', link: '/api/types' },
+            { text: 'Instance', link: '/api/instance' },
+            { text: 'Plugins', link: '/api/plugins' },
           ],
         },
       ],
