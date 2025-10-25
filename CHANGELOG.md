@@ -1,5 +1,12 @@
 ## 1.0.0 (2025-10-25)
 
+* docs: 更新文档中的版本号至1.1.0 ([cc7e84d](https://github.com/LeonCry/cursor-with/commit/cc7e84d))
+* chore: 更新cursorwith-ts版本号至1.1.0并更新CHANGELOG ([b35206e](https://github.com/LeonCry/cursor-with/commit/b35206e))
+
+
+
+## 1.1.0 (2025-10-25)
+
 * chore: :hammer: 删除冗余文件 ([fe2158b](https://github.com/LeonCry/cursor-with/commit/fe2158b))
 * chore: :hammer: 修改构建名字 ([272d9d3](https://github.com/LeonCry/cursor-with/commit/272d9d3))
 * chore: 更新版本号至1.0.1并更新CHANGELOG ([ed0c3e8](https://github.com/LeonCry/cursor-with/commit/ed0c3e8))
