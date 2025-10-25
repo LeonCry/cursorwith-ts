@@ -77,7 +77,7 @@ class CreateCursorWith {
       const { name, execute } = f;
       if (!isNameLegal(name)) throwError(`The use function name ${String(name)} is not legal.`);
       if (this.useFns.has(name)) this.stopUse(f);
-      this.useFns.set(name, execute);
+      this.useFns.set(name, f);
       execute.call(this as InstanceMeta, true);
     };
     const fns = Array.isArray(fn) ? fn : [fn];

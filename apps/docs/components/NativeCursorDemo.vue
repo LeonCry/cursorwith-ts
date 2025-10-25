@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CreateCursorWith } from 'cursorwith-ts/core';
 import { follow, nativeCursor } from 'cursorwith-ts/use';
-import { onMounted, ref, useTemplateRef } from 'vue';
+import { onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
 
 const container = useTemplateRef<HTMLDivElement>('container');
 const cw = ref<InstanceType<typeof CreateCursorWith> | null>(null);
@@ -19,6 +19,10 @@ onMounted(() => {
     radius: 5,
     color: 'red',
   }));
+});
+onBeforeUnmount(() => {
+  if (!container.value) return;
+  cw.value?.destroy();
 });
 </script>
 

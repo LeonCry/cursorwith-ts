@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CreateCursorWith } from 'cursorwith-ts/core';
 import { clickEffect, follow } from 'cursorwith-ts/use';
-import { onMounted, ref, useTemplateRef } from 'vue';
+import { onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
 
 const container = useTemplateRef<HTMLDivElement>('container');
 const cw = ref<InstanceType<typeof CreateCursorWith> | null>(null);
@@ -16,6 +16,10 @@ onMounted(() => {
   });
   cw.value.use(follow({ type: 'time' }));
   cw.value.use(clickEffect());
+});
+onBeforeUnmount(() => {
+  if (!container.value) return;
+  cw.value?.destroy();
 });
 const type = ref<'default' | 'custom'>('default');
 function changeType(t: 'default' | 'custom') {

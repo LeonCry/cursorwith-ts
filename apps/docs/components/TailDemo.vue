@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CreateCursorWith } from 'cursorwith-ts/core';
 import { follow, tail } from 'cursorwith-ts/use';
-import { onMounted, ref, useTemplateRef } from 'vue';
+import { onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
 
 const container = useTemplateRef<HTMLDivElement>('container');
 const cw = ref<InstanceType<typeof CreateCursorWith> | null>(null);
@@ -21,6 +21,10 @@ onMounted(() => {
     firstDockGap: 0,
     dockGap: 0,
   }));
+});
+onBeforeUnmount(() => {
+  if (!container.value) return;
+  cw.value?.destroy();
 });
 const type = ref<'default' | 'use:dockGap' | 'use:firstDockGap'>('default');
 function changeType(t: 'default' | 'use:dockGap' | 'use:firstDockGap') {

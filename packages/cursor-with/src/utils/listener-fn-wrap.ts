@@ -9,7 +9,7 @@ function listenerWrapper(fn: AnyFn, tag: string) {
 }
 
 function listenerUnWrapper(tag: string) {
-  if (!fnMap.has(tag)) throw new Error(`No listener found for tag: ${tag}`);
+  if (!fnMap.has(tag)) return () => void 0;
   const fn = fnMap.get(tag)!;
   fnMap.delete(tag);
   return fn;

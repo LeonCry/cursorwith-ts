@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CreateCursorWith } from 'cursorwith-ts/core';
 import { follow, inverse } from 'cursorwith-ts/use';
-import { onMounted, ref, useTemplateRef } from 'vue';
+import { onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
 
 const container = useTemplateRef<HTMLDivElement>('container');
 const cw = ref<InstanceType<typeof CreateCursorWith> | null>(null);
@@ -20,6 +20,10 @@ onMounted(() => {
   });
   cw.value.use(follow({ type: 'time' }));
   cw.value.use(inverse());
+});
+onBeforeUnmount(() => {
+  if (!container.value) return;
+  cw.value?.destroy();
 });
 const type = ref<'normal' | 'inverse'>('inverse');
 function changeType(t: 'normal' | 'inverse') {
