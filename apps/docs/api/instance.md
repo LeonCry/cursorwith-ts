@@ -5,7 +5,7 @@ This document explains how to create an instance and all available methods and e
 ## Create an Instance
 
 ```ts
-import { CreateCursorWith } from 'cursorwith-ts';
+import { CreateCursorWith } from 'cursorwith-ts/core';
 import { follow, hoverEffect, tail } from 'cursorwith-ts/use';
 
 const cw = new CreateCursorWith({

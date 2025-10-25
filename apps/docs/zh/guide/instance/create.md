@@ -76,7 +76,7 @@ interface StyleOptions {
 
 ## 示例
 ```ts
-import { CreateCursorWith } from 'cursorwith-ts';
+import { CreateCursorWith } from 'cursorwith-ts/core';
 
 const cw = new CreateCursorWith({
   style: {
