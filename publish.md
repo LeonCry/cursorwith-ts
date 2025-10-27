@@ -1,0 +1,3 @@
+- run release:prepare:patch
+- git push
+- run release:publish

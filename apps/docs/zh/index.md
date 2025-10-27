@@ -81,7 +81,7 @@ import MiniDemo from '../components/MiniDemo.vue'
 ---
 &nbsp;
 
-开始使用 **cursorwith**，让你的网页更生动有趣吧。
+开始使用 **cursorwith-ts**，让你的网页更生动有趣吧。
 
 <style>
 :root {

@@ -1,4 +1,4 @@
-# Cursorwith 安装
+# Cursorwith-ts 安装
 
 ::: code-group
 ```sh [npm]
@@ -15,7 +15,7 @@ yarn add cursorwith-ts
 ## 使用
 
 > [!TIP]
-> cursorwith 仅支持 **ES6 Modules** 与 **CDN** 引入方式。
+> cursorwith-ts 仅支持 **ES6 Modules** 与 **CDN** 引入方式。
 
 ### ES6 Modules
 
@@ -51,7 +51,7 @@ cw.value.use(follow({ type: 'time' }));
 
 ### TypeScript 支持
 
-cursorwith 完整支持 TypeScript，所有函数均提供完备类型定义。
+cursorwith-ts 完整支持 TypeScript，所有函数均提供完备类型定义。
 
 ```ts
 import { CreateCursorWith } from 'cursorwith-ts/core';
