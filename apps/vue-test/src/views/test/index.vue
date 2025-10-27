@@ -14,7 +14,7 @@ const container = ref<HTMLDivElement | null>(null);
 onMounted(() => {
   if (!container.value) return;
   cursorWith.value = new CreateCursorWith({
-    config: {
+    style: {
       radius: 20,
       color: 'black',
       borderWidth: 10,
@@ -26,7 +26,7 @@ onMounted(() => {
     },
     container: container.value,
   });
-  cursorWith.value.use(follow({ type: 'time', timeRatio: 0.1 }));
+  cursorWith.value.use(follow({ type: 'spring', stiffness: 0.05, damping: 0.25 }));
   cursorWith.value.use(hoverEffect({
     flash: {
       active: false,

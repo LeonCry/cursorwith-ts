@@ -28,7 +28,7 @@ function computeCurrentPoint(follow: Required<CursorWithOptions>['follow'], curr
     return springLoop(
       [currentPoint, targetPoint],
       follow.stiffness! / r,
-      follow.damping!,
+      follow.damping! / r,
     );
   }
   return currentPoint;
