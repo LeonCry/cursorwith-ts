@@ -68,6 +68,15 @@ cw.use(follow({ type: 'time', timeRatio: 0.04 }));
 
 **Then you will get a following circle. ☺️**
 
+<script setup>
+import MiniDemo from './components/MiniDemo.vue'
+</script>
+
+<ClientOnly>
+  <MiniDemo />
+</ClientOnly>
+
+
 ## 📄 License
 
 **MIT License**
