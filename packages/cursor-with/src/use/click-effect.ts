@@ -1,5 +1,6 @@
 import type { EasingInput, InstanceMeta } from '../types';
 import { clickEffectRestoreCollector, clickEffectTriggerCollector } from '../core/click-effect-core';
+import { deepClone } from '../utils';
 import { USEABLE_USE_FN_NAMES_SYMBOLS } from './index';
 // 使用clickEffect
 let clickEffectTrigger: (() => boolean | undefined) | null = null;
@@ -31,10 +32,10 @@ export function clickEffect(
     };
     const [triggerEase, restoreEase] = ease || ['ease-out', 'spring-out'];
     const [trigger, restore] = customTrigger?.() || [];
-    let originOptions = this.getOptions();
+    let originOptions = deepClone(this.getOptions());
     this.on('optionSetter', () => {
       if (clickFinish.restore && clickFinish.trigger) {
-        originOptions = this.getOptions();
+        originOptions = deepClone(this.getOptions());
       }
     }, uniqueId);
 

@@ -1,4 +1,4 @@
-# Install cursorwith
+# Install cursorwith-ts
 
 ::: code-group
 ```sh [npm]
@@ -14,7 +14,7 @@ yarn add cursorwith-ts
 
 ## Usage
 
-> cursorwith supports ES6 Modules and CDN imports.
+> cursorwith-ts supports ES6 Modules and CDN imports.
 
 ### ES6 Modules
 
@@ -46,7 +46,7 @@ cw.use(follow({ type: 'time' }));
 
 ### TypeScript support
 
-cursorwith fully supports TypeScript with complete type definitions for all functions.
+cursorwith-ts fully supports TypeScript with complete type definitions for all functions.
 
 ```ts
 import { CreateCursorWith } from 'cursorwith-ts/core';

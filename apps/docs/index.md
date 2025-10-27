@@ -75,7 +75,7 @@ cw.use(follow({ type: 'time', timeRatio: 0.04 }));
 ---
 &nbsp;
 
-Start using cursorwith to make your website more vivid and interesting.
+Start using cursorwith-ts to make your website more vivid and interesting.
 
 <style>
 :root {
