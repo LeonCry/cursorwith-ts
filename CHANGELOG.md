@@ -1,5 +1,15 @@
-## 1.0.0 (2025-10-27)
+## 1.0.0 (2025-10-28)
 
+* fix: :bug: 修复绘制顺序和样式问题 ([51b64fe](https://github.com/LeonCry/cursor-with/commit/51b64fe)), closes [#29](https://github.com/LeonCry/cursor-with/issues/29)
+* fix: :bug: 修复容器内鼠标位置检测问题 ([771b641](https://github.com/LeonCry/cursor-with/commit/771b641)), closes [#28](https://github.com/LeonCry/cursor-with/issues/28)
+* fix(tail): :bug: 修复悬停时尾部轨迹未清除的问题 ([8fe7b4d](https://github.com/LeonCry/cursor-with/commit/8fe7b4d)), closes [#27](https://github.com/LeonCry/cursor-with/issues/27)
+* docs: 在文档首页添加 MiniDemo 组件示例 ([90207cd](https://github.com/LeonCry/cursor-with/commit/90207cd))
+
+
+
+## <small>1.1.2 (2025-10-27)</small>
+
+* chore: 更新cursorwith-ts版本号至1.1.2 ([646d7ef](https://github.com/LeonCry/cursor-with/commit/646d7ef))
 * fix: :bug: 整跟随阻尼计算并修复点击效果选项对象问题 ([c56ecd6](https://github.com/LeonCry/cursor-with/commit/c56ecd6)), closes [#21](https://github.com/LeonCry/cursor-with/issues/21)
 * docs: 更新文档 ([0ac6654](https://github.com/LeonCry/cursor-with/commit/0ac6654))
 
