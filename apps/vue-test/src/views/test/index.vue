@@ -10,9 +10,7 @@ import {
 } from 'cursorwith-ts/use';
 
 const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
-const container = ref<HTMLDivElement | null>(null);
 onMounted(() => {
-  if (!container.value) return;
   cursorWith.value = new CreateCursorWith({
     style: {
       radius: 20,
@@ -24,7 +22,6 @@ onMounted(() => {
       shadowOffset: [0, 0],
       deform: { decay: 10 },
     },
-    container: container.value,
   });
   cursorWith.value.use(follow({ type: 'spring', stiffness: 0.05, damping: 0.25 }));
   cursorWith.value.use(hoverEffect({
@@ -60,10 +57,6 @@ onMounted(() => {
   }));
   cursorWith.value.use(inverse());
   cursorWith.value.stopUse(inverse());
-  setTimeout(() => {
-    container.value!.style.width = '2000px';
-    cursorWith.value?.updateBound();
-  }, 3000);
 });
 onBeforeUnmount(() => {
   cursorWith.value?.destroy();
@@ -86,7 +79,6 @@ window.addEventListener('keydown', (e) => {
 <template>
   <section class="w-full h-full p-2 bg-white overflow-auto">
     <div class="h-[200px]" />
-    <div ref="container" class="w-[8000px] h-[400px] bg-red-50 relative ml-40 mt-40 perspective-[0]" />
   </section>
 </template>
 
