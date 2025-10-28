@@ -14,9 +14,7 @@ export function tail(config: CursorWithOptions['tail']) {
     this.options.tail = config;
     fillDefaultTail(this.options.tail!);
     this.on('loopAfterDraw', () => {
-      if (!this.isOnHoverTarget) {
-        tailDrawer(this.ctx, this.currentPoint, this.targetPoint, this.options);
-      }
+      tailDrawer(this.ctx, this.isOnHoverTarget, this.currentPoint, this.targetPoint, this.options);
     }, uniqueId);
   }
   return {

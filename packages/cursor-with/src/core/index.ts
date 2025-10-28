@@ -162,6 +162,17 @@ class CreateCursorWith {
         },
       ), 'resize'));
     };
+    // 判断当前鼠标位置是否在container内,在则默认触发mouseenter事件
+    const checkMouseInContainer = () => {
+      return (this.containerRect.left <= this.targetPoint.x
+        && this.targetPoint.x <= this.containerRect.right
+        && this.containerRect.top <= this.targetPoint.y
+        && this.targetPoint.y <= this.containerRect.bottom);
+    };
+    if (checkMouseInContainer()) {
+      this.updateBound();
+      addEventListener();
+    }
     this.container.addEventListener('mouseenter', listenerWrapper(() => {
       this.updateBound();
       addEventListener();

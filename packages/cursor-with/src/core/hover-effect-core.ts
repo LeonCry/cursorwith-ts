@@ -192,15 +192,15 @@ function circleToRect(
   ctx.save();
   ctx.fillStyle = mixColorString(from.color, to.color, pe, alpha);
   ctx.strokeStyle = mixColorString(from.borderColor, to.borderColor, pe, alpha);
-  ctx.lineWidth = B;
+  ctx.lineWidth = B * 1.1;
   ctx.shadowBlur = SB;
   ctx.shadowColor = mixColorString(from.shadowColor, to.shadowColor, pe, alpha);
   ctx.shadowOffsetX = SO[0];
   ctx.shadowOffsetY = SO[1];
   ctx.beginPath();
   ctx.roundRect(L2, T2, W, H, dr);
-  ctx.fill();
   ctx.stroke();
+  ctx.fill();
   ctx.closePath();
   ctx.restore();
 }
@@ -261,7 +261,6 @@ function rectToCircle(
     shadowColor: shadowColor || 'transparent',
     shadowOffset: shadowOffset || [0, 0],
   };
-
   const now = performance.now();
   if (circleBackStartTime == null) {
     circleBackStartTime = now;
@@ -284,7 +283,6 @@ function rectToCircle(
     from.shadowOffset[0] + (to.shadowOffset[0] - from.shadowOffset[0]) * pe,
     from.shadowOffset[1] + (to.shadowOffset[1] - from.shadowOffset[1]) * pe,
   ];
-
   const centerX = from.left + from.width / 2;
   const centerY = from.top + from.height / 2;
   const dx = cx - centerX;
@@ -316,8 +314,8 @@ function rectToCircle(
   ctx.shadowOffsetY = SO[1];
   ctx.beginPath();
   ctx.roundRect(L, T, W, H, dr);
-  ctx.fill();
   ctx.stroke();
+  ctx.fill();
   ctx.closePath();
   ctx.restore();
 }
