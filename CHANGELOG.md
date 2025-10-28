@@ -1,7 +1,15 @@
-## 1.0.0 (2025-10-25)
+## 1.0.0 (2025-10-27)
 
-* docs: 更新文档中的版本号至1.1.0 ([cc7e84d](https://github.com/LeonCry/cursor-with/commit/cc7e84d))
+* fix: :bug: 整跟随阻尼计算并修复点击效果选项对象问题 ([c56ecd6](https://github.com/LeonCry/cursor-with/commit/c56ecd6)), closes [#21](https://github.com/LeonCry/cursor-with/issues/21)
+* docs: 更新文档 ([0ac6654](https://github.com/LeonCry/cursor-with/commit/0ac6654))
+
+
+
+## <small>1.1.1 (2025-10-25)</small>
+
+* chore: 更新版本号至1.1.1并同步文档中的版本信息 ([4463ba6](https://github.com/LeonCry/cursor-with/commit/4463ba6))
 * chore: 更新cursorwith-ts版本号至1.1.0并更新CHANGELOG ([b35206e](https://github.com/LeonCry/cursor-with/commit/b35206e))
+* docs: 更新文档中的版本号至1.1.0 ([cc7e84d](https://github.com/LeonCry/cursor-with/commit/cc7e84d))
 
 
 
