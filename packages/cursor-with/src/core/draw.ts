@@ -179,8 +179,8 @@ function nativeCursorDrawer(
   }
   ctx.beginPath();
   ctx.arc(currentPoint.x, currentPoint.y, radius, 0, Math.PI * 2);
-  ctx.fill();
   ctx.stroke();
+  ctx.fill();
   ctx.closePath();
   ctx.restore();
 }

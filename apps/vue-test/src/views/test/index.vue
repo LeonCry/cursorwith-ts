@@ -16,7 +16,7 @@ onMounted(() => {
       radius: 20,
       color: 'black',
       borderWidth: 10,
-      borderColor: 'black',
+      borderColor: 'yellow',
       shadowBlur: 20,
       shadowColor: 'black',
       shadowOffset: [0, 0],
@@ -38,11 +38,8 @@ onMounted(() => {
     easing: 'bounce-out',
     style: {
       color: 'rgba(0,0,0,0.5)',
-      borderColor: 'rgba(0,0,0,0.5)',
-      shadowBlur: 40,
-      shadowColor: 'rgba(0,0,0,0.5)',
-      shadowOffset: [0, 0],
-      borderWidth: 5,
+      borderColor: 'rgba(255,0,0,0.5)',
+      borderWidth: 20,
     },
   }));
   cursorWith.value.use(clickEffect());
