@@ -24,6 +24,7 @@ onMounted(() => {
     },
   });
   cursorWith.value.use(follow({ type: 'spring', stiffness: 0.05, damping: 0.25 }));
+  cursorWith.value.use(tail({ length: 10, color: 'rgba(0,0,0,0.2)' }));
   cursorWith.value.use(hoverEffect({
     flash: {
       active: false,
@@ -36,16 +37,15 @@ onMounted(() => {
     duration: 1000,
     easing: 'bounce-out',
     style: {
-      color: 'black',
-      borderColor: 'black',
+      color: 'rgba(0,0,0,0.5)',
+      borderColor: 'rgba(0,0,0,0.5)',
       shadowBlur: 40,
-      shadowColor: 'black',
+      shadowColor: 'rgba(0,0,0,0.5)',
       shadowOffset: [0, 0],
       borderWidth: 5,
     },
   }));
   cursorWith.value.use(clickEffect());
-  cursorWith.value.use(tail({ length: 10, color: 'rgba(0,0,0,0.2)' }));
   cursorWith.value.use(nativeCursor({
     radius: 5,
     color: 'red',
@@ -78,7 +78,7 @@ window.addEventListener('keydown', (e) => {
 
 <template>
   <section class="w-full h-full p-2 bg-white overflow-auto">
-    <div class="h-[200px]" />
+    <div class="h-[200px] w-[200px] bg-blue-100 text-rounded mt-20 ml-20" data-test />
   </section>
 </template>
 

@@ -31,6 +31,7 @@ export function hoverEffect(config: CursorWithOptions['hoverEffect']) {
       if (targetElement && targetStyle) {
         oldTargetElement = targetElement;
         oldTargetStyle = targetStyle;
+        this.isOnHoverTarget = true;
         circleToRect(
           this.ctx,
           this.options,
@@ -41,6 +42,7 @@ export function hoverEffect(config: CursorWithOptions['hoverEffect']) {
         );
       }
       else if (!targetElement && oldTargetElement) {
+        this.isOnHoverTarget = false;
         rectToCircle(
           this.ctx,
           this.options,
