@@ -71,11 +71,23 @@ window.addEventListener('keydown', (e) => {
   if (e.code === 'Space') handlePause();
   else if (e.code === 'Enter') handleResume();
 });
+const ml = ref(160);
+const width = ref(200);
+setTimeout(() => {
+  // ml.value = 400;
+  width.value = 300;
+}, 3000);
 </script>
 
 <template>
   <section class="w-full h-full p-2 bg-white overflow-auto">
-    <div class="h-[200px] w-[200px] bg-blue-100 text-rounded mt-20 ml-20" data-test />
+    <div class="h-200" />
+    <div
+      :style="`margin-left: ${ml}px;width:${width}px;`"
+      class="h-[400px] bg-blue-100 text-rounded mt-40"
+      data-test
+    />
+    <div class="h-200" />
   </section>
 </template>
 

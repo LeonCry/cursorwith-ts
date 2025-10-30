@@ -5,12 +5,20 @@ import { mixColorString } from '../utils/color-clamp';
 let cacheTarget: HTMLElement | null = null;
 let cacheTargetStyle: TargetBound | null = null;
 // 获取当前鼠标位置的元素
-function getActiveTarget(target: HTMLElement, hoverEffect: CursorWithOptions['hoverEffect']):
+function getActiveTarget(
+  target: HTMLElement,
+  hoverEffect: CursorWithOptions['hoverEffect'],
+  ro: ResizeObserver,
+  io: IntersectionObserver,
+  forceUpdate?: boolean,
+):
 [
     HTMLElement | null,
     TargetBound | null,
 ] {
   if (!hoverEffect || !target) {
+    ro.disconnect();
+    io.disconnect();
     cacheTarget = null;
     cacheTargetStyle = null;
     return [null, null];
@@ -28,8 +36,12 @@ function getActiveTarget(target: HTMLElement, hoverEffect: CursorWithOptions['ho
     }
   }
   if (tar) {
-    if (cacheTarget === tar) {
+    if (cacheTarget === tar && !forceUpdate) {
       return [tar, cacheTargetStyle];
+    }
+    if (cacheTarget !== tar) {
+      ro.observe(tar);
+      io.observe(tar);
     }
     cacheTarget = tar;
     const { top, left, width, height } = tar.getBoundingClientRect();
@@ -42,7 +54,7 @@ function getActiveTarget(target: HTMLElement, hoverEffect: CursorWithOptions['ho
     };
     return [tar, cacheTargetStyle];
   }
-  return getActiveTarget(target.parentElement as HTMLElement, hoverEffect);
+  return getActiveTarget(target.parentElement as HTMLElement, hoverEffect, ro, io, forceUpdate);
 }
 
 // 获取闪烁效果时的透明度
