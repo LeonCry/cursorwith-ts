@@ -32,11 +32,16 @@ function hoverEffect(options: HoverEffect): UseFn
 ```
 
 - Purpose: when hovering target elements, transition the circle into a rounded rectangle covering the target
-- Key options: `scope`, `padding`, `offset`, `duration`, `easing`, `flash`, `style`
+- Key options: `scope`, `padding`, `offset`, `duration`, `easing`, `flash`, `style`, `container`
 - Defaults (auto-filled):
   - `padding = 10`, `offset = 10`
   - `duration = 1000ms`, `easing = 'bounce-out'`
   - `flash.active = false`, `flash.duration = 1000ms`, `flash.easing = 'linear'`
+  - `container = document.body`
+
+Notes:
+- Set `hoverEffect.container` as target element's outer element.This keeps coordinates aligned and prevents overflow when scrolling inside a wrapper.
+- When the container scrolls, the plugin clamps the rectangle within container bounds using measured offsets.
 
 Example:
 ```ts
@@ -46,6 +51,7 @@ cw.use(hoverEffect({
   duration: 800,
   easing: 'quad-out',
   flash: { active: true, duration: 600, easing: 'sine-in-out' },
+  container, 
 }));
 ```
 
@@ -128,6 +134,7 @@ Example:
 ```ts
 cw.use(inverse());
 ```
+
 
 ## General Notes
 

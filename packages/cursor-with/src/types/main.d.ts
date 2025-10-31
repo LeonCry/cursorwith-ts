@@ -60,10 +60,11 @@ interface HoverEffect {
     easing?: EasingInput
   }
   style: CommonStyle
+  container?: HTMLElement
 };
 
 interface CursorWithOptions {
-  container?: Element
+  container?: HTMLElement
   style: StyleOptions
   follow?: Follow
   tail?: Tail

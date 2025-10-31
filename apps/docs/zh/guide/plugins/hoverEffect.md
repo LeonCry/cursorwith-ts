@@ -14,16 +14,17 @@ interface HoverEffectScope {
 
 interface HoverEffect {
   scope?: HoverEffectScope
-  padding?: number        // 默认 0，矩形相对目标元素的额外内边距
-  offset?: number         // 默认 0，目标元素的轻微位移（模拟跟随）
-  duration?: number       // 默认 600(ms)，过渡时长
-  easing?: EasingInput    // 默认 'ease-out'，过渡缓动
+  padding?: number        // 默认 10，矩形相对目标元素的额外内边距
+  offset?: number         // 默认 10，目标元素的轻微位移（模拟跟随）
+  duration?: number       // 默认 1000(ms)，过渡时长
+  easing?: EasingInput    // 默认 'bounce-out'，过渡缓动
   flash?: {
     active?: boolean      // 默认 false，开启后在悬停期间进行闪烁
-    duration?: number     // 默认 600(ms)，闪烁周期
-    easing?: EasingInput  // 默认 'sine-in-out'，闪烁缓动
+    duration?: number     // 默认 1000(ms)，闪烁周期
+    easing?: EasingInput  // 默认 'linear'，闪烁缓动
   }
   style?: CommonStyle     // 独立样式
+  container?: HTMLElement // 默认 document.body，矩形计算所参考的包裹容器
 }
 ```
 
@@ -82,6 +83,15 @@ import HoverEffectDemo from '../../../components/HoverEffectDemo.vue'
 - `padding` 扩展覆盖范围；`offset` 为目标元素制造轻微位移以增强跟随感；
 - `flash` 开启后，在悬停期间做周期性亮度/透明度变化；
 - `style` 仅在悬停期间生效，不影响全局圆形样式。
+
+### 容器（container）
+
+- 当使用 `hoverEffect` 时，建议设置 `hoverEffect.container`为目标元素的外层包围容器，默认为 `document.body`以保证坐标与边界一致；在包裹容器滚动时，矩形会根据偏移量进行边界限制，不会超出容器范围。
+::: warning 注意
+如果你手动更改了目标元素的位置,请在更改位置时调用 `updateTargetInHover()`来更新hoverEffect位置.
+import { updateTargetInHover } from 'cursorwith-ts/use';
+:::
+
 
 ## 组合提示
 
