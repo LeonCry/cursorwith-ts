@@ -1,5 +1,14 @@
-## 1.0.0 (2025-10-28)
+## 1.0.0 (2025-10-31)
 
+* docs(hoverEffect): 更新文档添加container配置说明 ([3f029d6](https://github.com/LeonCry/cursor-with/commit/3f029d6))
+* fix: :bug: 增强悬停效果的目标元素位置计算逻辑 ([c1fa926](https://github.com/LeonCry/cursor-with/commit/c1fa926)), closes [#32](https://github.com/LeonCry/cursor-with/issues/32)
+* feat(cursor-with): 添加ResizeObserver和IntersectionObserver支持 ([1ac3177](https://github.com/LeonCry/cursor-with/commit/1ac3177))
+
+
+
+## <small>1.1.3 (2025-10-28)</small>
+
+* chore: 更新cursorwith-ts版本号至1.1.3并更新CHANGELOG ([d2141bf](https://github.com/LeonCry/cursor-with/commit/d2141bf))
 * fix: :bug: 修复绘制顺序和样式问题 ([51b64fe](https://github.com/LeonCry/cursor-with/commit/51b64fe)), closes [#29](https://github.com/LeonCry/cursor-with/issues/29)
 * fix: :bug: 修复容器内鼠标位置检测问题 ([771b641](https://github.com/LeonCry/cursor-with/commit/771b641)), closes [#28](https://github.com/LeonCry/cursor-with/issues/28)
 * fix(tail): :bug: 修复悬停时尾部轨迹未清除的问题 ([8fe7b4d](https://github.com/LeonCry/cursor-with/commit/8fe7b4d)), closes [#27](https://github.com/LeonCry/cursor-with/issues/27)
