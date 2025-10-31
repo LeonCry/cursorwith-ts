@@ -9,7 +9,13 @@ interface TargetBound {
   left: number
   width: number
   height: number
-  borderRadius: string
+  offset: {
+    width: number
+    height: number
+    top: number
+    left: number
+  }
+  borderRadius?: string
 }
 
 type AnyFn = (...args: any) => any;

@@ -7,6 +7,20 @@ let targetElement: HTMLElement | null = null;
 let targetStyle: TargetBound | null = null;
 let oldTargetElement: HTMLElement | null = null;
 let oldTargetStyle: TargetBound | null = null;
+let needUpdateTargetStyle: boolean = false;
+function setRealTargetStyle(newStyle?: {
+  width?: number
+  height?: number
+}) {
+  const { width, height } = newStyle || {};
+  if (targetStyle) {
+    const { offset } = targetStyle;
+    targetStyle.width = (width ?? targetStyle.width) + offset.width;
+    targetStyle.height = (height ?? targetStyle.height) + offset.height;
+    targetStyle.top += offset.top;
+    targetStyle.left += offset.left;
+  }
+}
 // 使用hoverEffect
 export function hoverEffect(config: CursorWithOptions['hoverEffect']) {
   const uniqueId = USEABLE_USE_FN_NAMES_SYMBOLS.hoverEffect;
@@ -20,20 +34,25 @@ export function hoverEffect(config: CursorWithOptions['hoverEffect']) {
     }
     this.options.hoverEffect = config;
     fillDefaultHoverEffect(this.options.hoverEffect!);
-    const ro = new ResizeObserver((mutations) => {
-      targetStyle!.width = mutations[0].contentRect.width;
-      targetStyle!.height = mutations[0].contentRect.height;
+    const ro = new ResizeObserver(async (mutations) => {
+      await new Promise(resolve => setTimeout(resolve, 0));
+      const { width, height } = mutations[0].contentRect;
+      setRealTargetStyle({ width, height });
     });
-    const io = new IntersectionObserver((entries) => {
-      // console.log(entries[0]);
-    }, { threshold: Array.from({ length: 101 }, (_, i) => i / 100) });
     this.on('mousemove', (e: MouseEvent) => {
-      [targetElement, targetStyle] = getActiveTarget(e.target as HTMLElement, this.options.hoverEffect, ro, io);
+      [targetElement, targetStyle] = getActiveTarget(e.target as HTMLElement, this.options.hoverEffect, ro);
+      setRealTargetStyle();
     }, uniqueId);
     this.on('mousewheel', (e: MouseEvent) => {
-      [targetElement, targetStyle] = getActiveTarget(e.target as HTMLElement, this.options.hoverEffect, ro, io, true);
+      [targetElement, targetStyle] = getActiveTarget(e.target as HTMLElement, this.options.hoverEffect, ro, true);
+      setRealTargetStyle();
     }, uniqueId);
     this.on('loopBeforeDraw', () => {
+      if (needUpdateTargetStyle && targetElement) {
+        [, targetStyle] = getActiveTarget(targetElement, this.options.hoverEffect, ro, true);
+        setRealTargetStyle();
+        needUpdateTargetStyle = false;
+      }
       this.isDrawCircle = false;
       if (targetElement && targetStyle) {
         oldTargetElement = targetElement;
@@ -72,4 +91,9 @@ export function hoverEffect(config: CursorWithOptions['hoverEffect']) {
     name: uniqueId,
     execute,
   };
+}
+
+// 当目标元素被手动设置位置时,需要重新获取目标元素的位置信息
+export function updateTargetInHover() {
+  needUpdateTargetStyle = true;
 }

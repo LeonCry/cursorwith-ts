@@ -45,6 +45,7 @@ function fillDefaultHoverEffect(hoverEffect: Required<CursorWithOptions>['hoverE
   hoverEffect.offset ??= 10;
   hoverEffect.duration ??= 1000;
   hoverEffect.easing ??= 'bounce-out';
+  hoverEffect.container ??= document.body;
   if (notNone(hoverEffect.flash)) {
     hoverEffect.flash.active ??= false;
     hoverEffect.flash.duration ??= 1000;

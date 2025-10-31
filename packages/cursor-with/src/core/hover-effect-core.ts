@@ -4,12 +4,13 @@ import { mixColorString } from '../utils/color-clamp';
 
 let cacheTarget: HTMLElement | null = null;
 let cacheTargetStyle: TargetBound | null = null;
+let cacheContainer: HTMLElement | null = null;
+let cacheContainerRect: DOMRect | null = null;
 // 获取当前鼠标位置的元素
 function getActiveTarget(
   target: HTMLElement,
   hoverEffect: CursorWithOptions['hoverEffect'],
   ro: ResizeObserver,
-  io: IntersectionObserver,
   forceUpdate?: boolean,
 ):
 [
@@ -18,9 +19,10 @@ function getActiveTarget(
 ] {
   if (!hoverEffect || !target) {
     ro.disconnect();
-    io.disconnect();
     cacheTarget = null;
     cacheTargetStyle = null;
+    cacheContainer = null;
+    cacheContainerRect = null;
     return [null, null];
   }
   const { scope } = hoverEffect;
@@ -37,24 +39,43 @@ function getActiveTarget(
   }
   if (tar) {
     if (cacheTarget === tar && !forceUpdate) {
-      return [tar, cacheTargetStyle];
+      return [tar, { ...cacheTargetStyle! }];
     }
     if (cacheTarget !== tar) {
       ro.observe(tar);
-      io.observe(tar);
     }
     cacheTarget = tar;
-    const { top, left, width, height } = tar.getBoundingClientRect();
+    const container = hoverEffect.container!;
+    const containerRect = cacheContainer === container
+      ? cacheContainerRect!
+      : (() => {
+          cacheContainer = container;
+          cacheContainerRect = container.getBoundingClientRect();
+          return cacheContainerRect!;
+        })();
+    const tarRect = tar.getBoundingClientRect();
+    const dt = tarRect.top - containerRect.top;
+    const db = containerRect.bottom - tarRect.bottom;
+    const dl = tarRect.left - containerRect.left;
+    const dr = containerRect.right - tarRect.right;
+    const dh = dt < 0 ? dt : db < 0 ? db : 0;
+    const dw = dl < 0 ? dl : dr < 0 ? dr : 0;
     cacheTargetStyle = {
-      top,
-      left,
-      width,
-      height,
+      top: tarRect.top,
+      left: tarRect.left,
+      width: tarRect.width,
+      height: tarRect.height,
+      offset: {
+        width: dw,
+        height: dh,
+        top: dt < 0 ? -dt : 0,
+        left: dl < 0 ? -dl : 0,
+      },
       borderRadius: getComputedStyle(tar).borderRadius,
     };
-    return [tar, cacheTargetStyle];
+    return [tar, { ...cacheTargetStyle! }];
   }
-  return getActiveTarget(target.parentElement as HTMLElement, hoverEffect, ro, io, forceUpdate);
+  return getActiveTarget(target.parentElement as HTMLElement, hoverEffect, ro, forceUpdate);
 }
 
 // 获取闪烁效果时的透明度
@@ -197,7 +218,7 @@ function circleToRect(
   targetElement.style.willChange = 'transform';
 
   // 圆角处理
-  const borderRadiusList = borderRadius.split(' ').map(item => Number.parseInt(item));
+  const borderRadiusList = borderRadius?.split(' ')?.map(item => Number.parseInt(item)) || [];
   const drFrom = borderRadiusList.map(() => radius * 2);
   const dr = drFrom.map((v, i) => v + (borderRadiusList[i] - v) * pe);
   const alpha = getFlashAlpha(flash, now);
@@ -313,7 +334,7 @@ function rectToCircle(
   }
   targetElement.style.transform = `${baseTransformOut}${baseTransformOut ? ' ' : ''}translate(${eoxOut.toFixed(2)}px, ${eoyOut.toFixed(2)}px)`;
   targetElement.style.willChange = 'transform';
-  const borderRadiusList = borderRadius.split(' ').map(item => Number.parseInt(item));
+  const borderRadiusList = borderRadius?.split(' ')?.map(item => Number.parseInt(item)) || [];
   const dr = borderRadiusList.map(v => v + (radius * 2 - v) * pe);
   const alpha = 1;
   ctx.save();

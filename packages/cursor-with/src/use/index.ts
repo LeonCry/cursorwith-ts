@@ -1,6 +1,6 @@
 export { clickEffect } from './click-effect';
 export { follow } from './follow';
-export { hoverEffect } from './hover-effect';
+export { hoverEffect, updateTargetInHover } from './hover-effect';
 export { inverse } from './inverse';
 export { nativeCursor } from './native-cursor';
 export { tail } from './tail';

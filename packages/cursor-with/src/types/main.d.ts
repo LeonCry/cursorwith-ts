@@ -60,10 +60,11 @@ interface HoverEffect {
     easing?: EasingInput
   }
   style: CommonStyle
+  container?: HTMLElement
 };
 
 interface CursorWithOptions {
-  container?: Element
+  container?: HTMLElement
   style: StyleOptions
   follow?: Follow
   tail?: Tail
@@ -85,6 +86,7 @@ interface Meta {
   loopId: number | null
   isDrawCircle: boolean
   isOnHoverTarget: boolean
+  needUpdateTargetStyle: boolean
   useFns: Map<keyof any, AnyFn>
   eventListeners: Map<EventNames, Map<keyof any, ListenerFn>>
   eventResult: Map<EventNames, ReturnType<ListenerFn>[]>
