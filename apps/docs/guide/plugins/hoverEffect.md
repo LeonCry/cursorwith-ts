@@ -83,6 +83,15 @@ import HoverEffectDemo from '../../components/HoverEffectDemo.vue'
 - `flash` enables periodic brightness/opacity changes during hover.
 - `style` applies only while hovering and does not affect the global circle style.
 
+### Container
+
+- When using hoverEffect , it is recommended to set hoverEffect.container to the target element’s outer wrapper container. The default is document.body , which keeps coordinates and bounds aligned. When the wrapper container scrolls, the rectangle is clamped within the container using measured offsets and will not overflow the container bounds.
+:: warning Note
+If you manually change the target element’s position, call updateTargetInHover() at the time of change to update the hoverEffect position.
+import { updateTargetInHover } from 'cursorwith-ts/use';
+:::
+
+
 ## Combination Tips
 
 - When combined with `tail`, the tail temporarily stops while hovering and resumes afterward.

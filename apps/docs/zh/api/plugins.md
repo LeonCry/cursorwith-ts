@@ -32,11 +32,16 @@ function hoverEffect(options: HoverEffect): UseFn
 ```
 
 - 作用：悬停目标元素时将圆形过渡为带圆角矩形覆盖
-- 关键配置：`scope`（选择范围）、`padding`、`offset`、`duration`、`easing`、`flash`、`style`
+- 关键配置：`scope`（选择范围）、`padding`、`offset`、`duration`、`easing`、`flash`、`style`、`container`
 - 默认值（自动填充）：
   - `padding = 10`，`offset = 10`
   - `duration = 1000ms`，`easing = 'bounce-out'`
   - `flash.active = false`，`flash.duration = 1000ms`，`flash.easing = 'linear'`
+  - `container = document.body`
+
+注意：
+- 建议将 `hoverEffect.container` 设置为目标元素的外层包围容器，以保持坐标系一致并避免在包裹容器滚动时出现越界。
+- 当容器滚动时，插件会根据测量到的偏移量将矩形限制在容器范围内。
 
 示例：
 ```ts
@@ -46,6 +51,7 @@ cw.use(hoverEffect({
   duration: 800,
   easing: 'quad-out',
   flash: { active: true, duration: 600, easing: 'sine-in-out' },
+  container, 
 }));
 ```
 

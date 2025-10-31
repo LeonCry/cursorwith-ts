@@ -164,6 +164,11 @@ cw.use(follow({
   type: 'time', 
   timeRatio: 0.04 
 }));
+
+// Hover effect (recommended to set containers)
+// const container = document.body;
+// const cw = new CreateCursorWith({ style: { radius: 12, color: '#00000022' }, container });
+// cw.use(hoverEffect({ scope: { class: ['demo'] }, padding: 10, container }));
 ```
 
 ### CDN (unpkg)
