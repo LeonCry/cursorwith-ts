@@ -1,103 +1,18 @@
-import type { CursorWithOptions, Point, TargetBound } from '../types';
-import { resolveEasing } from '../utils';
-import { mixColorString } from '../utils/color-clamp';
+import type { CursorWithOptions, Point, TargetBound } from '../../types';
+import { mixColorString, resolveEasing } from '../../utils';
+import { getActiveTarget } from './active-target-getter';
+import { getFlashAlpha } from './flash-alpha-getter';
+import { collectRecoveryProcess, recoveryAbandonTransform } from './recovery-process';
 
-let cacheTarget: HTMLElement | null = null;
-let cacheTargetStyle: TargetBound | null = null;
-let cacheContainer: HTMLElement | null = null;
-let cacheContainerRect: DOMRect | null = null;
-// 获取当前鼠标位置的元素
-function getActiveTarget(
-  target: HTMLElement,
-  hoverEffect: CursorWithOptions['hoverEffect'],
-  ro: ResizeObserver,
-  forceUpdate?: boolean,
-):
-[
-    HTMLElement | null,
-    TargetBound | null,
-] {
-  if (!hoverEffect || !target) {
-    ro.disconnect();
-    cacheTarget = null;
-    cacheTargetStyle = null;
-    cacheContainer = null;
-    cacheContainerRect = null;
-    return [null, null];
-  }
-  const { scope } = hoverEffect;
-  let tar = null;
-  if (scope.class?.length) {
-    if (target.classList && Array.from(target.classList).some(cls => scope.class?.includes(cls))) {
-      tar = target;
-    }
-  }
-  if (scope.dataset?.length) {
-    if (Object.keys(target.dataset).some(key => scope.dataset?.includes(key))) {
-      tar = target;
-    }
-  }
-  if (tar) {
-    if (cacheTarget === tar && !forceUpdate) {
-      return [tar, { ...cacheTargetStyle! }];
-    }
-    if (cacheTarget !== tar) {
-      ro.observe(tar);
-    }
-    cacheTarget = tar;
-    const container = hoverEffect.container!;
-    const containerRect = cacheContainer === container
-      ? cacheContainerRect!
-      : (() => {
-          cacheContainer = container;
-          cacheContainerRect = container.getBoundingClientRect();
-          return cacheContainerRect!;
-        })();
-    const tarRect = tar.getBoundingClientRect();
-    const dt = tarRect.top - containerRect.top;
-    const db = containerRect.bottom - tarRect.bottom;
-    const dl = tarRect.left - containerRect.left;
-    const dr = containerRect.right - tarRect.right;
-    const dh = dt < 0 ? dt : db < 0 ? db : 0;
-    const dw = dl < 0 ? dl : dr < 0 ? dr : 0;
-    cacheTargetStyle = {
-      top: tarRect.top,
-      left: tarRect.left,
-      width: tarRect.width,
-      height: tarRect.height,
-      offset: {
-        width: dw,
-        height: dh,
-        top: dt < 0 ? -dt : 0,
-        left: dl < 0 ? -dl : 0,
-      },
-      borderRadius: getComputedStyle(tar).borderRadius,
-    };
-    return [tar, { ...cacheTargetStyle! }];
-  }
-  return getActiveTarget(target.parentElement as HTMLElement, hoverEffect, ro, forceUpdate);
-}
-
-// 获取闪烁效果时的透明度
-function getFlashAlpha(flash: NonNullable<CursorWithOptions['hoverEffect']>['flash'], now: number) {
-  if (!flash) return 1;
-  const { active, duration, easing } = flash!;
-  if (!active) return 1;
-  const halfFlashC = duration! / 2;
-  const spendC = now % duration!;
-  const flashRaw = spendC <= halfFlashC
-    ? spendC / halfFlashC
-    : (spendC - halfFlashC) / halfFlashC;
-  const flashEase = Math.min(1, Math.max(0, resolveEasing(easing)(flashRaw)));
-  return Math.max(0.2, spendC <= halfFlashC ? flashEase : 1 - flashEase);
-}
-
-// 保存元素原始transform
-const elementOriginalTransform = new WeakMap<HTMLElement, string>();
 let rectStartTime: number | null = null;
 let circleBackStartTime: number | null = null;
+const elementOriginalTransform = new WeakMap<HTMLElement, string>();
+function getElementOriginalTransform(targetElement: HTMLElement) {
+  return elementOriginalTransform.get(targetElement);
+}
 /**
  * 圆到矩形的过渡动画状态
+ * @param jumpedTarget 跳过了rectToCircle的target
  * @param ctx ctx实例
  * @param options 配置
  * @param targetStyle 目标样式
@@ -105,11 +20,13 @@ let circleBackStartTime: number | null = null;
  * @param currentPoint 当前点
  */
 function circleToRect(
+  jumpedTarget: HTMLElement | null,
   ctx: CanvasRenderingContext2D,
   options: CursorWithOptions,
   targetStyle: TargetBound,
   targetElement: HTMLElement,
   currentPoint: Point,
+  targetPoint: Point,
   containerRect: DOMRect,
 ) {
   const {
@@ -133,6 +50,7 @@ function circleToRect(
     = options.hoverEffect! as NonNullable<Required<CursorWithOptions['hoverEffect']>>;
   const { left, top, width, height, borderRadius } = targetStyle;
   const { x: cx, y: cy } = currentPoint;
+  const { x: tx, y: ty } = targetPoint;
   const from = {
     left: cx - radius,
     top: cy - radius,
@@ -158,6 +76,26 @@ function circleToRect(
     shadowOffset: hs?.shadowOffset || [0, 0],
   };
   const now = performance.now();
+  // 保存原始transform
+  if (!elementOriginalTransform.has(targetElement)) {
+    elementOriginalTransform.set(targetElement, targetElement.style.transform || '');
+  }
+  if (jumpedTarget) {
+    const centerX = from.left + from.width / 2;
+    const centerY = from.top + from.height / 2;
+    const dx = tx - centerX;
+    const dy = ty - centerY;
+    const dist = Math.hypot(dx, dy);
+    collectRecoveryProcess({
+      elapsed: 0,
+      easingFn: resolveEasing(easing),
+      targetElement: jumpedTarget,
+      duration,
+      eoxOut: (dx / dist) * offset / 2,
+      eoyOut: (dy / dist) * offset / 2,
+    });
+  }
+  recoveryAbandonTransform(targetElement);
   if (rectStartTime == null) {
     rectStartTime = now;
     circleBackStartTime = null;
@@ -200,10 +138,6 @@ function circleToRect(
   const L2 = L + ox * pe;
   const T2 = T + oy * pe;
 
-  // 目标元素进行适量偏移
-  if (!elementOriginalTransform.has(targetElement)) {
-    elementOriginalTransform.set(targetElement, targetElement.style.transform || '');
-  }
   const baseTransform = elementOriginalTransform.get(targetElement) || '';
   const maxElementOffset = offset / 2;
   let eox = 0;
@@ -214,7 +148,7 @@ function circleToRect(
     eox = (dx / dist) * magEl * pe;
     eoy = (dy / dist) * magEl * pe;
   }
-  targetElement.style.transform = `${baseTransform}${baseTransform ? ' ' : ''}translate(${eox.toFixed(2)}px, ${eoy.toFixed(2)}px)`;
+  targetElement.style.transform = `${baseTransform} translate(${eox.toFixed(2)}px, ${eoy.toFixed(2)}px)`;
   targetElement.style.willChange = 'transform';
 
   // 圆角处理
@@ -305,7 +239,6 @@ function rectToCircle(
   if (rectProgress > 1) return onComplete();
   const easingFn = resolveEasing(easing);
   const pe = Math.min(1, Math.max(0, easingFn(rectProgress)));
-
   const L = from.left + (to.left - from.left) * pe;
   const T = from.top + (to.top - from.top) * pe;
   const W = from.width + (to.width - from.width) * pe;
@@ -332,7 +265,15 @@ function rectToCircle(
     eoxOut = (dx / dist) * magEl * (1 - pe);
     eoyOut = (dy / dist) * magEl * (1 - pe);
   }
-  targetElement.style.transform = `${baseTransformOut}${baseTransformOut ? ' ' : ''}translate(${eoxOut.toFixed(2)}px, ${eoyOut.toFixed(2)}px)`;
+  collectRecoveryProcess({
+    elapsed,
+    easingFn,
+    targetElement,
+    duration,
+    eoxOut: (dx / dist) * Math.min(1, dist / influenceR) * maxElementOffset,
+    eoyOut: (dy / dist) * Math.min(1, dist / influenceR) * maxElementOffset,
+  });
+  targetElement.style.transform = `${baseTransformOut} translate(${eoxOut.toFixed(2)}px, ${eoyOut.toFixed(2)}px)`;
   targetElement.style.willChange = 'transform';
   const borderRadiusList = borderRadius?.split(' ')?.map(item => Number.parseInt(item)) || [];
   const dr = borderRadiusList.map(v => v + (radius * 2 - v) * pe);
@@ -353,4 +294,4 @@ function rectToCircle(
   ctx.restore();
 }
 
-export { circleToRect, getActiveTarget, rectToCircle };
+export { circleToRect, getActiveTarget, getElementOriginalTransform, rectToCircle };

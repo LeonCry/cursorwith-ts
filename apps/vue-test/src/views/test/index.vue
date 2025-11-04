@@ -34,14 +34,14 @@ onMounted(() => {
       easing: 'linear',
     },
     scope: { dataset: ['test'] },
-    offset: 10,
+    offset: 20,
     padding: 5,
     duration: 1000,
     easing: 'bounce-out',
     style: {
       color: 'rgba(0,0,0,0.5)',
       borderColor: 'rgba(255,0,0,0.5)',
-      borderWidth: 20,
+      borderWidth: 2,
     },
     container: container.value!,
   }));
@@ -78,7 +78,7 @@ const ml = ref(160);
 const width = ref(200);
 setTimeout(() => {
   ml.value = 400;
-  width.value = 300;
+  width.value = 50;
   updateTargetInHover();
 }, 3000);
 </script>
@@ -87,10 +87,45 @@ setTimeout(() => {
   <section ref="test" class=" border w-[1000px] h-[600px] ml-[250px] mt-[100px] p-2 bg-white overflow-auto">
     <div class="h-200 w-[2000px]" />
     <div
+      id="1"
       :style="`margin-left: ${ml}px;width:${width}px;`"
-      class="h-[400px] bg-blue-100 text-rounded mt-40"
+      class="h-[50px] bg-blue-100 text-rounded mt-40"
       data-test
-    />
+    >
+      1
+    </div>
+    <div
+      id="2"
+      :style="`margin-left: ${ml}px;width:${width}px;`"
+      class="h-[50px] bg-blue-100 text-rounded mt-5"
+      data-test
+    >
+      2
+    </div>
+    <div
+      id="3"
+      :style="`margin-left: ${ml}px;width:${width}px;`"
+      class="h-[50px] bg-blue-100 text-rounded mt-5"
+      data-test
+    >
+      3
+    </div>
+    <div
+      id="4"
+      :style="`margin-left: ${ml}px;width:${width}px;`"
+      class="h-[50px] bg-blue-100 text-rounded mt-5"
+      data-test
+    >
+      4
+    </div>
+    <div
+      id="5"
+      :style="`margin-left: ${ml}px;width:${width}px;`"
+      class="h-[50px] bg-blue-100 text-rounded mt-5"
+      data-test
+    >
+      5
+    </div>
     <div class="h-200" />
   </section>
 </template>

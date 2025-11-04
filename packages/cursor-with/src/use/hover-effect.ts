@@ -55,15 +55,19 @@ export function hoverEffect(config: CursorWithOptions['hoverEffect']) {
       }
       this.isDrawCircle = false;
       if (targetElement && targetStyle) {
+        // 如果this.isOnHoverTarget === true 且oldTargetElement !== targetElement,则说明跳过了rectToCircle步骤
+        const jumpedTarget = (this.isOnHoverTarget && (oldTargetElement !== targetElement)) ? oldTargetElement : null;
         oldTargetElement = targetElement;
         oldTargetStyle = targetStyle;
         this.isOnHoverTarget = true;
         circleToRect(
+          jumpedTarget,
           this.ctx,
           this.options,
           targetStyle,
           targetElement,
           this.currentPoint,
+          this.targetPoint,
           this.containerRect,
         );
       }
