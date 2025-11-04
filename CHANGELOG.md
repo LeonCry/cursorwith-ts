@@ -1,5 +1,13 @@
-## 1.0.0 (2025-10-31)
+## 1.0.0 (2025-11-04)
 
+* fix(hover): :bug: 修复当hoverEffect一个target时，如果移出时紧接着移入另一个新的target，则旧的target不会复位 ([919f938](https://github.com/LeonCry/cursor-with/commit/919f938)), closes [#33](https://github.com/LeonCry/cursor-with/issues/33)
+* fix(utils): 将重复监听器的错误抛出改为警告提示 ([abb0467](https://github.com/LeonCry/cursor-with/commit/abb0467))
+
+
+
+## <small>1.1.4 (2025-10-31)</small>
+
+* chore: 更新cursorwith-ts版本号至1.1.4并更新CHANGELOG ([a6d9587](https://github.com/LeonCry/cursor-with/commit/a6d9587))
 * docs(hoverEffect): 更新文档添加container配置说明 ([3f029d6](https://github.com/LeonCry/cursor-with/commit/3f029d6))
 * fix: :bug: 增强悬停效果的目标元素位置计算逻辑 ([c1fa926](https://github.com/LeonCry/cursor-with/commit/c1fa926)), closes [#32](https://github.com/LeonCry/cursor-with/issues/32)
 * feat(cursor-with): 添加ResizeObserver和IntersectionObserver支持 ([1ac3177](https://github.com/LeonCry/cursor-with/commit/1ac3177))
