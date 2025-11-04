@@ -7,7 +7,6 @@ import {
   inverse,
   nativeCursor,
   tail,
-  updateTargetInHover,
 } from 'cursorwith-ts/use';
 
 const cursorWith = ref<InstanceType<typeof CreateCursorWith> | null>(null);
@@ -58,7 +57,7 @@ onMounted(() => {
   cursorWith.value.use(inverse());
   cursorWith.value.stopUse(inverse());
 });
-onBeforeUnmount(() => {
+onUnmounted(() => {
   cursorWith.value?.destroy();
   cursorWith.value = null;
 });
@@ -76,58 +75,25 @@ window.addEventListener('keydown', (e) => {
 });
 const ml = ref(160);
 const width = ref(200);
-setTimeout(() => {
-  ml.value = 400;
-  width.value = 50;
-  updateTargetInHover();
-}, 3000);
 </script>
 
 <template>
-  <section ref="test" class=" border w-[1000px] h-[600px] ml-[250px] mt-[100px] p-2 bg-white overflow-auto">
-    <div class="h-200 w-[2000px]" />
+  <section
+    ref="test"
+    class=" border w-[1000px] h-[600px] ml-[25px] mt-[100px] p-2 bg-white overflow-auto grid grid-cols-4 gap-4"
+  >
     <div
+      v-for="v in 100"
       id="1"
+      :key="v"
       :style="`margin-left: ${ml}px;width:${width}px;`"
-      class="h-[50px] bg-blue-100 text-rounded mt-40"
+      class="h-[300px] bg-blue-100 text-rounded "
       data-test
     >
-      1
+      {{ v }}
     </div>
-    <div
-      id="2"
-      :style="`margin-left: ${ml}px;width:${width}px;`"
-      class="h-[50px] bg-blue-100 text-rounded mt-5"
-      data-test
-    >
-      2
-    </div>
-    <div
-      id="3"
-      :style="`margin-left: ${ml}px;width:${width}px;`"
-      class="h-[50px] bg-blue-100 text-rounded mt-5"
-      data-test
-    >
-      3
-    </div>
-    <div
-      id="4"
-      :style="`margin-left: ${ml}px;width:${width}px;`"
-      class="h-[50px] bg-blue-100 text-rounded mt-5"
-      data-test
-    >
-      4
-    </div>
-    <div
-      id="5"
-      :style="`margin-left: ${ml}px;width:${width}px;`"
-      class="h-[50px] bg-blue-100 text-rounded mt-5"
-      data-test
-    >
-      5
-    </div>
-    <div class="h-200" />
   </section>
+  <div class="h-300" />
 </template>
 
 <style scoped>
