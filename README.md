@@ -20,7 +20,7 @@
   </a>
   &nbsp;·&nbsp;
   <a href="https://leoncry.github.io/cursorwith-ts/zh/" target="_blank">
-      简体中文文档
+      简体中文
   </a>
 </div>
 
@@ -224,7 +224,7 @@ instance.destroy();
 | `style.color`          | `string` (CSS color)          | Fill color                          |
 | `style.borderWidth`    | `number`                      | Border stroke width                 |
 | `style.borderColor`    | `string`                      | Border stroke color                 |
-| `follow.type`          | `'time' | 'gap'` (example)    | Follow strategy mode                |
+| `follow.type`          | `'time'、'gap'` (example)    | Follow strategy mode                |
 | `follow.timeRatio`     | `number`                      | Time easing factor (for time mode)  |
 | `...`                  | `...`                         | ...                                 |
 
